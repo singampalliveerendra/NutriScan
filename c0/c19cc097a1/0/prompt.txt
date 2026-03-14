@@ -1,0 +1,37 @@
+hlo
+
+---
+
+You are reviewing an existing React Native Expo project called NutriScan that scans food barcodes and fetches product information from the Open Food Facts API.
+
+The scanner screen currently detects the barcode but gets stuck on "Searching for product..." and never displays the result. I want you to debug and fix the issue without creating a new project.
+
+Tasks:
+
+1. Analyze the scanner logic in the React Native Expo project.
+2. Ensure that when a barcode is detected:
+
+   * The scanner stops scanning temporarily.
+   * The barcode value is stored in state.
+3. Call the Open Food Facts API correctly using:
+   https://world.openfoodfacts.org/api/v0/product/{barcode}.json
+4. Handle API responses properly:
+
+   * If status = 1 → display product name, brand, and nutrition data.
+   * If status = 0 → show "Product not found".
+5. Make sure loading state is updated so the "Searching..." spinner stops.
+6. Prevent multiple API calls when the same barcode is scanned repeatedly.
+7. Add console logging for debugging:
+
+   * scanned barcode
+   * API request URL
+   * API response
+8. Add proper error handling for network failures.
+9. Ensure the UI transitions from:
+   scanning → searching → result screen.
+
+The goal is to fix the scanner so that when a barcode is scanned it fetches product data correctly and displays it instead of staying stuck on the loading state.
+
+---
+
+send some barcodes to search
