@@ -1,0 +1,44 @@
+{
+  "expo": {
+    "name": "NutriScan",
+    "slug": "NutriScan",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "light",
+    "scheme": "nutriscan",
+    "splash": {
+      "image": "./assets/splash-icon.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#22C55E"
+    },
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.nutriscan.app"
+    },
+    "android": {
+      "package": "com.nutriscan.app",
+      "adaptiveIcon": {
+        "backgroundColor": "#22C55E",
+        "foregroundImage": "./assets/android-icon-foreground.png"
+      },
+      "permissions": ["CAMERA"]
+    },
+    "web": {
+      "favicon": "./assets/favicon.png",
+      "bundler": "metro"
+    },
+    "plugins": [
+      "expo-router",
+      [
+        "expo-camera",
+        {
+          "cameraPermission": "Allow NutriScan to access your camera to scan food barcodes."
+        }
+      ]
+    ],
+    "experiments": {
+      "typedRoutes": true
+    }
+  }
+}
