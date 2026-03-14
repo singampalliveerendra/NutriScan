@@ -1,0 +1,8 @@
+Please review my React Native Expo project and fix the error: 
+"In HTML, <button> cannot be a descendant of <button>".
+
+Find places where TouchableOpacity (or Pressable / Button) is nested inside another TouchableOpacity. 
+Refactor the layout so buttons are not nested inside each other. 
+Use a View container instead and keep buttons as separate elements.
+
+Do not create a new project. Only modify the existing code and ensure the UI still works correctly.
