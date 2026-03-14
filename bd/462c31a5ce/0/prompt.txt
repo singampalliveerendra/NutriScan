@@ -1,0 +1,78 @@
+hi
+
+---
+
+Review the existing NutriScan React Native (Expo) project and redesign the user interface to be very user-friendly, modern, and suitable for all age groups including parents, families, and non-technical users.
+
+Do not create a new project. Improve the current UI components and screens.
+
+Goals:
+
+* Very clean and modern mobile UI
+* Easy to understand for beginners
+* Large readable text
+* Minimal steps for scanning food
+* Friendly design with simple colors and icons
+* Fast interaction
+
+Design Requirements:
+
+1. Home Screen
+
+* Large “Scan Food” button in the center
+* Secondary button “Search Food”
+* Quick access to “History”
+* Friendly welcome message like “Scan your food to check health”
+
+2. Scanner Screen
+
+* Clear camera view
+* Simple instruction: “Point camera at barcode”
+* Loading animation when searching product
+* Vibrate or sound feedback when barcode is detected
+
+3. Product Result Screen
+
+* Show product name at the top
+* Big health badge:
+  Green = Healthy
+  Yellow = Moderate
+  Red = Avoid
+* Simple nutrition cards:
+  Calories
+  Sugar
+  Protein
+  Fat
+* AI explanation in simple language
+* Button: “Save to history”
+
+4. History Screen
+
+* Card layout
+* Show product name, verdict color, date
+* Tap to open details
+
+5. UI Style
+
+* Rounded cards
+* Soft shadows
+* Modern mobile spacing
+* Friendly color palette (green, orange, red indicators)
+* Use icons for scanning, food, history
+
+6. Accessibility
+
+* Large tap areas
+* High contrast text
+* Easy navigation
+* Clear labels
+
+7. Mobile UX Improvements
+
+* Smooth transitions between screens
+* Skeleton loading instead of blank screens
+* Friendly error messages like:
+  “We couldn’t find this product yet”
+
+Goal:
+Make NutriScan feel like a polished consumer mobile app similar to modern health or grocery apps, with a clean and intuitive experience that anyone can use easily.
