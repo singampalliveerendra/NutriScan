@@ -1,0 +1,964 @@
+{
+  "info": {
+    "id": "ses_312eb5505ffeLGy7mqwoGWAeqq",
+    "slug": "kind-harbor",
+    "projectID": "25840736e6a07a8c1d84fee55ae58f43cb4a72c4",
+    "directory": "/home/veerendra/food/NutriScan",
+    "title": "Intro message: greetings and quick check-in",
+    "version": "1.2.26",
+    "summary": {
+      "additions": 56,
+      "deletions": 52,
+      "files": 2
+    },
+    "time": {
+      "created": 1773504080634,
+      "updated": 1773504214147
+    }
+  },
+  "messages": [
+    {
+      "info": {
+        "role": "user",
+        "time": {
+          "created": 1773504080660
+        },
+        "summary": {
+          "diffs": []
+        },
+        "agent": "build",
+        "model": {
+          "providerID": "opencode",
+          "modelID": "big-pickle"
+        },
+        "id": "msg_ced14ab0300157F5gvmSmOvwNn",
+        "sessionID": "ses_312eb5505ffeLGy7mqwoGWAeqq"
+      },
+      "parts": [
+        {
+          "type": "text",
+          "text": "hi",
+          "id": "prt_ced14ab04001JH1qdpsrGF81Tz",
+          "sessionID": "ses_312eb5505ffeLGy7mqwoGWAeqq",
+          "messageID": "msg_ced14ab0300157F5gvmSmOvwNn"
+        }
+      ]
+    },
+    {
+      "info": {
+        "role": "assistant",
+        "time": {
+          "created": 1773504080699,
+          "completed": 1773504090045
+        },
+        "parentID": "msg_ced14ab0300157F5gvmSmOvwNn",
+        "modelID": "big-pickle",
+        "providerID": "opencode",
+        "mode": "build",
+        "agent": "build",
+        "path": {
+          "cwd": "/home/veerendra/food/NutriScan",
+          "root": "/home/veerendra/food"
+        },
+        "cost": 0,
+        "tokens": {
+          "total": 11458,
+          "input": 78,
+          "output": 55,
+          "reasoning": 0,
+          "cache": {
+            "read": 510,
+            "write": 10815
+          }
+        },
+        "finish": "stop",
+        "id": "msg_ced14ab3b001TOnnGy4wokZ6yk",
+        "sessionID": "ses_312eb5505ffeLGy7mqwoGWAeqq"
+      },
+      "parts": [
+        {
+          "type": "step-start",
+          "snapshot": "d21eeda0eda58b196f396ec2b6df8ae457c7829e",
+          "id": "prt_ced14cb640013hVXpxP2eQMgrT",
+          "sessionID": "ses_312eb5505ffeLGy7mqwoGWAeqq",
+          "messageID": "msg_ced14ab3b001TOnnGy4wokZ6yk"
+        },
+        {
+          "type": "reasoning",
+          "text": "The user has just said \"hi\" - this is a greeting. According to the instructions, I should be concise and direct. I should greet them back briefly without being verbose or adding unnecessary preamble/postamble.",
+          "metadata": {
+            "anthropic": {
+              "signature": "f804ab641e8e1453c08451d424ae0c780bb6f7bc6496dace317ee383701b2ed8"
+            }
+          },
+          "time": {
+            "start": 1773504088936,
+            "end": 1773504089850
+          },
+          "id": "prt_ced14cb68001Kd1Nez1MZpr1h6",
+          "sessionID": "ses_312eb5505ffeLGy7mqwoGWAeqq",
+          "messageID": "msg_ced14ab3b001TOnnGy4wokZ6yk"
+        },
+        {
+          "type": "text",
+          "text": "Hi! How can I help you today?",
+          "time": {
+            "start": 1773504089863,
+            "end": 1773504089863
+          },
+          "id": "prt_ced14cf020019Jwp2KXipvlGQl",
+          "sessionID": "ses_312eb5505ffeLGy7mqwoGWAeqq",
+          "messageID": "msg_ced14ab3b001TOnnGy4wokZ6yk"
+        },
+        {
+          "type": "step-finish",
+          "reason": "stop",
+          "snapshot": "d21eeda0eda58b196f396ec2b6df8ae457c7829e",
+          "cost": 0,
+          "tokens": {
+            "total": 11458,
+            "input": 78,
+            "output": 55,
+            "reasoning": 0,
+            "cache": {
+              "read": 510,
+              "write": 10815
+            }
+          },
+          "id": "prt_ced14cf5f001JylScYe878UFMR",
+          "sessionID": "ses_312eb5505ffeLGy7mqwoGWAeqq",
+          "messageID": "msg_ced14ab3b001TOnnGy4wokZ6yk"
+        }
+      ]
+    },
+    {
+      "info": {
+        "role": "user",
+        "time": {
+          "created": 1773504164438
+        },
+        "summary": {
+          "diffs": [
+            {
+              "file": "NutriScan/app/scanner.tsx",
+              "before": "import React, { useState, useEffect, useRef } from 'react';\nimport {\n  View,\n  Text,\n  StyleSheet,\n  TouchableOpacity,\n  Alert,\n  ActivityIndicator,\n  TextInput,\n  Modal,\n  KeyboardAvoidingView,\n  Platform,\n  ScrollView,\n  Animated,\n  Vibration,\n} from 'react-native';\nimport { CameraView, useCameraPermissions, BarcodeScanningResult } from 'expo-camera';\nimport { useRouter, useFocusEffect } from 'expo-router';\nimport { COLORS, SPACING, FONT_SIZE, BORDER_RADIUS, SHADOWS } from '../src/constants';\nimport { Button } from '../src/components';\nimport { fetchProductByBarcode, addManualProduct, ManualProductRequiredError } from '../src/services/foodApi';\nimport { Product } from '../src/types';\n\ninterface ManualProductForm {\n  name: string;\n  brand: string;\n  calories: string;\n  protein: string;\n  carbohydrates: string;\n  fat: string;\n  sugar: string;\n  sodium: string;\n  saturatedFat: string;\n}\n\nconst initialFormState: ManualProductForm = {\n  name: '',\n  brand: '',\n  calories: '',\n  protein: '',\n  carbohydrates: '',\n  fat: '',\n  sugar: '',\n  sodium: '',\n  saturatedFat: '',\n};\n\nexport default function ScannerScreen() {\n  const router = useRouter();\n  const [permission, requestPermission] = useCameraPermissions();\n  const [scanned, setScanned] = useState(false);\n  const [flashOn, setFlashOn] = useState(false);\n  const [loading, setLoading] = useState(false);\n  const [showManualInput, setShowManualInput] = useState(false);\n  const [manualBarcode, setManualBarcode] = useState('');\n  const [showAddProduct, setShowAddProduct] = useState(false);\n  const [manualForm, setManualForm] = useState<ManualProductForm>(initialFormState);\n  const [lastScannedBarcode, setLastScannedBarcode] = useState('');\n  const scanLineAnim = useRef(new Animated.Value(0)).current;\n  const lastScanTime = useRef(0);\n  const SCAN_DEBOUNCE_MS = 2000;\n\n  useEffect(() => {\n    let animation: Animated.CompositeAnimation;\n    if (!scanned && !loading) {\n      animation = Animated.loop(\n        Animated.sequence([\n          Animated.timing(scanLineAnim, {\n            toValue: 1,\n            duration: 2000,\n            useNativeDriver: true,\n          }),\n          Animated.timing(scanLineAnim, {\n            toValue: 0,\n            duration: 2000,\n            useNativeDriver: true,\n          }),\n        ])\n      );\n      animation.start();\n    }\n    return () => {\n      if (animation) {\n        animation.stop();\n      }\n    };\n  }, [scanned, loading]);\n\n  useFocusEffect(\n    React.useCallback(() => {\n      setScanned(false);\n      setLoading(false);\n      setLastScannedBarcode('');\n      lastScanTime.current = 0;\n      console.log('[Scanner] Screen focused, ready to scan');\n    }, [])\n  );\n\n  const handleBarCodeScanned = async (result: BarcodeScanningResult) => {\n    if (scanned || loading) return;\n    \n    const now = Date.now();\n    if (now - lastScanTime.current < SCAN_DEBOUNCE_MS) {\n      console.log('[Scanner] Debouncing - scan too soon after last scan');\n      return;\n    }\n    \n    const barcode = result.data;\n    console.log('[Scanner] Barcode detected:', barcode);\n    \n    if (lastScannedBarcode === barcode) {\n      console.log('[Scanner] Same barcode already scanned, ignoring');\n      return;\n    }\n    \n    lastScanTime.current = now;\n    \n    setScanned(true);\n    setLoading(true);\n    setLastScannedBarcode(barcode);\n    Vibration.vibrate(100);\n\n    const timeoutId = setTimeout(() => {\n      setLoading(false);\n      setScanned(false);\n      Alert.alert('Timeout', 'The request took too long. Please try again.');\n    }, 15000);\n\n    try {\n      console.log('[Scanner] Fetching product for barcode:', barcode);\n      const product = await fetchProductByBarcode(barcode);\n      console.log('[Scanner] Product found:', product.name);\n      \n      router.replace({\n        pathname: '/product/[id]',\n        params: { id: encodeURIComponent(product.barcode), product: JSON.stringify(product) },\n      });\n    } catch (error) {\n      console.log('[Scanner] Error fetching product:', error);\n      \n      if (error instanceof ManualProductRequiredError) {\n        Alert.alert(\n          'Product Not Found',\n          'We couldn\\'t find this product yet. Would you like to add it?',\n          [\n            {\n              text: 'Search Instead',\n              onPress: () => {\n                setScanned(false);\n                router.push('/search');\n              },\n            },\n            {\n              text: 'Add Manually',\n              onPress: () => {\n                setScanned(false);\n                setShowAddProduct(true);\n              },\n            },\n          ]\n        );\n      } else {\n        Alert.alert('Error', 'Failed to fetch product. Please try again.');\n        setScanned(false);\n      }\n    } finally {\n      clearTimeout(timeoutId);\n      setLoading(false);\n    }\n  };\n\n  const handleManualSearch = async () => {\n    if (!manualBarcode.trim()) {\n      Alert.alert('Error', 'Please enter a valid barcode');\n      return;\n    }\n\n    const barcode = manualBarcode.trim();\n    console.log('[Scanner] Manual search for barcode:', barcode);\n    \n    setLoading(true);\n    setShowManualInput(false);\n    setScanned(true);\n    setLastScannedBarcode(barcode);\n\n    const timeoutId = setTimeout(() => {\n      setLoading(false);\n      setScanned(false);\n      Alert.alert('Timeout', 'The request took too long. Please try again.');\n    }, 15000);\n\n    try {\n      const product = await fetchProductByBarcode(barcode);\n      console.log('[Scanner] Manual search found product:', product.name);\n      \n      router.replace({\n        pathname: '/product/[id]',\n        params: { id: encodeURIComponent(product.barcode), product: JSON.stringify(product) },\n      });\n    } catch (error) {\n      console.log('[Scanner] Manual search error:', error);\n      \n      if (error instanceof ManualProductRequiredError) {\n        Alert.alert(\n          'Product Not Found',\n          'We couldn\\'t find this product yet. Would you like to add it?',\n          [\n            {\n              text: 'Search Instead',\n              onPress: () => {\n                setScanned(false);\n                router.push('/search');\n              },\n            },\n            {\n              text: 'Add Manually',\n              onPress: () => {\n                setScanned(false);\n                setShowAddProduct(true);\n              },\n            },\n          ]\n        );\n      } else {\n        Alert.alert('Error', 'Failed to fetch product. Please try again.');\n        setScanned(false);\n      }\n    } finally {\n      clearTimeout(timeoutId);\n      setLoading(false);\n      setManualBarcode('');\n    }\n  };\n\n  const handleAddManualProduct = async () => {\n    if (!manualForm.name.trim()) {\n      Alert.alert('Error', 'Please enter product name');\n      return;\n    }\n\n    setLoading(true);\n\n    try {\n      const product = await addManualProduct(\n        manualForm.name.trim(),\n        manualForm.brand.trim(),\n        {\n          calories: parseFloat(manualForm.calories) || 0,\n          protein: parseFloat(manualForm.protein) || 0,\n          carbohydrates: parseFloat(manualForm.carbohydrates) || 0,\n          fat: parseFloat(manualForm.fat) || 0,\n          sugar: parseFloat(manualForm.sugar) || 0,\n          sodium: parseFloat(manualForm.sodium) || 0,\n          saturatedFat: parseFloat(manualForm.saturatedFat) || 0,\n          fiber: 0,\n        },\n        manualForm.brand.trim() || undefined\n      );\n\n      setShowAddProduct(false);\n      setManualForm(initialFormState);\n\n      router.replace({\n        pathname: '/product/[id]',\n        params: { id: encodeURIComponent(product.barcode), product: JSON.stringify(product) },\n      });\n    } catch (error) {\n      Alert.alert('Error', 'Failed to add product. Please try again.');\n    } finally {\n      setLoading(false);\n    }\n  };\n\n  if (!permission) {\n    return (\n      <View style={styles.container}>\n        <ActivityIndicator size=\"large\" color={COLORS.primary} />\n      </View>\n    );\n  }\n\n  if (!permission.granted) {\n    return (\n      <View style={styles.permissionContainer}>\n        <View style={styles.permissionIconContainer}>\n          <Text style={styles.permissionIcon}>📷</Text>\n        </View>\n        <Text style={styles.permissionTitle}>Camera Permission</Text>\n        <Text style={styles.permissionText}>\n          We need camera access to scan food barcodes\n        </Text>\n        <Button\n          title=\"Enable Camera\"\n          onPress={requestPermission}\n          variant=\"primary\"\n          size=\"large\"\n          fullWidth\n        />\n        <TouchableOpacity\n          style={styles.manualButton}\n          onPress={() => setShowManualInput(true)}\n        >\n          <Text style={styles.manualButtonText}>Enter Barcode Manually</Text>\n        </TouchableOpacity>\n      </View>\n    );\n  }\n\n  const scanLinePosition = scanLineAnim.interpolate({\n    inputRange: [0, 1],\n    outputRange: [0, 150],\n  });\n\n  return (\n    <View style={styles.container}>\n      <CameraView\n        style={styles.camera}\n        facing=\"back\"\n        enableTorch={flashOn}\n        barcodeScannerSettings={{\n          barcodeTypes: [\n            'ean13',\n            'ean8',\n            'upc_a',\n            'upc_e',\n            'code128',\n            'code39',\n            'code93',\n            'itf14',\n            'codabar',\n            'qr',\n          ],\n        }}\n        onBarcodeScanned={scanned ? undefined : handleBarCodeScanned}\n      >\n        <View style={styles.overlay}>\n          <View style={styles.header}>\n            <TouchableOpacity\n              style={styles.closeButton}\n              onPress={() => router.back()}\n              accessibilityRole=\"button\"\n              accessibilityLabel=\"Close scanner\"\n            >\n              <Text style={styles.closeIcon}>✕</Text>\n            </TouchableOpacity>\n            <TouchableOpacity\n              style={[styles.flashButton, flashOn && styles.flashButtonActive]}\n              onPress={() => setFlashOn(!flashOn)}\n              accessibilityRole=\"button\"\n              accessibilityLabel={flashOn ? 'Turn off flash' : 'Turn on flash'}\n            >\n              <Text style={styles.flashIcon}>{flashOn ? '⚡' : '🔦'}</Text>\n            </TouchableOpacity>\n          </View>\n          \n          <View style={styles.scanArea}>\n            <View style={styles.scanFrame}>\n              <View style={[styles.corner, styles.topLeft]} />\n              <View style={[styles.corner, styles.topRight]} />\n              <View style={[styles.corner, styles.bottomLeft]} />\n              <View style={[styles.corner, styles.bottomRight]} />\n              {!scanned && !loading && (\n                <Animated.View \n                  style={[\n                    styles.scanLine,\n                    { transform: [{ translateY: scanLinePosition }] }\n                  ]} \n                />\n              )}\n            </View>\n            <Text style={styles.instructionText}>\n              {loading ? 'Searching...' : 'Align barcode inside the frame'}\n            </Text>\n          </View>\n\n          <View style={styles.footer}>\n            <TouchableOpacity\n              style={styles.manualEntryButton}\n              onPress={() => setShowManualInput(true)}\n              accessibilityRole=\"button\"\n              accessibilityLabel=\"Enter barcode manually\"\n            >\n              <Text style={styles.manualEntryText}>Enter Barcode Manually</Text>\n            </TouchableOpacity>\n          </View>\n        </View>\n      </CameraView>\n\n      {loading && (\n        <View style={styles.loadingOverlay}>\n          <View style={styles.loadingCard}>\n            <ActivityIndicator size=\"large\" color={COLORS.primary} />\n            <Text style={styles.loadingText}>Searching for product...</Text>\n            <Text style={styles.loadingSubtext}>Please wait</Text>\n          </View>\n        </View>\n      )}\n\n      <Modal\n        visible={showManualInput}\n        animationType=\"slide\"\n        transparent={true}\n        onRequestClose={() => setShowManualInput(false)}\n      >\n        <KeyboardAvoidingView\n          behavior={Platform.OS === 'ios' ? 'padding' : 'height'}\n          style={styles.modalOverlay}\n        >\n          <View style={styles.modalContent}>\n            <View style={styles.modalHeader}>\n              <Text style={styles.modalTitle}>Enter Barcode</Text>\n              <TouchableOpacity onPress={() => setShowManualInput(false)}>\n                <Text style={styles.modalClose}>✕</Text>\n              </TouchableOpacity>\n            </View>\n            <Text style={styles.modalSubtitle}>\n              Type the barcode number manually\n            </Text>\n            <TextInput\n              style={styles.input}\n              value={manualBarcode}\n              onChangeText={setManualBarcode}\n              placeholder=\"e.g., 5000159484695\"\n              keyboardType=\"numeric\"\n              autoFocus\n              accessibilityLabel=\"Barcode input\"\n            />\n            <View style={styles.modalButtons}>\n              <Button\n                title=\"Cancel\"\n                onPress={() => {\n                  setShowManualInput(false);\n                  setManualBarcode('');\n                }}\n                variant=\"outline\"\n                style={styles.modalButton}\n              />\n              <Button\n                title=\"Search\"\n                onPress={handleManualSearch}\n                variant=\"primary\"\n                loading={loading}\n                style={styles.modalButton}\n              />\n            </View>\n          </View>\n        </KeyboardAvoidingView>\n      </Modal>\n\n      <Modal\n        visible={showAddProduct}\n        animationType=\"slide\"\n        transparent={false}\n        onRequestClose={() => setShowAddProduct(false)}\n      >\n        <KeyboardAvoidingView\n          behavior={Platform.OS === 'ios' ? 'padding' : 'height'}\n          style={styles.addProductContainer}\n        >\n          <ScrollView style={styles.addProductScroll}>\n            <View style={styles.addProductHeader}>\n              <TouchableOpacity onPress={() => setShowAddProduct(false)}>\n                <Text style={styles.backButton}>← Back</Text>\n              </TouchableOpacity>\n              <Text style={styles.addProductTitle}>Add New Product</Text>\n              <View style={{ width: 60 }} />\n            </View>\n            \n            <Text style={styles.addProductSubtitle}>\n              Add nutrition info per 100g serving\n            </Text>\n\n            <View style={styles.formGroup}>\n              <Text style={styles.label}>Product Name *</Text>\n              <TextInput\n                style={styles.formInput}\n                value={manualForm.name}\n                onChangeText={(text) => setManualForm({ ...manualForm, name: text })}\n                placeholder=\"e.g., Maggi Noodles\"\n                accessibilityLabel=\"Product name\"\n              />\n            </View>\n\n            <View style={styles.formGroup}>\n              <Text style={styles.label}>Brand</Text>\n              <TextInput\n                style={styles.formInput}\n                value={manualForm.brand}\n                onChangeText={(text) => setManualForm({ ...manualForm, brand: text })}\n                placeholder=\"e.g., Nestle\"\n                accessibilityLabel=\"Brand\"\n              />\n            </View>\n\n            <View style={styles.formRow}>\n              <View style={[styles.formGroup, { flex: 1 }]}>\n                <Text style={styles.label}>Calories (kcal)</Text>\n                <TextInput\n                  style={styles.formInput}\n                  value={manualForm.calories}\n                  onChangeText={(text) => setManualForm({ ...manualForm, calories: text })}\n                  placeholder=\"0\"\n                  keyboardType=\"numeric\"\n                />\n              </View>\n              <View style={[styles.formGroup, { flex: 1 }]}>\n                <Text style={styles.label}>Protein (g)</Text>\n                <TextInput\n                  style={styles.formInput}\n                  value={manualForm.protein}\n                  onChangeText={(text) => setManualForm({ ...manualForm, protein: text })}\n                  placeholder=\"0\"\n                  keyboardType=\"numeric\"\n                />\n              </View>\n            </View>\n\n            <View style={styles.formRow}>\n              <View style={[styles.formGroup, { flex: 1 }]}>\n                <Text style={styles.label}>Carbs (g)</Text>\n                <TextInput\n                  style={styles.formInput}\n                  value={manualForm.carbohydrates}\n                  onChangeText={(text) => setManualForm({ ...manualForm, carbohydrates: text })}\n                  placeholder=\"0\"\n                  keyboardType=\"numeric\"\n                />\n              </View>\n              <View style={[styles.formGroup, { flex: 1 }]}>\n                <Text style={styles.label}>Fat (g)</Text>\n                <TextInput\n                  style={styles.formInput}\n                  value={manualForm.fat}\n                  onChangeText={(text) => setManualForm({ ...manualForm, fat: text })}\n                  placeholder=\"0\"\n                  keyboardType=\"numeric\"\n                />\n              </View>\n            </View>\n\n            <View style={styles.formRow}>\n              <View style={[styles.formGroup, { flex: 1 }]}>\n                <Text style={styles.label}>Sugar (g)</Text>\n                <TextInput\n                  style={styles.formInput}\n                  value={manualForm.sugar}\n                  onChangeText={(text) => setManualForm({ ...manualForm, sugar: text })}\n                  placeholder=\"0\"\n                  keyboardType=\"numeric\"\n                />\n              </View>\n              <View style={[styles.formGroup, { flex: 1 }]}>\n                <Text style={styles.label}>Sodium (mg)</Text>\n                <TextInput\n                  style={styles.formInput}\n                  value={manualForm.sodium}\n                  onChangeText={(text) => setManualForm({ ...manualForm, sodium: text })}\n                  placeholder=\"0\"\n                  keyboardType=\"numeric\"\n                />\n              </View>\n            </View>\n\n            <View style={styles.formGroup}>\n              <Text style={styles.label}>Saturated Fat (g)</Text>\n              <TextInput\n                style={styles.formInput}\n                value={manualForm.saturatedFat}\n                onChangeText={(text) => setManualForm({ ...manualForm, saturatedFat: text })}\n                placeholder=\"0\"\n                keyboardType=\"numeric\"\n              />\n            </View>\n\n            <View style={styles.formButtons}>\n              <Button\n                title=\"Cancel\"\n                onPress={() => {\n                  setShowAddProduct(false);\n                  setManualForm(initialFormState);\n                }}\n                variant=\"outline\"\n                style={styles.formButton}\n              />\n              <Button\n                title=\"Add Product\"\n                onPress={handleAddManualProduct}\n                variant=\"primary\"\n                loading={loading}\n                style={styles.formButton}\n              />\n            </View>\n          </ScrollView>\n        </KeyboardAvoidingView>\n      </Modal>\n    </View>\n  );\n}\n\nconst styles = StyleSheet.create({\n  container: {\n    flex: 1,\n    backgroundColor: COLORS.black,\n  },\n  permissionContainer: {\n    flex: 1,\n    backgroundColor: COLORS.background,\n    justifyContent: 'center',\n    alignItems: 'center',\n    padding: SPACING.xl,\n  },\n  permissionIconContainer: {\n    width: 100,\n    height: 100,\n    borderRadius: 50,\n    backgroundColor: COLORS.primaryLight,\n    justifyContent: 'center',\n    alignItems: 'center',\n    marginBottom: SPACING.lg,\n  },\n  permissionIcon: {\n    fontSize: 48,\n  },\n  permissionTitle: {\n    fontSize: FONT_SIZE.xxl,\n    fontWeight: '800',\n    color: COLORS.text,\n    marginBottom: SPACING.sm,\n    textAlign: 'center',\n  },\n  permissionText: {\n    fontSize: FONT_SIZE.md,\n    color: COLORS.textSecondary,\n    textAlign: 'center',\n    marginBottom: SPACING.xl,\n    lineHeight: 22,\n  },\n  manualButton: {\n    marginTop: SPACING.lg,\n  },\n  manualButtonText: {\n    fontSize: FONT_SIZE.md,\n    color: COLORS.primary,\n    fontWeight: '600',\n  },\n  camera: {\n    flex: 1,\n  },\n  overlay: {\n    flex: 1,\n    backgroundColor: 'rgba(0,0,0,0.4)',\n  },\n  header: {\n    flexDirection: 'row',\n    justifyContent: 'space-between',\n    padding: SPACING.lg,\n    paddingTop: SPACING.xl,\n  },\n  closeButton: {\n    width: 44,\n    height: 44,\n    borderRadius: 22,\n    backgroundColor: 'rgba(255,255,255,0.2)',\n    justifyContent: 'center',\n    alignItems: 'center',\n  },\n  closeIcon: {\n    fontSize: 20,\n    color: COLORS.white,\n    fontWeight: '600',\n  },\n  flashButton: {\n    width: 44,\n    height: 44,\n    borderRadius: 22,\n    backgroundColor: 'rgba(255,255,255,0.2)',\n    justifyContent: 'center',\n    alignItems: 'center',\n  },\n  flashButtonActive: {\n    backgroundColor: COLORS.primary,\n  },\n  flashIcon: {\n    fontSize: 22,\n  },\n  scanArea: {\n    flex: 1,\n    justifyContent: 'center',\n    alignItems: 'center',\n  },\n  scanFrame: {\n    width: 280,\n    height: 180,\n    borderRadius: BORDER_RADIUS.lg,\n    backgroundColor: 'transparent',\n    position: 'relative',\n  },\n  corner: {\n    position: 'absolute',\n    width: 30,\n    height: 30,\n    borderColor: COLORS.primary,\n  },\n  topLeft: {\n    top: 0,\n    left: 0,\n    borderTopWidth: 4,\n    borderLeftWidth: 4,\n    borderTopLeftRadius: BORDER_RADIUS.lg,\n  },\n  topRight: {\n    top: 0,\n    right: 0,\n    borderTopWidth: 4,\n    borderRightWidth: 4,\n    borderTopRightRadius: BORDER_RADIUS.lg,\n  },\n  bottomLeft: {\n    bottom: 0,\n    left: 0,\n    borderBottomWidth: 4,\n    borderLeftWidth: 4,\n    borderBottomLeftRadius: BORDER_RADIUS.lg,\n  },\n  bottomRight: {\n    bottom: 0,\n    right: 0,\n    borderBottomWidth: 4,\n    borderRightWidth: 4,\n    borderBottomRightRadius: BORDER_RADIUS.lg,\n  },\n  scanLine: {\n    position: 'absolute',\n    left: 10,\n    right: 10,\n    height: 3,\n    backgroundColor: COLORS.primary,\n    borderRadius: 2,\n  },\n  footer: {\n    padding: SPACING.xl,\n    alignItems: 'center',\n  },\n  instructionText: {\n    fontSize: FONT_SIZE.lg,\n    color: COLORS.white,\n    fontWeight: '600',\n    marginTop: SPACING.lg,\n  },\n  manualEntryButton: {\n    padding: SPACING.md,\n  },\n  manualEntryText: {\n    fontSize: FONT_SIZE.md,\n    color: COLORS.primaryLight,\n    fontWeight: '600',\n  },\n  loadingOverlay: {\n    ...StyleSheet.absoluteFillObject,\n    backgroundColor: COLORS.overlay,\n    justifyContent: 'center',\n    alignItems: 'center',\n  },\n  loadingCard: {\n    backgroundColor: COLORS.white,\n    borderRadius: BORDER_RADIUS.xl,\n    padding: SPACING.xl,\n    alignItems: 'center',\n    ...SHADOWS.large,\n  },\n  loadingText: {\n    marginTop: SPACING.md,\n    fontSize: FONT_SIZE.lg,\n    fontWeight: '700',\n    color: COLORS.text,\n  },\n  loadingSubtext: {\n    marginTop: SPACING.xs,\n    fontSize: FONT_SIZE.sm,\n    color: COLORS.textSecondary,\n  },\n  modalOverlay: {\n    flex: 1,\n    backgroundColor: 'rgba(0,0,0,0.5)',\n    justifyContent: 'flex-end',\n  },\n  modalContent: {\n    backgroundColor: COLORS.white,\n    borderTopLeftRadius: BORDER_RADIUS.xl,\n    borderTopRightRadius: BORDER_RADIUS.xl,\n    padding: SPACING.lg,\n    paddingBottom: SPACING.xxl,\n  },\n  modalHeader: {\n    flexDirection: 'row',\n    justifyContent: 'space-between',\n    alignItems: 'center',\n    marginBottom: SPACING.xs,\n  },\n  modalTitle: {\n    fontSize: FONT_SIZE.xl,\n    fontWeight: '800',\n    color: COLORS.text,\n  },\n  modalClose: {\n    fontSize: FONT_SIZE.xl,\n    color: COLORS.textSecondary,\n    padding: SPACING.sm,\n  },\n  modalSubtitle: {\n    fontSize: FONT_SIZE.sm,\n    color: COLORS.textSecondary,\n    marginBottom: SPACING.lg,\n  },\n  input: {\n    borderWidth: 1,\n    borderColor: COLORS.border,\n    borderRadius: BORDER_RADIUS.lg,\n    padding: SPACING.md,\n    fontSize: FONT_SIZE.lg,\n    marginBottom: SPACING.lg,\n    backgroundColor: COLORS.surfaceAlt,\n  },\n  modalButtons: {\n    flexDirection: 'row',\n    gap: SPACING.md,\n  },\n  modalButton: {\n    flex: 1,\n  },\n  addProductContainer: {\n    flex: 1,\n    backgroundColor: COLORS.background,\n  },\n  addProductScroll: {\n    flex: 1,\n  },\n  addProductHeader: {\n    flexDirection: 'row',\n    justifyContent: 'space-between',\n    alignItems: 'center',\n    padding: SPACING.lg,\n    backgroundColor: COLORS.white,\n    borderBottomWidth: 1,\n    borderBottomColor: COLORS.border,\n  },\n  backButton: {\n    fontSize: FONT_SIZE.md,\n    color: COLORS.primary,\n    fontWeight: '600',\n  },\n  addProductTitle: {\n    fontSize: FONT_SIZE.xl,\n    fontWeight: '800',\n    color: COLORS.text,\n  },\n  addProductSubtitle: {\n    fontSize: FONT_SIZE.sm,\n    color: COLORS.textSecondary,\n    marginBottom: SPACING.lg,\n    paddingHorizontal: SPACING.lg,\n  },\n  formGroup: {\n    marginBottom: SPACING.md,\n    paddingHorizontal: SPACING.lg,\n  },\n  formRow: {\n    flexDirection: 'row',\n    gap: SPACING.md,\n  },\n  label: {\n    fontSize: FONT_SIZE.sm,\n    fontWeight: '600',\n    color: COLORS.text,\n    marginBottom: SPACING.xs,\n  },\n  formInput: {\n    borderWidth: 1,\n    borderColor: COLORS.border,\n    borderRadius: BORDER_RADIUS.lg,\n    padding: SPACING.md,\n    fontSize: FONT_SIZE.md,\n    backgroundColor: COLORS.white,\n  },\n  formButtons: {\n    flexDirection: 'row',\n    gap: SPACING.md,\n    padding: SPACING.lg,\n    marginTop: SPACING.md,\n  },\n  formButton: {\n    flex: 1,\n  },\n});\n",
+              "after": "import React, { useState, useEffect, useRef } from 'react';\nimport {\n  View,\n  Text,\n  StyleSheet,\n  TouchableOpacity,\n  Alert,\n  ActivityIndicator,\n  TextInput,\n  Modal,\n  KeyboardAvoidingView,\n  Platform,\n  ScrollView,\n  Animated,\n  Vibration,\n} from 'react-native';\nimport { CameraView, useCameraPermissions, BarcodeScanningResult } from 'expo-camera';\nimport { useRouter, useFocusEffect } from 'expo-router';\nimport { COLORS, SPACING, FONT_SIZE, BORDER_RADIUS, SHADOWS } from '../src/constants';\nimport { Button } from '../src/components';\nimport { fetchProductByBarcode, addManualProduct, ManualProductRequiredError } from '../src/services/foodApi';\nimport { Product } from '../src/types';\n\ninterface ManualProductForm {\n  name: string;\n  brand: string;\n  calories: string;\n  protein: string;\n  carbohydrates: string;\n  fat: string;\n  sugar: string;\n  sodium: string;\n  saturatedFat: string;\n}\n\nconst initialFormState: ManualProductForm = {\n  name: '',\n  brand: '',\n  calories: '',\n  protein: '',\n  carbohydrates: '',\n  fat: '',\n  sugar: '',\n  sodium: '',\n  saturatedFat: '',\n};\n\nexport default function ScannerScreen() {\n  const router = useRouter();\n  const [permission, requestPermission] = useCameraPermissions();\n  const [scanned, setScanned] = useState(false);\n  const [flashOn, setFlashOn] = useState(false);\n  const [loading, setLoading] = useState(false);\n  const [showManualInput, setShowManualInput] = useState(false);\n  const [manualBarcode, setManualBarcode] = useState('');\n  const [showAddProduct, setShowAddProduct] = useState(false);\n  const [manualForm, setManualForm] = useState<ManualProductForm>(initialFormState);\n  const [lastScannedBarcode, setLastScannedBarcode] = useState('');\n  const scanLineAnim = useRef(new Animated.Value(0)).current;\n  const lastScanTime = useRef(0);\n  const SCAN_DEBOUNCE_MS = 2000;\n\n  useEffect(() => {\n    let animation: Animated.CompositeAnimation;\n    if (!scanned && !loading) {\n      animation = Animated.loop(\n        Animated.sequence([\n          Animated.timing(scanLineAnim, {\n            toValue: 1,\n            duration: 2000,\n            useNativeDriver: true,\n          }),\n          Animated.timing(scanLineAnim, {\n            toValue: 0,\n            duration: 2000,\n            useNativeDriver: true,\n          }),\n        ])\n      );\n      animation.start();\n    }\n    return () => {\n      if (animation) {\n        animation.stop();\n      }\n    };\n  }, [scanned, loading]);\n\n  useFocusEffect(\n    React.useCallback(() => {\n      setScanned(false);\n      setLoading(false);\n      setLastScannedBarcode('');\n      lastScanTime.current = 0;\n      console.log('[Scanner] Screen focused, ready to scan');\n    }, [])\n  );\n\n  const handleBarCodeScanned = async (result: BarcodeScanningResult) => {\n    if (scanned || loading) return;\n    \n    const now = Date.now();\n    if (now - lastScanTime.current < SCAN_DEBOUNCE_MS) {\n      console.log('[Scanner] Debouncing - scan too soon after last scan');\n      return;\n    }\n    \n    const barcode = result.data;\n    console.log('[Scanner] Barcode detected:', barcode);\n    \n    if (lastScannedBarcode === barcode) {\n      console.log('[Scanner] Same barcode already scanned, ignoring');\n      return;\n    }\n    \n    lastScanTime.current = now;\n    \n    setScanned(true);\n    setLoading(true);\n    setLastScannedBarcode(barcode);\n    Vibration.vibrate(100);\n\n    const timeoutId = setTimeout(() => {\n      setLoading(false);\n      setScanned(false);\n      Alert.alert('Timeout', 'The request took too long. Please try again.');\n    }, 15000);\n\n    try {\n      console.log('[Scanner] Fetching product for barcode:', barcode);\n      const product = await fetchProductByBarcode(barcode);\n      console.log('[Scanner] Product found:', product.name);\n      \n      router.replace({\n        pathname: '/product/[id]',\n        params: { id: encodeURIComponent(product.barcode), product: JSON.stringify(product) },\n      });\n    } catch (error) {\n      console.log('[Scanner] Error fetching product:', error);\n      \n      if (error instanceof ManualProductRequiredError) {\n        Alert.alert(\n          'Product Not Found',\n          'We couldn\\'t find this product yet. Would you like to add it?',\n          [\n            {\n              text: 'Search Instead',\n              onPress: () => {\n                setScanned(false);\n                router.push('/search');\n              },\n            },\n            {\n              text: 'Add Manually',\n              onPress: () => {\n                setScanned(false);\n                setShowAddProduct(true);\n              },\n            },\n          ]\n        );\n      } else {\n        Alert.alert('Error', 'Failed to fetch product. Please try again.');\n        setScanned(false);\n      }\n    } finally {\n      clearTimeout(timeoutId);\n      setLoading(false);\n    }\n  };\n\n  const handleManualSearch = async () => {\n    if (!manualBarcode.trim()) {\n      Alert.alert('Error', 'Please enter a valid barcode');\n      return;\n    }\n\n    const barcode = manualBarcode.trim();\n    console.log('[Scanner] Manual search for barcode:', barcode);\n    \n    setLoading(true);\n    setShowManualInput(false);\n    setScanned(true);\n    setLastScannedBarcode(barcode);\n\n    const timeoutId = setTimeout(() => {\n      setLoading(false);\n      setScanned(false);\n      Alert.alert('Timeout', 'The request took too long. Please try again.');\n    }, 15000);\n\n    try {\n      const product = await fetchProductByBarcode(barcode);\n      console.log('[Scanner] Manual search found product:', product.name);\n      \n      router.replace({\n        pathname: '/product/[id]',\n        params: { id: encodeURIComponent(product.barcode), product: JSON.stringify(product) },\n      });\n    } catch (error) {\n      console.log('[Scanner] Manual search error:', error);\n      \n      if (error instanceof ManualProductRequiredError) {\n        Alert.alert(\n          'Product Not Found',\n          'We couldn\\'t find this product yet. Would you like to add it?',\n          [\n            {\n              text: 'Search Instead',\n              onPress: () => {\n                setScanned(false);\n                router.push('/search');\n              },\n            },\n            {\n              text: 'Add Manually',\n              onPress: () => {\n                setScanned(false);\n                setShowAddProduct(true);\n              },\n            },\n          ]\n        );\n      } else {\n        Alert.alert('Error', 'Failed to fetch product. Please try again.');\n        setScanned(false);\n      }\n    } finally {\n      clearTimeout(timeoutId);\n      setLoading(false);\n      setManualBarcode('');\n    }\n  };\n\n  const handleAddManualProduct = async () => {\n    if (!manualForm.name.trim()) {\n      Alert.alert('Error', 'Please enter product name');\n      return;\n    }\n\n    setLoading(true);\n\n    try {\n      const product = await addManualProduct(\n        manualForm.name.trim(),\n        manualForm.brand.trim(),\n        {\n          calories: parseFloat(manualForm.calories) || 0,\n          protein: parseFloat(manualForm.protein) || 0,\n          carbohydrates: parseFloat(manualForm.carbohydrates) || 0,\n          fat: parseFloat(manualForm.fat) || 0,\n          sugar: parseFloat(manualForm.sugar) || 0,\n          sodium: parseFloat(manualForm.sodium) || 0,\n          saturatedFat: parseFloat(manualForm.saturatedFat) || 0,\n          fiber: 0,\n        },\n        manualForm.brand.trim() || undefined\n      );\n\n      setShowAddProduct(false);\n      setManualForm(initialFormState);\n\n      router.replace({\n        pathname: '/product/[id]',\n        params: { id: encodeURIComponent(product.barcode), product: JSON.stringify(product) },\n      });\n    } catch (error) {\n      Alert.alert('Error', 'Failed to add product. Please try again.');\n    } finally {\n      setLoading(false);\n    }\n  };\n\n  if (!permission) {\n    return (\n      <View style={styles.container}>\n        <ActivityIndicator size=\"large\" color={COLORS.primary} />\n      </View>\n    );\n  }\n\n  if (!permission.granted) {\n    return (\n      <View style={styles.permissionContainer}>\n        <View style={styles.permissionIconContainer}>\n          <Text style={styles.permissionIcon}>📷</Text>\n        </View>\n        <Text style={styles.permissionTitle}>Camera Permission</Text>\n        <Text style={styles.permissionText}>\n          We need camera access to scan food barcodes\n        </Text>\n        <Button\n          title=\"Enable Camera\"\n          onPress={requestPermission}\n          variant=\"primary\"\n          size=\"large\"\n          fullWidth\n        />\n        <TouchableOpacity\n          style={styles.manualButton}\n          onPress={() => setShowManualInput(true)}\n        >\n          <Text style={styles.manualButtonText}>Enter Barcode Manually</Text>\n        </TouchableOpacity>\n      </View>\n    );\n  }\n\n  const scanLinePosition = scanLineAnim.interpolate({\n    inputRange: [0, 1],\n    outputRange: [0, 150],\n  });\n\n  return (\n    <View style={styles.container}>\n      <CameraView\n        style={styles.camera}\n        facing=\"back\"\n        enableTorch={flashOn}\n        focusMode=\"auto\"\n        preset=\"high\"\n        barcodeScannerSettings={{\n          barcodeTypes: [\n            'ean13',\n            'ean8',\n            'upc_a',\n            'upc_e',\n            'code128',\n          ],\n        }}\n        onBarcodeScanned={scanned ? undefined : handleBarCodeScanned}\n      >\n        <View style={styles.overlay}>\n          <View style={styles.header}>\n            <TouchableOpacity\n              style={styles.closeButton}\n              onPress={() => router.back()}\n              accessibilityRole=\"button\"\n              accessibilityLabel=\"Close scanner\"\n            >\n              <Text style={styles.closeIcon}>✕</Text>\n            </TouchableOpacity>\n            <TouchableOpacity\n              style={[styles.flashButton, flashOn && styles.flashButtonActive]}\n              onPress={() => setFlashOn(!flashOn)}\n              accessibilityRole=\"button\"\n              accessibilityLabel={flashOn ? 'Turn off flash' : 'Turn on flash'}\n            >\n              <Text style={styles.flashIcon}>{flashOn ? '⚡' : '🔦'}</Text>\n            </TouchableOpacity>\n          </View>\n          \n          <View style={styles.scanArea}>\n            <View style={styles.scanFrame}>\n              <View style={[styles.corner, styles.topLeft]} />\n              <View style={[styles.corner, styles.topRight]} />\n              <View style={[styles.corner, styles.bottomLeft]} />\n              <View style={[styles.corner, styles.bottomRight]} />\n              {!scanned && !loading && (\n                <Animated.View \n                  style={[\n                    styles.scanLine,\n                    { transform: [{ translateY: scanLinePosition }] }\n                  ]} \n                />\n              )}\n            </View>\n            <Text style={styles.instructionText}>\n              {loading ? 'Searching...' : 'Align barcode inside the frame'}\n            </Text>\n          </View>\n\n          <View style={styles.footer}>\n            <TouchableOpacity\n              style={styles.manualEntryButton}\n              onPress={() => setShowManualInput(true)}\n              accessibilityRole=\"button\"\n              accessibilityLabel=\"Enter barcode manually\"\n            >\n              <Text style={styles.manualEntryText}>Enter Barcode Manually</Text>\n            </TouchableOpacity>\n          </View>\n        </View>\n      </CameraView>\n\n      {loading && (\n        <View style={styles.loadingOverlay}>\n          <View style={styles.loadingCard}>\n            <ActivityIndicator size=\"large\" color={COLORS.primary} />\n            <Text style={styles.loadingText}>Searching for product...</Text>\n            <Text style={styles.loadingSubtext}>Please wait</Text>\n          </View>\n        </View>\n      )}\n\n      <Modal\n        visible={showManualInput}\n        animationType=\"slide\"\n        transparent={true}\n        onRequestClose={() => setShowManualInput(false)}\n      >\n        <KeyboardAvoidingView\n          behavior={Platform.OS === 'ios' ? 'padding' : 'height'}\n          style={styles.modalOverlay}\n        >\n          <View style={styles.modalContent}>\n            <View style={styles.modalHeader}>\n              <Text style={styles.modalTitle}>Enter Barcode</Text>\n              <TouchableOpacity onPress={() => setShowManualInput(false)}>\n                <Text style={styles.modalClose}>✕</Text>\n              </TouchableOpacity>\n            </View>\n            <Text style={styles.modalSubtitle}>\n              Type the barcode number manually\n            </Text>\n            <TextInput\n              style={styles.input}\n              value={manualBarcode}\n              onChangeText={setManualBarcode}\n              placeholder=\"e.g., 5000159484695\"\n              keyboardType=\"numeric\"\n              autoFocus\n              accessibilityLabel=\"Barcode input\"\n            />\n            <View style={styles.modalButtons}>\n              <Button\n                title=\"Cancel\"\n                onPress={() => {\n                  setShowManualInput(false);\n                  setManualBarcode('');\n                }}\n                variant=\"outline\"\n                style={styles.modalButton}\n              />\n              <Button\n                title=\"Search\"\n                onPress={handleManualSearch}\n                variant=\"primary\"\n                loading={loading}\n                style={styles.modalButton}\n              />\n            </View>\n          </View>\n        </KeyboardAvoidingView>\n      </Modal>\n\n      <Modal\n        visible={showAddProduct}\n        animationType=\"slide\"\n        transparent={false}\n        onRequestClose={() => setShowAddProduct(false)}\n      >\n        <KeyboardAvoidingView\n          behavior={Platform.OS === 'ios' ? 'padding' : 'height'}\n          style={styles.addProductContainer}\n        >\n          <ScrollView style={styles.addProductScroll}>\n            <View style={styles.addProductHeader}>\n              <TouchableOpacity onPress={() => setShowAddProduct(false)}>\n                <Text style={styles.backButton}>← Back</Text>\n              </TouchableOpacity>\n              <Text style={styles.addProductTitle}>Add New Product</Text>\n              <View style={{ width: 60 }} />\n            </View>\n            \n            <Text style={styles.addProductSubtitle}>\n              Add nutrition info per 100g serving\n            </Text>\n\n            <View style={styles.formGroup}>\n              <Text style={styles.label}>Product Name *</Text>\n              <TextInput\n                style={styles.formInput}\n                value={manualForm.name}\n                onChangeText={(text) => setManualForm({ ...manualForm, name: text })}\n                placeholder=\"e.g., Maggi Noodles\"\n                accessibilityLabel=\"Product name\"\n              />\n            </View>\n\n            <View style={styles.formGroup}>\n              <Text style={styles.label}>Brand</Text>\n              <TextInput\n                style={styles.formInput}\n                value={manualForm.brand}\n                onChangeText={(text) => setManualForm({ ...manualForm, brand: text })}\n                placeholder=\"e.g., Nestle\"\n                accessibilityLabel=\"Brand\"\n              />\n            </View>\n\n            <View style={styles.formRow}>\n              <View style={[styles.formGroup, { flex: 1 }]}>\n                <Text style={styles.label}>Calories (kcal)</Text>\n                <TextInput\n                  style={styles.formInput}\n                  value={manualForm.calories}\n                  onChangeText={(text) => setManualForm({ ...manualForm, calories: text })}\n                  placeholder=\"0\"\n                  keyboardType=\"numeric\"\n                />\n              </View>\n              <View style={[styles.formGroup, { flex: 1 }]}>\n                <Text style={styles.label}>Protein (g)</Text>\n                <TextInput\n                  style={styles.formInput}\n                  value={manualForm.protein}\n                  onChangeText={(text) => setManualForm({ ...manualForm, protein: text })}\n                  placeholder=\"0\"\n                  keyboardType=\"numeric\"\n                />\n              </View>\n            </View>\n\n            <View style={styles.formRow}>\n              <View style={[styles.formGroup, { flex: 1 }]}>\n                <Text style={styles.label}>Carbs (g)</Text>\n                <TextInput\n                  style={styles.formInput}\n                  value={manualForm.carbohydrates}\n                  onChangeText={(text) => setManualForm({ ...manualForm, carbohydrates: text })}\n                  placeholder=\"0\"\n                  keyboardType=\"numeric\"\n                />\n              </View>\n              <View style={[styles.formGroup, { flex: 1 }]}>\n                <Text style={styles.label}>Fat (g)</Text>\n                <TextInput\n                  style={styles.formInput}\n                  value={manualForm.fat}\n                  onChangeText={(text) => setManualForm({ ...manualForm, fat: text })}\n                  placeholder=\"0\"\n                  keyboardType=\"numeric\"\n                />\n              </View>\n            </View>\n\n            <View style={styles.formRow}>\n              <View style={[styles.formGroup, { flex: 1 }]}>\n                <Text style={styles.label}>Sugar (g)</Text>\n                <TextInput\n                  style={styles.formInput}\n                  value={manualForm.sugar}\n                  onChangeText={(text) => setManualForm({ ...manualForm, sugar: text })}\n                  placeholder=\"0\"\n                  keyboardType=\"numeric\"\n                />\n              </View>\n              <View style={[styles.formGroup, { flex: 1 }]}>\n                <Text style={styles.label}>Sodium (mg)</Text>\n                <TextInput\n                  style={styles.formInput}\n                  value={manualForm.sodium}\n                  onChangeText={(text) => setManualForm({ ...manualForm, sodium: text })}\n                  placeholder=\"0\"\n                  keyboardType=\"numeric\"\n                />\n              </View>\n            </View>\n\n            <View style={styles.formGroup}>\n              <Text style={styles.label}>Saturated Fat (g)</Text>\n              <TextInput\n                style={styles.formInput}\n                value={manualForm.saturatedFat}\n                onChangeText={(text) => setManualForm({ ...manualForm, saturatedFat: text })}\n                placeholder=\"0\"\n                keyboardType=\"numeric\"\n              />\n            </View>\n\n            <View style={styles.formButtons}>\n              <Button\n                title=\"Cancel\"\n                onPress={() => {\n                  setShowAddProduct(false);\n                  setManualForm(initialFormState);\n                }}\n                variant=\"outline\"\n                style={styles.formButton}\n              />\n              <Button\n                title=\"Add Product\"\n                onPress={handleAddManualProduct}\n                variant=\"primary\"\n                loading={loading}\n                style={styles.formButton}\n              />\n            </View>\n          </ScrollView>\n        </KeyboardAvoidingView>\n      </Modal>\n    </View>\n  );\n}\n\nconst styles = StyleSheet.create({\n  container: {\n    flex: 1,\n    backgroundColor: COLORS.black,\n  },\n  permissionContainer: {\n    flex: 1,\n    backgroundColor: COLORS.background,\n    justifyContent: 'center',\n    alignItems: 'center',\n    padding: SPACING.xl,\n  },\n  permissionIconContainer: {\n    width: 100,\n    height: 100,\n    borderRadius: 50,\n    backgroundColor: COLORS.primaryLight,\n    justifyContent: 'center',\n    alignItems: 'center',\n    marginBottom: SPACING.lg,\n  },\n  permissionIcon: {\n    fontSize: 48,\n  },\n  permissionTitle: {\n    fontSize: FONT_SIZE.xxl,\n    fontWeight: '800',\n    color: COLORS.text,\n    marginBottom: SPACING.sm,\n    textAlign: 'center',\n  },\n  permissionText: {\n    fontSize: FONT_SIZE.md,\n    color: COLORS.textSecondary,\n    textAlign: 'center',\n    marginBottom: SPACING.xl,\n    lineHeight: 22,\n  },\n  manualButton: {\n    marginTop: SPACING.lg,\n  },\n  manualButtonText: {\n    fontSize: FONT_SIZE.md,\n    color: COLORS.primary,\n    fontWeight: '600',\n  },\n  camera: {\n    flex: 1,\n  },\n  overlay: {\n    flex: 1,\n    backgroundColor: 'rgba(0,0,0,0.4)',\n  },\n  header: {\n    flexDirection: 'row',\n    justifyContent: 'space-between',\n    padding: SPACING.lg,\n    paddingTop: SPACING.xl,\n  },\n  closeButton: {\n    width: 44,\n    height: 44,\n    borderRadius: 22,\n    backgroundColor: 'rgba(255,255,255,0.2)',\n    justifyContent: 'center',\n    alignItems: 'center',\n  },\n  closeIcon: {\n    fontSize: 20,\n    color: COLORS.white,\n    fontWeight: '600',\n  },\n  flashButton: {\n    width: 44,\n    height: 44,\n    borderRadius: 22,\n    backgroundColor: 'rgba(255,255,255,0.2)',\n    justifyContent: 'center',\n    alignItems: 'center',\n  },\n  flashButtonActive: {\n    backgroundColor: COLORS.primary,\n  },\n  flashIcon: {\n    fontSize: 22,\n  },\n  scanArea: {\n    flex: 1,\n    justifyContent: 'center',\n    alignItems: 'center',\n  },\n  scanFrame: {\n    width: 280,\n    height: 180,\n    borderRadius: BORDER_RADIUS.lg,\n    backgroundColor: 'transparent',\n    position: 'relative',\n  },\n  corner: {\n    position: 'absolute',\n    width: 30,\n    height: 30,\n    borderColor: COLORS.primary,\n  },\n  topLeft: {\n    top: 0,\n    left: 0,\n    borderTopWidth: 4,\n    borderLeftWidth: 4,\n    borderTopLeftRadius: BORDER_RADIUS.lg,\n  },\n  topRight: {\n    top: 0,\n    right: 0,\n    borderTopWidth: 4,\n    borderRightWidth: 4,\n    borderTopRightRadius: BORDER_RADIUS.lg,\n  },\n  bottomLeft: {\n    bottom: 0,\n    left: 0,\n    borderBottomWidth: 4,\n    borderLeftWidth: 4,\n    borderBottomLeftRadius: BORDER_RADIUS.lg,\n  },\n  bottomRight: {\n    bottom: 0,\n    right: 0,\n    borderBottomWidth: 4,\n    borderRightWidth: 4,\n    borderBottomRightRadius: BORDER_RADIUS.lg,\n  },\n  scanLine: {\n    position: 'absolute',\n    left: 10,\n    right: 10,\n    height: 3,\n    backgroundColor: COLORS.primary,\n    borderRadius: 2,\n  },\n  footer: {\n    padding: SPACING.xl,\n    alignItems: 'center',\n  },\n  instructionText: {\n    fontSize: FONT_SIZE.lg,\n    color: COLORS.white,\n    fontWeight: '600',\n    marginTop: SPACING.lg,\n  },\n  manualEntryButton: {\n    padding: SPACING.md,\n  },\n  manualEntryText: {\n    fontSize: FONT_SIZE.md,\n    color: COLORS.primaryLight,\n    fontWeight: '600',\n  },\n  loadingOverlay: {\n    ...StyleSheet.absoluteFillObject,\n    backgroundColor: COLORS.overlay,\n    justifyContent: 'center',\n    alignItems: 'center',\n  },\n  loadingCard: {\n    backgroundColor: COLORS.white,\n    borderRadius: BORDER_RADIUS.xl,\n    padding: SPACING.xl,\n    alignItems: 'center',\n    ...SHADOWS.large,\n  },\n  loadingText: {\n    marginTop: SPACING.md,\n    fontSize: FONT_SIZE.lg,\n    fontWeight: '700',\n    color: COLORS.text,\n  },\n  loadingSubtext: {\n    marginTop: SPACING.xs,\n    fontSize: FONT_SIZE.sm,\n    color: COLORS.textSecondary,\n  },\n  modalOverlay: {\n    flex: 1,\n    backgroundColor: 'rgba(0,0,0,0.5)',\n    justifyContent: 'flex-end',\n  },\n  modalContent: {\n    backgroundColor: COLORS.white,\n    borderTopLeftRadius: BORDER_RADIUS.xl,\n    borderTopRightRadius: BORDER_RADIUS.xl,\n    padding: SPACING.lg,\n    paddingBottom: SPACING.xxl,\n  },\n  modalHeader: {\n    flexDirection: 'row',\n    justifyContent: 'space-between',\n    alignItems: 'center',\n    marginBottom: SPACING.xs,\n  },\n  modalTitle: {\n    fontSize: FONT_SIZE.xl,\n    fontWeight: '800',\n    color: COLORS.text,\n  },\n  modalClose: {\n    fontSize: FONT_SIZE.xl,\n    color: COLORS.textSecondary,\n    padding: SPACING.sm,\n  },\n  modalSubtitle: {\n    fontSize: FONT_SIZE.sm,\n    color: COLORS.textSecondary,\n    marginBottom: SPACING.lg,\n  },\n  input: {\n    borderWidth: 1,\n    borderColor: COLORS.border,\n    borderRadius: BORDER_RADIUS.lg,\n    padding: SPACING.md,\n    fontSize: FONT_SIZE.lg,\n    marginBottom: SPACING.lg,\n    backgroundColor: COLORS.surfaceAlt,\n  },\n  modalButtons: {\n    flexDirection: 'row',\n    gap: SPACING.md,\n  },\n  modalButton: {\n    flex: 1,\n  },\n  addProductContainer: {\n    flex: 1,\n    backgroundColor: COLORS.background,\n  },\n  addProductScroll: {\n    flex: 1,\n  },\n  addProductHeader: {\n    flexDirection: 'row',\n    justifyContent: 'space-between',\n    alignItems: 'center',\n    padding: SPACING.lg,\n    backgroundColor: COLORS.white,\n    borderBottomWidth: 1,\n    borderBottomColor: COLORS.border,\n  },\n  backButton: {\n    fontSize: FONT_SIZE.md,\n    color: COLORS.primary,\n    fontWeight: '600',\n  },\n  addProductTitle: {\n    fontSize: FONT_SIZE.xl,\n    fontWeight: '800',\n    color: COLORS.text,\n  },\n  addProductSubtitle: {\n    fontSize: FONT_SIZE.sm,\n    color: COLORS.textSecondary,\n    marginBottom: SPACING.lg,\n    paddingHorizontal: SPACING.lg,\n  },\n  formGroup: {\n    marginBottom: SPACING.md,\n    paddingHorizontal: SPACING.lg,\n  },\n  formRow: {\n    flexDirection: 'row',\n    gap: SPACING.md,\n  },\n  label: {\n    fontSize: FONT_SIZE.sm,\n    fontWeight: '600',\n    color: COLORS.text,\n    marginBottom: SPACING.xs,\n  },\n  formInput: {\n    borderWidth: 1,\n    borderColor: COLORS.border,\n    borderRadius: BORDER_RADIUS.lg,\n    padding: SPACING.md,\n    fontSize: FONT_SIZE.md,\n    backgroundColor: COLORS.white,\n  },\n  formButtons: {\n    flexDirection: 'row',\n    gap: SPACING.md,\n    padding: SPACING.lg,\n    marginTop: SPACING.md,\n  },\n  formButton: {\n    flex: 1,\n  },\n});\n",
+              "additions": 2,
+              "deletions": 5,
+              "status": "modified"
+            }
+          ]
+        },
+        "agent": "build",
+        "model": {
+          "providerID": "opencode",
+          "modelID": "big-pickle"
+        },
+        "id": "msg_ced15f21a0014TBu8spg4qC8a2",
+        "sessionID": "ses_312eb5505ffeLGy7mqwoGWAeqq"
+      },
+      "parts": [
+        {
+          "type": "text",
+          "text": "Please review my React Native Expo project and fix the barcode scanner camera focus issue.\n\nThe camera opens but it does not focus properly on barcodes. Improve the scanner so it can detect barcodes quickly and clearly.\n\nTasks:\n1. Enable autofocus for the camera.\n2. Use expo-camera or expo-barcode-scanner correctly.\n3. Restrict barcodeTypes to common formats like EAN13, EAN8, UPC, and CODE128.\n4. Add a scan frame overlay so users know where to place the barcode.\n5. Ensure the scanner stops scanning after a barcode is detected.\n6. Improve camera resolution and focus settings if possible.\n\nDo not create a new project. Only update the existing scanner implementation. ",
+          "id": "prt_ced15f21c001BMmrCUErvlIO3o",
+          "sessionID": "ses_312eb5505ffeLGy7mqwoGWAeqq",
+          "messageID": "msg_ced15f21a0014TBu8spg4qC8a2"
+        }
+      ]
+    },
+    {
+      "info": {
+        "role": "assistant",
+        "time": {
+          "created": 1773504164492,
+          "completed": 1773504173045
+        },
+        "parentID": "msg_ced15f21a0014TBu8spg4qC8a2",
+        "modelID": "big-pickle",
+        "providerID": "opencode",
+        "mode": "build",
+        "agent": "build",
+        "path": {
+          "cwd": "/home/veerendra/food/NutriScan",
+          "root": "/home/veerendra/food"
+        },
+        "cost": 0,
+        "tokens": {
+          "total": 11714,
+          "input": 78,
+          "output": 150,
+          "reasoning": 0,
+          "cache": {
+            "read": 11319,
+            "write": 167
+          }
+        },
+        "finish": "tool-calls",
+        "id": "msg_ced15f28c001p38r95K4GlmNfX",
+        "sessionID": "ses_312eb5505ffeLGy7mqwoGWAeqq"
+      },
+      "parts": [
+        {
+          "type": "step-start",
+          "snapshot": "1f651ba88031fd7c32eaac8349c04c86e0bf578a",
+          "id": "prt_ced1605f6001RnC3JNkC96Aeoy",
+          "sessionID": "ses_312eb5505ffeLGy7mqwoGWAeqq",
+          "messageID": "msg_ced15f28c001p38r95K4GlmNfX"
+        },
+        {
+          "type": "reasoning",
+          "text": "The user wants me to review and fix a barcode scanner issue in their React Native Expo project. Let me start by exploring the codebase to understand the current implementation.\n\nI need to:\n1. Find the scanner component in the project\n2. Understand the current implementation\n3. Make the necessary fixes for:\n   - Enable autofocus\n   - Use expo-camera or expo-barcode-scanner correctly\n   - Restrict barcodeTypes\n   - Add scan frame overlay\n   - Stop scanning after detection\n   - Improve camera resolution and focus\n\nLet me start by exploring the project structure.",
+          "metadata": {
+            "anthropic": {
+              "signature": "8c8d76c4e4b3cadf8ea48186ba51191d5cc98eb80be9a40675200a3d382f8a2b"
+            }
+          },
+          "time": {
+            "start": 1773504169471,
+            "end": 1773504171825
+          },
+          "id": "prt_ced1605fa0015Tjsg72yi71zEm",
+          "sessionID": "ses_312eb5505ffeLGy7mqwoGWAeqq",
+          "messageID": "msg_ced15f28c001p38r95K4GlmNfX"
+        },
+        {
+          "type": "tool",
+          "callID": "call_function_96i5r4sizean_1",
+          "tool": "glob",
+          "state": {
+            "status": "completed",
+            "input": {
+              "pattern": "**/*.{tsx,ts,js}"
+            },
+            "output": "/home/veerendra/food/NutriScan/app/(tabs)/history.tsx\n/home/veerendra/food/NutriScan/expo-env.d.ts\n/home/veerendra/food/NutriScan/app/scanner.tsx\n/home/veerendra/food/NutriScan/app/(tabs)/_layout.tsx\n/home/veerendra/food/NutriScan/app/search.tsx\n/home/veerendra/food/NutriScan/app/product/[id].tsx\n/home/veerendra/food/NutriScan/app/(tabs)/index.tsx\n/home/veerendra/food/NutriScan/src/components/index.ts\n/home/veerendra/food/NutriScan/src/components/NutritionCard.tsx\n/home/veerendra/food/NutriScan/src/components/RatingBadge.tsx\n/home/veerendra/food/NutriScan/src/components/Button.tsx\n/home/veerendra/food/NutriScan/src/constants/index.ts\n/home/veerendra/food/NutriScan/src/services/databaseService.ts\n/home/veerendra/food/NutriScan/metro.config.js\n/home/veerendra/food/NutriScan/src/services/foodApi.ts\n/home/veerendra/food/NutriScan/src/context/AppContext.tsx\n/home/veerendra/food/NutriScan/src/utils/index.ts\n/home/veerendra/food/NutriScan/src/types/index.ts\n/home/veerendra/food/NutriScan/src/data/indianFoods.ts\n/home/veerendra/food/NutriScan/src/services/cacheService.ts\n/home/veerendra/food/NutriScan/src/services/api.ts\n/home/veerendra/food/NutriScan/app/_layout.tsx\n/home/veerendra/food/NutriScan/src/components/SearchBar.tsx\n/home/veerendra/food/NutriScan/src/components/NutritionFactsTable.tsx\n/home/veerendra/food/NutriScan/src/components/ProductCard.tsx\n/home/veerendra/food/NutriScan/foodscanner/app/(tabs)/explore.tsx\n/home/veerendra/food/NutriScan/foodscanner/constants/theme.ts\n/home/veerendra/food/NutriScan/foodscanner/components/themed-text.tsx\n/home/veerendra/food/NutriScan/foodscanner/components/external-link.tsx\n/home/veerendra/food/NutriScan/foodscanner/components/themed-view.tsx\n/home/veerendra/food/NutriScan/foodscanner/components/parallax-scroll-view.tsx\n/home/veerendra/food/NutriScan/foodscanner/app/modal.tsx\n/home/veerendra/food/NutriScan/foodscanner/components/ui/collapsible.tsx\n/home/veerendra/food/NutriScan/foodscanner/components/ui/icon-symbol.tsx\n/home/veerendra/food/NutriScan/foodscanner/components/ui/icon-symbol.ios.tsx\n/home/veerendra/food/NutriScan/foodscanner/components/haptic-tab.tsx\n/home/veerendra/food/NutriScan/foodscanner/components/hello-wave.tsx\n/home/veerendra/food/NutriScan/foodscanner/eslint.config.js\n/home/veerendra/food/NutriScan/foodscanner/hooks/use-color-scheme.ts\n/home/veerendra/food/NutriScan/foodscanner/hooks/use-theme-color.ts\n/home/veerendra/food/NutriScan/foodscanner/hooks/use-color-scheme.web.ts\n/home/veerendra/food/NutriScan/foodscanner/scripts/reset-project.js\n/home/veerendra/food/NutriScan/foodscanner/app/(tabs)/_layout.tsx\n/home/veerendra/food/NutriScan/foodscanner/app/_layout.tsx\n/home/veerendra/food/NutriScan/foodscanner/app/(tabs)/index.tsx",
+            "title": "NutriScan",
+            "metadata": {
+              "count": 45,
+              "truncated": false
+            },
+            "time": {
+              "start": 1773504172080,
+              "end": 1773504172477
+            }
+          },
+          "id": "prt_ced160f36001FBNALVr5WEkZey",
+          "sessionID": "ses_312eb5505ffeLGy7mqwoGWAeqq",
+          "messageID": "msg_ced15f28c001p38r95K4GlmNfX"
+        },
+        {
+          "type": "step-finish",
+          "reason": "tool-calls",
+          "snapshot": "1f651ba88031fd7c32eaac8349c04c86e0bf578a",
+          "cost": 0,
+          "tokens": {
+            "total": 11714,
+            "input": 78,
+            "output": 150,
+            "reasoning": 0,
+            "cache": {
+              "read": 11319,
+              "write": 167
+            }
+          },
+          "id": "prt_ced1611e6001FP2e0H8L56r0jT",
+          "sessionID": "ses_312eb5505ffeLGy7mqwoGWAeqq",
+          "messageID": "msg_ced15f28c001p38r95K4GlmNfX"
+        }
+      ]
+    },
+    {
+      "info": {
+        "role": "assistant",
+        "time": {
+          "created": 1773504173061,
+          "completed": 1773504178682
+        },
+        "parentID": "msg_ced15f21a0014TBu8spg4qC8a2",
+        "modelID": "big-pickle",
+        "providerID": "opencode",
+        "mode": "build",
+        "agent": "build",
+        "path": {
+          "cwd": "/home/veerendra/food/NutriScan",
+          "root": "/home/veerendra/food"
+        },
+        "cost": 0,
+        "tokens": {
+          "total": 12629,
+          "input": 933,
+          "output": 55,
+          "reasoning": 0,
+          "cache": {
+            "read": 11325,
+            "write": 316
+          }
+        },
+        "finish": "tool-calls",
+        "id": "msg_ced161405001jfTTTCnnGRrVES",
+        "sessionID": "ses_312eb5505ffeLGy7mqwoGWAeqq"
+      },
+      "parts": [
+        {
+          "type": "step-start",
+          "snapshot": "1f651ba88031fd7c32eaac8349c04c86e0bf578a",
+          "id": "prt_ced1623fc0013zVlX265VOkT1Q",
+          "sessionID": "ses_312eb5505ffeLGy7mqwoGWAeqq",
+          "messageID": "msg_ced161405001jfTTTCnnGRrVES"
+        },
+        {
+          "type": "reasoning",
+          "text": "Let me look at the main scanner file in the app folder.",
+          "metadata": {
+            "anthropic": {
+              "signature": "a8f540635588a8d6b2dde2b960c52f00fd9aa4ab4ee55dea471f43c4a3c5c90c"
+            }
+          },
+          "time": {
+            "start": 1773504177159,
+            "end": 1773504177694
+          },
+          "id": "prt_ced1624070011qP1MW7WYRrV3M",
+          "sessionID": "ses_312eb5505ffeLGy7mqwoGWAeqq",
+          "messageID": "msg_ced161405001jfTTTCnnGRrVES"
+        },
+        {
+          "type": "tool",
+          "callID": "call_function_dso9c874y9m9_1",
+          "tool": "read",
+          "state": {
+            "status": "completed",
+            "input": {
+              "filePath": "/home/veerendra/food/NutriScan/app/scanner.tsx"
+            },
+            "output": "<path>/home/veerendra/food/NutriScan/app/scanner.tsx</path>\n<type>file</type>\n<content>1: import React, { useState, useEffect, useRef } from 'react';\n2: import {\n3:   View,\n4:   Text,\n5:   StyleSheet,\n6:   TouchableOpacity,\n7:   Alert,\n8:   ActivityIndicator,\n9:   TextInput,\n10:   Modal,\n11:   KeyboardAvoidingView,\n12:   Platform,\n13:   ScrollView,\n14:   Animated,\n15:   Vibration,\n16: } from 'react-native';\n17: import { CameraView, useCameraPermissions, BarcodeScanningResult } from 'expo-camera';\n18: import { useRouter, useFocusEffect } from 'expo-router';\n19: import { COLORS, SPACING, FONT_SIZE, BORDER_RADIUS, SHADOWS } from '../src/constants';\n20: import { Button } from '../src/components';\n21: import { fetchProductByBarcode, addManualProduct, ManualProductRequiredError } from '../src/services/foodApi';\n22: import { Product } from '../src/types';\n23: \n24: interface ManualProductForm {\n25:   name: string;\n26:   brand: string;\n27:   calories: string;\n28:   protein: string;\n29:   carbohydrates: string;\n30:   fat: string;\n31:   sugar: string;\n32:   sodium: string;\n33:   saturatedFat: string;\n34: }\n35: \n36: const initialFormState: ManualProductForm = {\n37:   name: '',\n38:   brand: '',\n39:   calories: '',\n40:   protein: '',\n41:   carbohydrates: '',\n42:   fat: '',\n43:   sugar: '',\n44:   sodium: '',\n45:   saturatedFat: '',\n46: };\n47: \n48: export default function ScannerScreen() {\n49:   const router = useRouter();\n50:   const [permission, requestPermission] = useCameraPermissions();\n51:   const [scanned, setScanned] = useState(false);\n52:   const [flashOn, setFlashOn] = useState(false);\n53:   const [loading, setLoading] = useState(false);\n54:   const [showManualInput, setShowManualInput] = useState(false);\n55:   const [manualBarcode, setManualBarcode] = useState('');\n56:   const [showAddProduct, setShowAddProduct] = useState(false);\n57:   const [manualForm, setManualForm] = useState<ManualProductForm>(initialFormState);\n58:   const [lastScannedBarcode, setLastScannedBarcode] = useState('');\n59:   const scanLineAnim = useRef(new Animated.Value(0)).current;\n60:   const lastScanTime = useRef(0);\n61:   const SCAN_DEBOUNCE_MS = 2000;\n62: \n63:   useEffect(() => {\n64:     let animation: Animated.CompositeAnimation;\n65:     if (!scanned && !loading) {\n66:       animation = Animated.loop(\n67:         Animated.sequence([\n68:           Animated.timing(scanLineAnim, {\n69:             toValue: 1,\n70:             duration: 2000,\n71:             useNativeDriver: true,\n72:           }),\n73:           Animated.timing(scanLineAnim, {\n74:             toValue: 0,\n75:             duration: 2000,\n76:             useNativeDriver: true,\n77:           }),\n78:         ])\n79:       );\n80:       animation.start();\n81:     }\n82:     return () => {\n83:       if (animation) {\n84:         animation.stop();\n85:       }\n86:     };\n87:   }, [scanned, loading]);\n88: \n89:   useFocusEffect(\n90:     React.useCallback(() => {\n91:       setScanned(false);\n92:       setLoading(false);\n93:       setLastScannedBarcode('');\n94:       lastScanTime.current = 0;\n95:       console.log('[Scanner] Screen focused, ready to scan');\n96:     }, [])\n97:   );\n98: \n99:   const handleBarCodeScanned = async (result: BarcodeScanningResult) => {\n100:     if (scanned || loading) return;\n101:     \n102:     const now = Date.now();\n103:     if (now - lastScanTime.current < SCAN_DEBOUNCE_MS) {\n104:       console.log('[Scanner] Debouncing - scan too soon after last scan');\n105:       return;\n106:     }\n107:     \n108:     const barcode = result.data;\n109:     console.log('[Scanner] Barcode detected:', barcode);\n110:     \n111:     if (lastScannedBarcode === barcode) {\n112:       console.log('[Scanner] Same barcode already scanned, ignoring');\n113:       return;\n114:     }\n115:     \n116:     lastScanTime.current = now;\n117:     \n118:     setScanned(true);\n119:     setLoading(true);\n120:     setLastScannedBarcode(barcode);\n121:     Vibration.vibrate(100);\n122: \n123:     const timeoutId = setTimeout(() => {\n124:       setLoading(false);\n125:       setScanned(false);\n126:       Alert.alert('Timeout', 'The request took too long. Please try again.');\n127:     }, 15000);\n128: \n129:     try {\n130:       console.log('[Scanner] Fetching product for barcode:', barcode);\n131:       const product = await fetchProductByBarcode(barcode);\n132:       console.log('[Scanner] Product found:', product.name);\n133:       \n134:       router.replace({\n135:         pathname: '/product/[id]',\n136:         params: { id: encodeURIComponent(product.barcode), product: JSON.stringify(product) },\n137:       });\n138:     } catch (error) {\n139:       console.log('[Scanner] Error fetching product:', error);\n140:       \n141:       if (error instanceof ManualProductRequiredError) {\n142:         Alert.alert(\n143:           'Product Not Found',\n144:           'We couldn\\'t find this product yet. Would you like to add it?',\n145:           [\n146:             {\n147:               text: 'Search Instead',\n148:               onPress: () => {\n149:                 setScanned(false);\n150:                 router.push('/search');\n151:               },\n152:             },\n153:             {\n154:               text: 'Add Manually',\n155:               onPress: () => {\n156:                 setScanned(false);\n157:                 setShowAddProduct(true);\n158:               },\n159:             },\n160:           ]\n161:         );\n162:       } else {\n163:         Alert.alert('Error', 'Failed to fetch product. Please try again.');\n164:         setScanned(false);\n165:       }\n166:     } finally {\n167:       clearTimeout(timeoutId);\n168:       setLoading(false);\n169:     }\n170:   };\n171: \n172:   const handleManualSearch = async () => {\n173:     if (!manualBarcode.trim()) {\n174:       Alert.alert('Error', 'Please enter a valid barcode');\n175:       return;\n176:     }\n177: \n178:     const barcode = manualBarcode.trim();\n179:     console.log('[Scanner] Manual search for barcode:', barcode);\n180:     \n181:     setLoading(true);\n182:     setShowManualInput(false);\n183:     setScanned(true);\n184:     setLastScannedBarcode(barcode);\n185: \n186:     const timeoutId = setTimeout(() => {\n187:       setLoading(false);\n188:       setScanned(false);\n189:       Alert.alert('Timeout', 'The request took too long. Please try again.');\n190:     }, 15000);\n191: \n192:     try {\n193:       const product = await fetchProductByBarcode(barcode);\n194:       console.log('[Scanner] Manual search found product:', product.name);\n195:       \n196:       router.replace({\n197:         pathname: '/product/[id]',\n198:         params: { id: encodeURIComponent(product.barcode), product: JSON.stringify(product) },\n199:       });\n200:     } catch (error) {\n201:       console.log('[Scanner] Manual search error:', error);\n202:       \n203:       if (error instanceof ManualProductRequiredError) {\n204:         Alert.alert(\n205:           'Product Not Found',\n206:           'We couldn\\'t find this product yet. Would you like to add it?',\n207:           [\n208:             {\n209:               text: 'Search Instead',\n210:               onPress: () => {\n211:                 setScanned(false);\n212:                 router.push('/search');\n213:               },\n214:             },\n215:             {\n216:               text: 'Add Manually',\n217:               onPress: () => {\n218:                 setScanned(false);\n219:                 setShowAddProduct(true);\n220:               },\n221:             },\n222:           ]\n223:         );\n224:       } else {\n225:         Alert.alert('Error', 'Failed to fetch product. Please try again.');\n226:         setScanned(false);\n227:       }\n228:     } finally {\n229:       clearTimeout(timeoutId);\n230:       setLoading(false);\n231:       setManualBarcode('');\n232:     }\n233:   };\n234: \n235:   const handleAddManualProduct = async () => {\n236:     if (!manualForm.name.trim()) {\n237:       Alert.alert('Error', 'Please enter product name');\n238:       return;\n239:     }\n240: \n241:     setLoading(true);\n242: \n243:     try {\n244:       const product = await addManualProduct(\n245:         manualForm.name.trim(),\n246:         manualForm.brand.trim(),\n247:         {\n248:           calories: parseFloat(manualForm.calories) || 0,\n249:           protein: parseFloat(manualForm.protein) || 0,\n250:           carbohydrates: parseFloat(manualForm.carbohydrates) || 0,\n251:           fat: parseFloat(manualForm.fat) || 0,\n252:           sugar: parseFloat(manualForm.sugar) || 0,\n253:           sodium: parseFloat(manualForm.sodium) || 0,\n254:           saturatedFat: parseFloat(manualForm.saturatedFat) || 0,\n255:           fiber: 0,\n256:         },\n257:         manualForm.brand.trim() || undefined\n258:       );\n259: \n260:       setShowAddProduct(false);\n261:       setManualForm(initialFormState);\n262: \n263:       router.replace({\n264:         pathname: '/product/[id]',\n265:         params: { id: encodeURIComponent(product.barcode), product: JSON.stringify(product) },\n266:       });\n267:     } catch (error) {\n268:       Alert.alert('Error', 'Failed to add product. Please try again.');\n269:     } finally {\n270:       setLoading(false);\n271:     }\n272:   };\n273: \n274:   if (!permission) {\n275:     return (\n276:       <View style={styles.container}>\n277:         <ActivityIndicator size=\"large\" color={COLORS.primary} />\n278:       </View>\n279:     );\n280:   }\n281: \n282:   if (!permission.granted) {\n283:     return (\n284:       <View style={styles.permissionContainer}>\n285:         <View style={styles.permissionIconContainer}>\n286:           <Text style={styles.permissionIcon}>📷</Text>\n287:         </View>\n288:         <Text style={styles.permissionTitle}>Camera Permission</Text>\n289:         <Text style={styles.permissionText}>\n290:           We need camera access to scan food barcodes\n291:         </Text>\n292:         <Button\n293:           title=\"Enable Camera\"\n294:           onPress={requestPermission}\n295:           variant=\"primary\"\n296:           size=\"large\"\n297:           fullWidth\n298:         />\n299:         <TouchableOpacity\n300:           style={styles.manualButton}\n301:           onPress={() => setShowManualInput(true)}\n302:         >\n303:           <Text style={styles.manualButtonText}>Enter Barcode Manually</Text>\n304:         </TouchableOpacity>\n305:       </View>\n306:     );\n307:   }\n308: \n309:   const scanLinePosition = scanLineAnim.interpolate({\n310:     inputRange: [0, 1],\n311:     outputRange: [0, 150],\n312:   });\n313: \n314:   return (\n315:     <View style={styles.container}>\n316:       <CameraView\n317:         style={styles.camera}\n318:         facing=\"back\"\n319:         enableTorch={flashOn}\n320:         barcodeScannerSettings={{\n321:           barcodeTypes: [\n322:             'ean13',\n323:             'ean8',\n324:             'upc_a',\n325:             'upc_e',\n326:             'code128',\n327:             'code39',\n328:             'code93',\n329:             'itf14',\n330:             'codabar',\n331:             'qr',\n332:           ],\n333:         }}\n334:         onBarcodeScanned={scanned ? undefined : handleBarCodeScanned}\n335:       >\n336:         <View style={styles.overlay}>\n337:           <View style={styles.header}>\n338:             <TouchableOpacity\n339:               style={styles.closeButton}\n340:               onPress={() => router.back()}\n341:               accessibilityRole=\"button\"\n342:               accessibilityLabel=\"Close scanner\"\n343:             >\n344:               <Text style={styles.closeIcon}>✕</Text>\n345:             </TouchableOpacity>\n346:             <TouchableOpacity\n347:               style={[styles.flashButton, flashOn && styles.flashButtonActive]}\n348:               onPress={() => setFlashOn(!flashOn)}\n349:               accessibilityRole=\"button\"\n350:               accessibilityLabel={flashOn ? 'Turn off flash' : 'Turn on flash'}\n351:             >\n352:               <Text style={styles.flashIcon}>{flashOn ? '⚡' : '🔦'}</Text>\n353:             </TouchableOpacity>\n354:           </View>\n355:           \n356:           <View style={styles.scanArea}>\n357:             <View style={styles.scanFrame}>\n358:               <View style={[styles.corner, styles.topLeft]} />\n359:               <View style={[styles.corner, styles.topRight]} />\n360:               <View style={[styles.corner, styles.bottomLeft]} />\n361:               <View style={[styles.corner, styles.bottomRight]} />\n362:               {!scanned && !loading && (\n363:                 <Animated.View \n364:                   style={[\n365:                     styles.scanLine,\n366:                     { transform: [{ translateY: scanLinePosition }] }\n367:                   ]} \n368:                 />\n369:               )}\n370:             </View>\n371:             <Text style={styles.instructionText}>\n372:               {loading ? 'Searching...' : 'Align barcode inside the frame'}\n373:             </Text>\n374:           </View>\n375: \n376:           <View style={styles.footer}>\n377:             <TouchableOpacity\n378:               style={styles.manualEntryButton}\n379:               onPress={() => setShowManualInput(true)}\n380:               accessibilityRole=\"button\"\n381:               accessibilityLabel=\"Enter barcode manually\"\n382:             >\n383:               <Text style={styles.manualEntryText}>Enter Barcode Manually</Text>\n384:             </TouchableOpacity>\n385:           </View>\n386:         </View>\n387:       </CameraView>\n388: \n389:       {loading && (\n390:         <View style={styles.loadingOverlay}>\n391:           <View style={styles.loadingCard}>\n392:             <ActivityIndicator size=\"large\" color={COLORS.primary} />\n393:             <Text style={styles.loadingText}>Searching for product...</Text>\n394:             <Text style={styles.loadingSubtext}>Please wait</Text>\n395:           </View>\n396:         </View>\n397:       )}\n398: \n399:       <Modal\n400:         visible={showManualInput}\n401:         animationType=\"slide\"\n402:         transparent={true}\n403:         onRequestClose={() => setShowManualInput(false)}\n404:       >\n405:         <KeyboardAvoidingView\n406:           behavior={Platform.OS === 'ios' ? 'padding' : 'height'}\n407:           style={styles.modalOverlay}\n408:         >\n409:           <View style={styles.modalContent}>\n410:             <View style={styles.modalHeader}>\n411:               <Text style={styles.modalTitle}>Enter Barcode</Text>\n412:               <TouchableOpacity onPress={() => setShowManualInput(false)}>\n413:                 <Text style={styles.modalClose}>✕</Text>\n414:               </TouchableOpacity>\n415:             </View>\n416:             <Text style={styles.modalSubtitle}>\n417:               Type the barcode number manually\n418:             </Text>\n419:             <TextInput\n420:               style={styles.input}\n421:               value={manualBarcode}\n422:               onChangeText={setManualBarcode}\n423:               placeholder=\"e.g., 5000159484695\"\n424:               keyboardType=\"numeric\"\n425:               autoFocus\n426:               accessibilityLabel=\"Barcode input\"\n427:             />\n428:             <View style={styles.modalButtons}>\n429:               <Button\n430:                 title=\"Cancel\"\n431:                 onPress={() => {\n432:                   setShowManualInput(false);\n433:                   setManualBarcode('');\n434:                 }}\n435:                 variant=\"outline\"\n436:                 style={styles.modalButton}\n437:               />\n438:               <Button\n439:                 title=\"Search\"\n440:                 onPress={handleManualSearch}\n441:                 variant=\"primary\"\n442:                 loading={loading}\n443:                 style={styles.modalButton}\n444:               />\n445:             </View>\n446:           </View>\n447:         </KeyboardAvoidingView>\n448:       </Modal>\n449: \n450:       <Modal\n451:         visible={showAddProduct}\n452:         animationType=\"slide\"\n453:         transparent={false}\n454:         onRequestClose={() => setShowAddProduct(false)}\n455:       >\n456:         <KeyboardAvoidingView\n457:           behavior={Platform.OS === 'ios' ? 'padding' : 'height'}\n458:           style={styles.addProductContainer}\n459:         >\n460:           <ScrollView style={styles.addProductScroll}>\n461:             <View style={styles.addProductHeader}>\n462:               <TouchableOpacity onPress={() => setShowAddProduct(false)}>\n463:                 <Text style={styles.backButton}>← Back</Text>\n464:               </TouchableOpacity>\n465:               <Text style={styles.addProductTitle}>Add New Product</Text>\n466:               <View style={{ width: 60 }} />\n467:             </View>\n468:             \n469:             <Text style={styles.addProductSubtitle}>\n470:               Add nutrition info per 100g serving\n471:             </Text>\n472: \n473:             <View style={styles.formGroup}>\n474:               <Text style={styles.label}>Product Name *</Text>\n475:               <TextInput\n476:                 style={styles.formInput}\n477:                 value={manualForm.name}\n478:                 onChangeText={(text) => setManualForm({ ...manualForm, name: text })}\n479:                 placeholder=\"e.g., Maggi Noodles\"\n480:                 accessibilityLabel=\"Product name\"\n481:               />\n482:             </View>\n483: \n484:             <View style={styles.formGroup}>\n485:               <Text style={styles.label}>Brand</Text>\n486:               <TextInput\n487:                 style={styles.formInput}\n488:                 value={manualForm.brand}\n489:                 onChangeText={(text) => setManualForm({ ...manualForm, brand: text })}\n490:                 placeholder=\"e.g., Nestle\"\n491:                 accessibilityLabel=\"Brand\"\n492:               />\n493:             </View>\n494: \n495:             <View style={styles.formRow}>\n496:               <View style={[styles.formGroup, { flex: 1 }]}>\n497:                 <Text style={styles.label}>Calories (kcal)</Text>\n498:                 <TextInput\n499:                   style={styles.formInput}\n500:                   value={manualForm.calories}\n501:                   onChangeText={(text) => setManualForm({ ...manualForm, calories: text })}\n502:                   placeholder=\"0\"\n503:                   keyboardType=\"numeric\"\n504:                 />\n505:               </View>\n506:               <View style={[styles.formGroup, { flex: 1 }]}>\n507:                 <Text style={styles.label}>Protein (g)</Text>\n508:                 <TextInput\n509:                   style={styles.formInput}\n510:                   value={manualForm.protein}\n511:                   onChangeText={(text) => setManualForm({ ...manualForm, protein: text })}\n512:                   placeholder=\"0\"\n513:                   keyboardType=\"numeric\"\n514:                 />\n515:               </View>\n516:             </View>\n517: \n518:             <View style={styles.formRow}>\n519:               <View style={[styles.formGroup, { flex: 1 }]}>\n520:                 <Text style={styles.label}>Carbs (g)</Text>\n521:                 <TextInput\n522:                   style={styles.formInput}\n523:                   value={manualForm.carbohydrates}\n524:                   onChangeText={(text) => setManualForm({ ...manualForm, carbohydrates: text })}\n525:                   placeholder=\"0\"\n526:                   keyboardType=\"numeric\"\n527:                 />\n528:               </View>\n529:               <View style={[styles.formGroup, { flex: 1 }]}>\n530:                 <Text style={styles.label}>Fat (g)</Text>\n531:                 <TextInput\n532:                   style={styles.formInput}\n533:                   value={manualForm.fat}\n534:                   onChangeText={(text) => setManualForm({ ...manualForm, fat: text })}\n535:                   placeholder=\"0\"\n536:                   keyboardType=\"numeric\"\n537:                 />\n538:               </View>\n539:             </View>\n540: \n541:             <View style={styles.formRow}>\n542:               <View style={[styles.formGroup, { flex: 1 }]}>\n543:                 <Text style={styles.label}>Sugar (g)</Text>\n544:                 <TextInput\n545:                   style={styles.formInput}\n546:                   value={manualForm.sugar}\n547:                   onChangeText={(text) => setManualForm({ ...manualForm, sugar: text })}\n548:                   placeholder=\"0\"\n549:                   keyboardType=\"numeric\"\n550:                 />\n551:               </View>\n552:               <View style={[styles.formGroup, { flex: 1 }]}>\n553:                 <Text style={styles.label}>Sodium (mg)</Text>\n554:                 <TextInput\n555:                   style={styles.formInput}\n556:                   value={manualForm.sodium}\n557:                   onChangeText={(text) => setManualForm({ ...manualForm, sodium: text })}\n558:                   placeholder=\"0\"\n559:                   keyboardType=\"numeric\"\n560:                 />\n561:               </View>\n562:             </View>\n563: \n564:             <View style={styles.formGroup}>\n565:               <Text style={styles.label}>Saturated Fat (g)</Text>\n566:               <TextInput\n567:                 style={styles.formInput}\n568:                 value={manualForm.saturatedFat}\n569:                 onChangeText={(text) => setManualForm({ ...manualForm, saturatedFat: text })}\n570:                 placeholder=\"0\"\n571:                 keyboardType=\"numeric\"\n572:               />\n573:             </View>\n574: \n575:             <View style={styles.formButtons}>\n576:               <Button\n577:                 title=\"Cancel\"\n578:                 onPress={() => {\n579:                   setShowAddProduct(false);\n580:                   setManualForm(initialFormState);\n581:                 }}\n582:                 variant=\"outline\"\n583:                 style={styles.formButton}\n584:               />\n585:               <Button\n586:                 title=\"Add Product\"\n587:                 onPress={handleAddManualProduct}\n588:                 variant=\"primary\"\n589:                 loading={loading}\n590:                 style={styles.formButton}\n591:               />\n592:             </View>\n593:           </ScrollView>\n594:         </KeyboardAvoidingView>\n595:       </Modal>\n596:     </View>\n597:   );\n598: }\n599: \n600: const styles = StyleSheet.create({\n601:   container: {\n602:     flex: 1,\n603:     backgroundColor: COLORS.black,\n604:   },\n605:   permissionContainer: {\n606:     flex: 1,\n607:     backgroundColor: COLORS.background,\n608:     justifyContent: 'center',\n609:     alignItems: 'center',\n610:     padding: SPACING.xl,\n611:   },\n612:   permissionIconContainer: {\n613:     width: 100,\n614:     height: 100,\n615:     borderRadius: 50,\n616:     backgroundColor: COLORS.primaryLight,\n617:     justifyContent: 'center',\n618:     alignItems: 'center',\n619:     marginBottom: SPACING.lg,\n620:   },\n621:   permissionIcon: {\n622:     fontSize: 48,\n623:   },\n624:   permissionTitle: {\n625:     fontSize: FONT_SIZE.xxl,\n626:     fontWeight: '800',\n627:     color: COLORS.text,\n628:     marginBottom: SPACING.sm,\n629:     textAlign: 'center',\n630:   },\n631:   permissionText: {\n632:     fontSize: FONT_SIZE.md,\n633:     color: COLORS.textSecondary,\n634:     textAlign: 'center',\n635:     marginBottom: SPACING.xl,\n636:     lineHeight: 22,\n637:   },\n638:   manualButton: {\n639:     marginTop: SPACING.lg,\n640:   },\n641:   manualButtonText: {\n642:     fontSize: FONT_SIZE.md,\n643:     color: COLORS.primary,\n644:     fontWeight: '600',\n645:   },\n646:   camera: {\n647:     flex: 1,\n648:   },\n649:   overlay: {\n650:     flex: 1,\n651:     backgroundColor: 'rgba(0,0,0,0.4)',\n652:   },\n653:   header: {\n654:     flexDirection: 'row',\n655:     justifyContent: 'space-between',\n656:     padding: SPACING.lg,\n657:     paddingTop: SPACING.xl,\n658:   },\n659:   closeButton: {\n660:     width: 44,\n661:     height: 44,\n662:     borderRadius: 22,\n663:     backgroundColor: 'rgba(255,255,255,0.2)',\n664:     justifyContent: 'center',\n665:     alignItems: 'center',\n666:   },\n667:   closeIcon: {\n668:     fontSize: 20,\n669:     color: COLORS.white,\n670:     fontWeight: '600',\n671:   },\n672:   flashButton: {\n673:     width: 44,\n674:     height: 44,\n675:     borderRadius: 22,\n676:     backgroundColor: 'rgba(255,255,255,0.2)',\n677:     justifyContent: 'center',\n678:     alignItems: 'center',\n679:   },\n680:   flashButtonActive: {\n681:     backgroundColor: COLORS.primary,\n682:   },\n683:   flashIcon: {\n684:     fontSize: 22,\n685:   },\n686:   scanArea: {\n687:     flex: 1,\n688:     justifyContent: 'center',\n689:     alignItems: 'center',\n690:   },\n691:   scanFrame: {\n692:     width: 280,\n693:     height: 180,\n694:     borderRadius: BORDER_RADIUS.lg,\n695:     backgroundColor: 'transparent',\n696:     position: 'relative',\n697:   },\n698:   corner: {\n699:     position: 'absolute',\n700:     width: 30,\n701:     height: 30,\n702:     borderColor: COLORS.primary,\n703:   },\n704:   topLeft: {\n705:     top: 0,\n706:     left: 0,\n707:     borderTopWidth: 4,\n708:     borderLeftWidth: 4,\n709:     borderTopLeftRadius: BORDER_RADIUS.lg,\n710:   },\n711:   topRight: {\n712:     top: 0,\n713:     right: 0,\n714:     borderTopWidth: 4,\n715:     borderRightWidth: 4,\n716:     borderTopRightRadius: BORDER_RADIUS.lg,\n717:   },\n718:   bottomLeft: {\n719:     bottom: 0,\n720:     left: 0,\n721:     borderBottomWidth: 4,\n722:     borderLeftWidth: 4,\n723:     borderBottomLeftRadius: BORDER_RADIUS.lg,\n724:   },\n725:   bottomRight: {\n726:     bottom: 0,\n727:     right: 0,\n728:     borderBottomWidth: 4,\n729:     borderRightWidth: 4,\n730:     borderBottomRightRadius: BORDER_RADIUS.lg,\n731:   },\n732:   scanLine: {\n733:     position: 'absolute',\n734:     left: 10,\n735:     right: 10,\n736:     height: 3,\n737:     backgroundColor: COLORS.primary,\n738:     borderRadius: 2,\n739:   },\n740:   footer: {\n741:     padding: SPACING.xl,\n742:     alignItems: 'center',\n743:   },\n744:   instructionText: {\n745:     fontSize: FONT_SIZE.lg,\n746:     color: COLORS.white,\n747:     fontWeight: '600',\n748:     marginTop: SPACING.lg,\n749:   },\n750:   manualEntryButton: {\n751:     padding: SPACING.md,\n752:   },\n753:   manualEntryText: {\n754:     fontSize: FONT_SIZE.md,\n755:     color: COLORS.primaryLight,\n756:     fontWeight: '600',\n757:   },\n758:   loadingOverlay: {\n759:     ...StyleSheet.absoluteFillObject,\n760:     backgroundColor: COLORS.overlay,\n761:     justifyContent: 'center',\n762:     alignItems: 'center',\n763:   },\n764:   loadingCard: {\n765:     backgroundColor: COLORS.white,\n766:     borderRadius: BORDER_RADIUS.xl,\n767:     padding: SPACING.xl,\n768:     alignItems: 'center',\n769:     ...SHADOWS.large,\n770:   },\n771:   loadingText: {\n772:     marginTop: SPACING.md,\n773:     fontSize: FONT_SIZE.lg,\n774:     fontWeight: '700',\n775:     color: COLORS.text,\n776:   },\n777:   loadingSubtext: {\n778:     marginTop: SPACING.xs,\n779:     fontSize: FONT_SIZE.sm,\n780:     color: COLORS.textSecondary,\n781:   },\n782:   modalOverlay: {\n783:     flex: 1,\n784:     backgroundColor: 'rgba(0,0,0,0.5)',\n785:     justifyContent: 'flex-end',\n786:   },\n787:   modalContent: {\n788:     backgroundColor: COLORS.white,\n789:     borderTopLeftRadius: BORDER_RADIUS.xl,\n790:     borderTopRightRadius: BORDER_RADIUS.xl,\n791:     padding: SPACING.lg,\n792:     paddingBottom: SPACING.xxl,\n793:   },\n794:   modalHeader: {\n795:     flexDirection: 'row',\n796:     justifyContent: 'space-between',\n797:     alignItems: 'center',\n798:     marginBottom: SPACING.xs,\n799:   },\n800:   modalTitle: {\n801:     fontSize: FONT_SIZE.xl,\n802:     fontWeight: '800',\n803:     color: COLORS.text,\n804:   },\n805:   modalClose: {\n806:     fontSize: FONT_SIZE.xl,\n807:     color: COLORS.textSecondary,\n808:     padding: SPACING.sm,\n809:   },\n810:   modalSubtitle: {\n811:     fontSize: FONT_SIZE.sm,\n812:     color: COLORS.textSecondary,\n813:     marginBottom: SPACING.lg,\n814:   },\n815:   input: {\n816:     borderWidth: 1,\n817:     borderColor: COLORS.border,\n818:     borderRadius: BORDER_RADIUS.lg,\n819:     padding: SPACING.md,\n820:     fontSize: FONT_SIZE.lg,\n821:     marginBottom: SPACING.lg,\n822:     backgroundColor: COLORS.surfaceAlt,\n823:   },\n824:   modalButtons: {\n825:     flexDirection: 'row',\n826:     gap: SPACING.md,\n827:   },\n828:   modalButton: {\n829:     flex: 1,\n830:   },\n831:   addProductContainer: {\n832:     flex: 1,\n833:     backgroundColor: COLORS.background,\n834:   },\n835:   addProductScroll: {\n836:     flex: 1,\n837:   },\n838:   addProductHeader: {\n839:     flexDirection: 'row',\n840:     justifyContent: 'space-between',\n841:     alignItems: 'center',\n842:     padding: SPACING.lg,\n843:     backgroundColor: COLORS.white,\n844:     borderBottomWidth: 1,\n845:     borderBottomColor: COLORS.border,\n846:   },\n847:   backButton: {\n848:     fontSize: FONT_SIZE.md,\n849:     color: COLORS.primary,\n850:     fontWeight: '600',\n851:   },\n852:   addProductTitle: {\n853:     fontSize: FONT_SIZE.xl,\n854:     fontWeight: '800',\n855:     color: COLORS.text,\n856:   },\n857:   addProductSubtitle: {\n858:     fontSize: FONT_SIZE.sm,\n859:     color: COLORS.textSecondary,\n860:     marginBottom: SPACING.lg,\n861:     paddingHorizontal: SPACING.lg,\n862:   },\n863:   formGroup: {\n864:     marginBottom: SPACING.md,\n865:     paddingHorizontal: SPACING.lg,\n866:   },\n867:   formRow: {\n868:     flexDirection: 'row',\n869:     gap: SPACING.md,\n870:   },\n871:   label: {\n872:     fontSize: FONT_SIZE.sm,\n873:     fontWeight: '600',\n874:     color: COLORS.text,\n875:     marginBottom: SPACING.xs,\n876:   },\n877:   formInput: {\n878:     borderWidth: 1,\n879:     borderColor: COLORS.border,\n880:     borderRadius: BORDER_RADIUS.lg,\n881:     padding: SPACING.md,\n882:     fontSize: FONT_SIZE.md,\n883:     backgroundColor: COLORS.white,\n884:   },\n885:   formButtons: {\n886:     flexDirection: 'row',\n887:     gap: SPACING.md,\n888:     padding: SPACING.lg,\n889:     marginTop: SPACING.md,\n890:   },\n891:   formButton: {\n892:     flex: 1,\n893:   },\n894: });\n\n(End of file - total 894 lines)\n</content>",
+            "title": "NutriScan/app/scanner.tsx",
+            "metadata": {
+              "preview": "import React, { useState, useEffect, useRef } from 'react';\nimport {\n  View,\n  Text,\n  StyleSheet,\n  TouchableOpacity,\n  Alert,\n  ActivityIndicator,\n  TextInput,\n  Modal,\n  KeyboardAvoidingView,\n  Platform,\n  ScrollView,\n  Animated,\n  Vibration,\n} from 'react-native';\nimport { CameraView, useCameraPermissions, BarcodeScanningResult } from 'expo-camera';\nimport { useRouter, useFocusEffect } from 'expo-router';\nimport { COLORS, SPACING, FONT_SIZE, BORDER_RADIUS, SHADOWS } from '../src/constants';\nimport { Button } from '../src/components';",
+              "truncated": false,
+              "loaded": []
+            },
+            "time": {
+              "start": 1773504177974,
+              "end": 1773504178124
+            }
+          },
+          "id": "prt_ced162623001skl7k12OpeoY6E",
+          "sessionID": "ses_312eb5505ffeLGy7mqwoGWAeqq",
+          "messageID": "msg_ced161405001jfTTTCnnGRrVES"
+        },
+        {
+          "type": "step-finish",
+          "reason": "tool-calls",
+          "snapshot": "1f651ba88031fd7c32eaac8349c04c86e0bf578a",
+          "cost": 0,
+          "tokens": {
+            "total": 12629,
+            "input": 933,
+            "output": 55,
+            "reasoning": 0,
+            "cache": {
+              "read": 11325,
+              "write": 316
+            }
+          },
+          "id": "prt_ced16283e001PA8kIIUProXQSX",
+          "sessionID": "ses_312eb5505ffeLGy7mqwoGWAeqq",
+          "messageID": "msg_ced161405001jfTTTCnnGRrVES"
+        }
+      ]
+    },
+    {
+      "info": {
+        "role": "assistant",
+        "time": {
+          "created": 1773504178719,
+          "completed": 1773504185567
+        },
+        "parentID": "msg_ced15f21a0014TBu8spg4qC8a2",
+        "modelID": "big-pickle",
+        "providerID": "opencode",
+        "mode": "build",
+        "agent": "build",
+        "path": {
+          "cwd": "/home/veerendra/food/NutriScan",
+          "root": "/home/veerendra/food"
+        },
+        "cost": 0,
+        "tokens": {
+          "total": 20624,
+          "input": 7983,
+          "output": 85,
+          "reasoning": 0,
+          "cache": {
+            "read": 11486,
+            "write": 1070
+          }
+        },
+        "finish": "tool-calls",
+        "id": "msg_ced162a1e001VeCZd6H2zj40AN",
+        "sessionID": "ses_312eb5505ffeLGy7mqwoGWAeqq"
+      },
+      "parts": [
+        {
+          "type": "step-start",
+          "snapshot": "1f651ba88031fd7c32eaac8349c04c86e0bf578a",
+          "id": "prt_ced1641f7001RbSuwCM7Fywp4z",
+          "sessionID": "ses_312eb5505ffeLGy7mqwoGWAeqq",
+          "messageID": "msg_ced162a1e001VeCZd6H2zj40AN"
+        },
+        {
+          "type": "reasoning",
+          "text": "Now I understand the current implementation. Let me check the expo-camera documentation to understand the correct way to set up autofocus and other camera settings. Let me also check the package.json to see which version of expo-camera is being used.",
+          "metadata": {
+            "anthropic": {
+              "signature": "0c173870d494c8634fccf0c6528578037e9c43b4b1422464076a73d35028530a"
+            }
+          },
+          "time": {
+            "start": 1773504184847,
+            "end": 1773504184983
+          },
+          "id": "prt_ced16420b001O4y9x0AgqrZWPV",
+          "sessionID": "ses_312eb5505ffeLGy7mqwoGWAeqq",
+          "messageID": "msg_ced162a1e001VeCZd6H2zj40AN"
+        },
+        {
+          "type": "tool",
+          "callID": "call_function_ib1d68v2azci_1",
+          "tool": "read",
+          "state": {
+            "status": "completed",
+            "input": {
+              "filePath": "/home/veerendra/food/NutriScan/package.json"
+            },
+            "output": "<path>/home/veerendra/food/NutriScan/package.json</path>\n<type>file</type>\n<content>1: {\n2:   \"name\": \"nutriscan\",\n3:   \"version\": \"1.0.0\",\n4:   \"main\": \"expo-router/entry\",\n5:   \"scripts\": {\n6:     \"start\": \"expo start\",\n7:     \"android\": \"expo run:android\",\n8:     \"ios\": \"expo run:ios\",\n9:     \"web\": \"expo start --web\"\n10:   },\n11:   \"dependencies\": {\n12:     \"@react-native-async-storage/async-storage\": \"2.2.0\",\n13:     \"expo\": \"~55.0.4\",\n14:     \"expo-camera\": \"~55.0.9\",\n15:     \"expo-constants\": \"~55.0.7\",\n16:     \"expo-linking\": \"~55.0.7\",\n17:     \"expo-router\": \"~55.0.3\",\n18:     \"expo-sqlite\": \"^55.0.10\",\n19:     \"expo-status-bar\": \"~55.0.4\",\n20:     \"react\": \"19.2.0\",\n21:     \"react-dom\": \"19.2.0\",\n22:     \"react-native\": \"0.83.2\",\n23:     \"react-native-web\": \"^0.21.0\"\n24:   },\n25:   \"devDependencies\": {\n26:     \"@types/react\": \"~19.2.2\",\n27:     \"typescript\": \"~5.9.2\"\n28:   },\n29:   \"private\": true\n30: }\n\n(End of file - total 30 lines)\n</content>",
+            "title": "NutriScan/package.json",
+            "metadata": {
+              "preview": "{\n  \"name\": \"nutriscan\",\n  \"version\": \"1.0.0\",\n  \"main\": \"expo-router/entry\",\n  \"scripts\": {\n    \"start\": \"expo start\",\n    \"android\": \"expo run:android\",\n    \"ios\": \"expo run:ios\",\n    \"web\": \"expo start --web\"\n  },\n  \"dependencies\": {\n    \"@react-native-async-storage/async-storage\": \"2.2.0\",\n    \"expo\": \"~55.0.4\",\n    \"expo-camera\": \"~55.0.9\",\n    \"expo-constants\": \"~55.0.7\",\n    \"expo-linking\": \"~55.0.7\",\n    \"expo-router\": \"~55.0.3\",\n    \"expo-sqlite\": \"^55.0.10\",\n    \"expo-status-bar\": \"~55.0.4\",\n    \"react\": \"19.2.0\",",
+              "truncated": false,
+              "loaded": []
+            },
+            "time": {
+              "start": 1773504185235,
+              "end": 1773504185243
+            }
+          },
+          "id": "REDACTED",
+          "sessionID": "ses_312eb5505ffeLGy7mqwoGWAeqq",
+          "messageID": "msg_ced162a1e001VeCZd6H2zj40AN"
+        },
+        {
+          "type": "step-finish",
+          "reason": "tool-calls",
+          "snapshot": "1f651ba88031fd7c32eaac8349c04c86e0bf578a",
+          "cost": 0,
+          "tokens": {
+            "total": 20624,
+            "input": 7983,
+            "output": 85,
+            "reasoning": 0,
+            "cache": {
+              "read": 11486,
+              "write": 1070
+            }
+          },
+          "id": "prt_ced1643af00170fX8Nyw9I0nfI",
+          "sessionID": "ses_312eb5505ffeLGy7mqwoGWAeqq",
+          "messageID": "msg_ced162a1e001VeCZd6H2zj40AN"
+        }
+      ]
+    },
+    {
+      "info": {
+        "role": "assistant",
+        "time": {
+          "created": 1773504185644,
+          "completed": 1773504197358
+        },
+        "parentID": "msg_ced15f21a0014TBu8spg4qC8a2",
+        "modelID": "big-pickle",
+        "providerID": "opencode",
+        "mode": "build",
+        "agent": "build",
+        "path": {
+          "cwd": "/home/veerendra/food/NutriScan",
+          "root": "/home/veerendra/food"
+        },
+        "cost": 0,
+        "tokens": {
+          "total": 21425,
+          "input": 473,
+          "output": 401,
+          "reasoning": 0,
+          "cache": {
+            "read": 12496,
+            "write": 8055
+          }
+        },
+        "finish": "tool-calls",
+        "id": "REDACTED",
+        "sessionID": "ses_312eb5505ffeLGy7mqwoGWAeqq"
+      },
+      "parts": [
+        {
+          "type": "step-start",
+          "snapshot": "1f651ba88031fd7c32eaac8349c04c86e0bf578a",
+          "id": "REDACTED",
+          "sessionID": "ses_312eb5505ffeLGy7mqwoGWAeqq",
+          "messageID": "REDACTED"
+        },
+        {
+          "type": "reasoning",
+          "text": "The project uses expo-camera ~55.0.9 with React Native 0.83.2. Let me check the expo-camera API for the correct settings.\n\nBased on my analysis, here's what I need to fix:\n\n1. **Enable autofocus**: The CameraView in expo-camera has `focusMode` property that can be set to 'auto' or 'on'. Need to add that.\n\n2. **Use expo-camera correctly**: Currently it's using CameraView with barcodeScannerSettings, which is correct for expo-camera.\n\n3. **Restrict barcodeTypes**: Currently it has many types. I need to restrict to EAN13, EAN8, UPC (upc_a, upc_e), and CODE128 as requested.\n\n4. **Add scan frame overlay**: Already has a scan frame overlay with corners and scan line - this is already implemented!\n\n5. **Stop scanning after detection**: Already implemented with `onBarcodeScanned={scanned ? undefined : handleBarCodeScanned}`\n\n6. **Improve camera resolution and focus**: Need to add `preset` property for resolution and `focusMode` for autofocus.\n\nLet me update the scanner.tsx to:\n- Add autofocus with `focusMode=\"auto\"`\n- Restrict barcode types to the common ones (EAN13, EAN8, UPC_A, UPC_E, CODE128)\n- Add a higher camera preset for better resolution\n\nLet me make these changes.",
+          "metadata": {
+            "anthropic": {
+              "signature": "59257854f6e7ef721ac50d2eeba636bcfe22bef6950ef65181774eb0f8086ccd"
+            }
+          },
+          "time": {
+            "start": 1773504191879,
+            "end": 1773504194603
+          },
+          "id": "prt_ced165d87001tE4BBKh0jjceHG",
+          "sessionID": "ses_312eb5505ffeLGy7mqwoGWAeqq",
+          "messageID": "REDACTED"
+        },
+        {
+          "type": "tool",
+          "callID": "call_function_shpj664ty37i_1",
+          "tool": "todowrite",
+          "state": {
+            "status": "completed",
+            "input": {
+              "todos": [
+                {
+                  "content": "Enable autofocus for camera",
+                  "priority": "high",
+                  "status": "in_progress"
+                },
+                {
+                  "content": "Restrict barcodeTypes to common formats",
+                  "priority": "high",
+                  "status": "pending"
+                },
+                {
+                  "content": "Improve camera resolution settings",
+                  "priority": "medium",
+                  "status": "pending"
+                },
+                {
+                  "content": "Verify scanner implementation",
+                  "priority": "medium",
+                  "status": "pending"
+                }
+              ]
+            },
+            "output": "[\n  {\n    \"content\": \"Enable autofocus for camera\",\n    \"priority\": \"high\",\n    \"status\": \"in_progress\"\n  },\n  {\n    \"content\": \"Restrict barcodeTypes to common formats\",\n    \"priority\": \"high\",\n    \"status\": \"pending\"\n  },\n  {\n    \"content\": \"Improve camera resolution settings\",\n    \"priority\": \"medium\",\n    \"status\": \"pending\"\n  },\n  {\n    \"content\": \"Verify scanner implementation\",\n    \"priority\": \"medium\",\n    \"status\": \"pending\"\n  }\n]",
+            "title": "4 todos",
+            "metadata": {
+              "todos": [
+                {
+                  "content": "Enable autofocus for camera",
+                  "priority": "high",
+                  "status": "in_progress"
+                },
+                {
+                  "content": "Restrict barcodeTypes to common formats",
+                  "priority": "high",
+                  "status": "pending"
+                },
+                {
+                  "content": "Improve camera resolution settings",
+                  "priority": "medium",
+                  "status": "pending"
+                },
+                {
+                  "content": "Verify scanner implementation",
+                  "priority": "medium",
+                  "status": "pending"
+                }
+              ],
+              "truncated": false
+            },
+            "time": {
+              "start": 1773504195891,
+              "end": 1773504196108
+            }
+          },
+          "id": "prt_ced1668ec001VEDF55zydkDs8e",
+          "sessionID": "ses_312eb5505ffeLGy7mqwoGWAeqq",
+          "messageID": "REDACTED"
+        },
+        {
+          "type": "step-finish",
+          "reason": "tool-calls",
+          "snapshot": "1f651ba88031fd7c32eaac8349c04c86e0bf578a",
+          "cost": 0,
+          "tokens": {
+            "total": 21425,
+            "input": 473,
+            "output": 401,
+            "reasoning": 0,
+            "cache": {
+              "read": 12496,
+              "write": 8055
+            }
+          },
+          "id": "prt_ced166e69001XDCNlrNRp45du8",
+          "sessionID": "ses_312eb5505ffeLGy7mqwoGWAeqq",
+          "messageID": "REDACTED"
+        }
+      ]
+    },
+    {
+      "info": {
+        "role": "assistant",
+        "time": {
+          "created": 1773504197400,
+          "completed": 1773504208946
+        },
+        "parentID": "msg_ced15f21a0014TBu8spg4qC8a2",
+        "modelID": "big-pickle",
+        "providerID": "opencode",
+        "mode": "build",
+        "agent": "build",
+        "path": {
+          "cwd": "/home/veerendra/food/NutriScan",
+          "root": "/home/veerendra/food"
+        },
+        "cost": 0,
+        "tokens": {
+          "total": 21841,
+          "input": 204,
+          "output": 285,
+          "reasoning": 0,
+          "cache": {
+            "read": 20461,
+            "write": 891
+          }
+        },
+        "finish": "tool-calls",
+        "id": "msg_ced167317001LLzicStusUI1KC",
+        "sessionID": "ses_312eb5505ffeLGy7mqwoGWAeqq"
+      },
+      "parts": [
+        {
+          "type": "step-start",
+          "snapshot": "1f651ba88031fd7c32eaac8349c04c86e0bf578a",
+          "id": "prt_ced167d7d001XKVz6AuvFfuv7b",
+          "sessionID": "ses_312eb5505ffeLGy7mqwoGWAeqq",
+          "messageID": "msg_ced167317001LLzicStusUI1KC"
+        },
+        {
+          "type": "reasoning",
+          "text": "Now let me update the scanner to add autofocus, restrict barcode types, and add a better camera preset.",
+          "metadata": {
+            "anthropic": {
+              "signature": "b54d1f07b346b34338fd33a63543c25818758c67719b99d3ebc736ff40ba7dd6"
+            }
+          },
+          "time": {
+            "start": 1773504200316,
+            "end": 1773504200449
+          },
+          "id": "prt_ced167e7c001JjpQqA6x59BUT4",
+          "sessionID": "ses_312eb5505ffeLGy7mqwoGWAeqq",
+          "messageID": "msg_ced167317001LLzicStusUI1KC"
+        },
+        {
+          "type": "tool",
+          "callID": "call_function_32y3no5y33h7_1",
+          "tool": "edit",
+          "state": {
+            "status": "completed",
+            "input": {
+              "filePath": "/home/veerendra/food/NutriScan/app/scanner.tsx",
+              "newString": "      <CameraView\n        style={styles.camera}\n        facing=\"back\"\n        enableTorch={flashOn}\n        focusMode=\"auto\"\n        preset=\"high\"\n        barcodeScannerSettings={{\n          barcodeTypes: [\n            'ean13',\n            'ean8',\n            'upc_a',\n            'upc_e',\n            'code128',\n          ],\n        }}\n        onBarcodeScanned={scanned ? undefined : handleBarCodeScanned}\n      >",
+              "oldString": "      <CameraView\n        style={styles.camera}\n        facing=\"back\"\n        enableTorch={flashOn}\n        barcodeScannerSettings={{\n          barcodeTypes: [\n            'ean13',\n            'ean8',\n            'upc_a',\n            'upc_e',\n            'code128',\n            'code39',\n            'code93',\n            'itf14',\n            'codabar',\n            'qr',\n          ],\n        }}\n        onBarcodeScanned={scanned ? undefined : handleBarCodeScanned}\n      >"
+            },
+            "output": "Edit applied successfully.",
+            "title": "NutriScan/app/scanner.tsx",
+            "metadata": {
+              "diagnostics": {},
+              "diff": "Index: /home/veerendra/food/NutriScan/app/scanner.tsx\n===================================================================\n--- /home/veerendra/food/NutriScan/app/scanner.tsx\n+++ /home/veerendra/food/NutriScan/app/scanner.tsx\n@@ -316,20 +316,17 @@\n <CameraView\n   style={styles.camera}\n   facing=\"back\"\n   enableTorch={flashOn}\n+  focusMode=\"auto\"\n+  preset=\"high\"\n   barcodeScannerSettings={{\n     barcodeTypes: [\n       'ean13',\n       'ean8',\n       'upc_a',\n       'upc_e',\n       'code128',\n-      'code39',\n-      'code93',\n-      'itf14',\n-      'codabar',\n-      'qr',\n     ],\n   }}\n   onBarcodeScanned={scanned ? undefined : handleBarCodeScanned}\n >\n",
+              "filediff": {
+                "file": "/home/veerendra/food/NutriScan/app/scanner.tsx",
+                "before": "import React, { useState, useEffect, useRef } from 'react';\nimport {\n  View,\n  Text,\n  StyleSheet,\n  TouchableOpacity,\n  Alert,\n  ActivityIndicator,\n  TextInput,\n  Modal,\n  KeyboardAvoidingView,\n  Platform,\n  ScrollView,\n  Animated,\n  Vibration,\n} from 'react-native';\nimport { CameraView, useCameraPermissions, BarcodeScanningResult } from 'expo-camera';\nimport { useRouter, useFocusEffect } from 'expo-router';\nimport { COLORS, SPACING, FONT_SIZE, BORDER_RADIUS, SHADOWS } from '../src/constants';\nimport { Button } from '../src/components';\nimport { fetchProductByBarcode, addManualProduct, ManualProductRequiredError } from '../src/services/foodApi';\nimport { Product } from '../src/types';\n\ninterface ManualProductForm {\n  name: string;\n  brand: string;\n  calories: string;\n  protein: string;\n  carbohydrates: string;\n  fat: string;\n  sugar: string;\n  sodium: string;\n  saturatedFat: string;\n}\n\nconst initialFormState: ManualProductForm = {\n  name: '',\n  brand: '',\n  calories: '',\n  protein: '',\n  carbohydrates: '',\n  fat: '',\n  sugar: '',\n  sodium: '',\n  saturatedFat: '',\n};\n\nexport default function ScannerScreen() {\n  const router = useRouter();\n  const [permission, requestPermission] = useCameraPermissions();\n  const [scanned, setScanned] = useState(false);\n  const [flashOn, setFlashOn] = useState(false);\n  const [loading, setLoading] = useState(false);\n  const [showManualInput, setShowManualInput] = useState(false);\n  const [manualBarcode, setManualBarcode] = useState('');\n  const [showAddProduct, setShowAddProduct] = useState(false);\n  const [manualForm, setManualForm] = useState<ManualProductForm>(initialFormState);\n  const [lastScannedBarcode, setLastScannedBarcode] = useState('');\n  const scanLineAnim = useRef(new Animated.Value(0)).current;\n  const lastScanTime = useRef(0);\n  const SCAN_DEBOUNCE_MS = 2000;\n\n  useEffect(() => {\n    let animation: Animated.CompositeAnimation;\n    if (!scanned && !loading) {\n      animation = Animated.loop(\n        Animated.sequence([\n          Animated.timing(scanLineAnim, {\n            toValue: 1,\n            duration: 2000,\n            useNativeDriver: true,\n          }),\n          Animated.timing(scanLineAnim, {\n            toValue: 0,\n            duration: 2000,\n            useNativeDriver: true,\n          }),\n        ])\n      );\n      animation.start();\n    }\n    return () => {\n      if (animation) {\n        animation.stop();\n      }\n    };\n  }, [scanned, loading]);\n\n  useFocusEffect(\n    React.useCallback(() => {\n      setScanned(false);\n      setLoading(false);\n      setLastScannedBarcode('');\n      lastScanTime.current = 0;\n      console.log('[Scanner] Screen focused, ready to scan');\n    }, [])\n  );\n\n  const handleBarCodeScanned = async (result: BarcodeScanningResult) => {\n    if (scanned || loading) return;\n    \n    const now = Date.now();\n    if (now - lastScanTime.current < SCAN_DEBOUNCE_MS) {\n      console.log('[Scanner] Debouncing - scan too soon after last scan');\n      return;\n    }\n    \n    const barcode = result.data;\n    console.log('[Scanner] Barcode detected:', barcode);\n    \n    if (lastScannedBarcode === barcode) {\n      console.log('[Scanner] Same barcode already scanned, ignoring');\n      return;\n    }\n    \n    lastScanTime.current = now;\n    \n    setScanned(true);\n    setLoading(true);\n    setLastScannedBarcode(barcode);\n    Vibration.vibrate(100);\n\n    const timeoutId = setTimeout(() => {\n      setLoading(false);\n      setScanned(false);\n      Alert.alert('Timeout', 'The request took too long. Please try again.');\n    }, 15000);\n\n    try {\n      console.log('[Scanner] Fetching product for barcode:', barcode);\n      const product = await fetchProductByBarcode(barcode);\n      console.log('[Scanner] Product found:', product.name);\n      \n      router.replace({\n        pathname: '/product/[id]',\n        params: { id: encodeURIComponent(product.barcode), product: JSON.stringify(product) },\n      });\n    } catch (error) {\n      console.log('[Scanner] Error fetching product:', error);\n      \n      if (error instanceof ManualProductRequiredError) {\n        Alert.alert(\n          'Product Not Found',\n          'We couldn\\'t find this product yet. Would you like to add it?',\n          [\n            {\n              text: 'Search Instead',\n              onPress: () => {\n                setScanned(false);\n                router.push('/search');\n              },\n            },\n            {\n              text: 'Add Manually',\n              onPress: () => {\n                setScanned(false);\n                setShowAddProduct(true);\n              },\n            },\n          ]\n        );\n      } else {\n        Alert.alert('Error', 'Failed to fetch product. Please try again.');\n        setScanned(false);\n      }\n    } finally {\n      clearTimeout(timeoutId);\n      setLoading(false);\n    }\n  };\n\n  const handleManualSearch = async () => {\n    if (!manualBarcode.trim()) {\n      Alert.alert('Error', 'Please enter a valid barcode');\n      return;\n    }\n\n    const barcode = manualBarcode.trim();\n    console.log('[Scanner] Manual search for barcode:', barcode);\n    \n    setLoading(true);\n    setShowManualInput(false);\n    setScanned(true);\n    setLastScannedBarcode(barcode);\n\n    const timeoutId = setTimeout(() => {\n      setLoading(false);\n      setScanned(false);\n      Alert.alert('Timeout', 'The request took too long. Please try again.');\n    }, 15000);\n\n    try {\n      const product = await fetchProductByBarcode(barcode);\n      console.log('[Scanner] Manual search found product:', product.name);\n      \n      router.replace({\n        pathname: '/product/[id]',\n        params: { id: encodeURIComponent(product.barcode), product: JSON.stringify(product) },\n      });\n    } catch (error) {\n      console.log('[Scanner] Manual search error:', error);\n      \n      if (error instanceof ManualProductRequiredError) {\n        Alert.alert(\n          'Product Not Found',\n          'We couldn\\'t find this product yet. Would you like to add it?',\n          [\n            {\n              text: 'Search Instead',\n              onPress: () => {\n                setScanned(false);\n                router.push('/search');\n              },\n            },\n            {\n              text: 'Add Manually',\n              onPress: () => {\n                setScanned(false);\n                setShowAddProduct(true);\n              },\n            },\n          ]\n        );\n      } else {\n        Alert.alert('Error', 'Failed to fetch product. Please try again.');\n        setScanned(false);\n      }\n    } finally {\n      clearTimeout(timeoutId);\n      setLoading(false);\n      setManualBarcode('');\n    }\n  };\n\n  const handleAddManualProduct = async () => {\n    if (!manualForm.name.trim()) {\n      Alert.alert('Error', 'Please enter product name');\n      return;\n    }\n\n    setLoading(true);\n\n    try {\n      const product = await addManualProduct(\n        manualForm.name.trim(),\n        manualForm.brand.trim(),\n        {\n          calories: parseFloat(manualForm.calories) || 0,\n          protein: parseFloat(manualForm.protein) || 0,\n          carbohydrates: parseFloat(manualForm.carbohydrates) || 0,\n          fat: parseFloat(manualForm.fat) || 0,\n          sugar: parseFloat(manualForm.sugar) || 0,\n          sodium: parseFloat(manualForm.sodium) || 0,\n          saturatedFat: parseFloat(manualForm.saturatedFat) || 0,\n          fiber: 0,\n        },\n        manualForm.brand.trim() || undefined\n      );\n\n      setShowAddProduct(false);\n      setManualForm(initialFormState);\n\n      router.replace({\n        pathname: '/product/[id]',\n        params: { id: encodeURIComponent(product.barcode), product: JSON.stringify(product) },\n      });\n    } catch (error) {\n      Alert.alert('Error', 'Failed to add product. Please try again.');\n    } finally {\n      setLoading(false);\n    }\n  };\n\n  if (!permission) {\n    return (\n      <View style={styles.container}>\n        <ActivityIndicator size=\"large\" color={COLORS.primary} />\n      </View>\n    );\n  }\n\n  if (!permission.granted) {\n    return (\n      <View style={styles.permissionContainer}>\n        <View style={styles.permissionIconContainer}>\n          <Text style={styles.permissionIcon}>📷</Text>\n        </View>\n        <Text style={styles.permissionTitle}>Camera Permission</Text>\n        <Text style={styles.permissionText}>\n          We need camera access to scan food barcodes\n        </Text>\n        <Button\n          title=\"Enable Camera\"\n          onPress={requestPermission}\n          variant=\"primary\"\n          size=\"large\"\n          fullWidth\n        />\n        <TouchableOpacity\n          style={styles.manualButton}\n          onPress={() => setShowManualInput(true)}\n        >\n          <Text style={styles.manualButtonText}>Enter Barcode Manually</Text>\n        </TouchableOpacity>\n      </View>\n    );\n  }\n\n  const scanLinePosition = scanLineAnim.interpolate({\n    inputRange: [0, 1],\n    outputRange: [0, 150],\n  });\n\n  return (\n    <View style={styles.container}>\n      <CameraView\n        style={styles.camera}\n        facing=\"back\"\n        enableTorch={flashOn}\n        barcodeScannerSettings={{\n          barcodeTypes: [\n            'ean13',\n            'ean8',\n            'upc_a',\n            'upc_e',\n            'code128',\n            'code39',\n            'code93',\n            'itf14',\n            'codabar',\n            'qr',\n          ],\n        }}\n        onBarcodeScanned={scanned ? undefined : handleBarCodeScanned}\n      >\n        <View style={styles.overlay}>\n          <View style={styles.header}>\n            <TouchableOpacity\n              style={styles.closeButton}\n              onPress={() => router.back()}\n              accessibilityRole=\"button\"\n              accessibilityLabel=\"Close scanner\"\n            >\n              <Text style={styles.closeIcon}>✕</Text>\n            </TouchableOpacity>\n            <TouchableOpacity\n              style={[styles.flashButton, flashOn && styles.flashButtonActive]}\n              onPress={() => setFlashOn(!flashOn)}\n              accessibilityRole=\"button\"\n              accessibilityLabel={flashOn ? 'Turn off flash' : 'Turn on flash'}\n            >\n              <Text style={styles.flashIcon}>{flashOn ? '⚡' : '🔦'}</Text>\n            </TouchableOpacity>\n          </View>\n          \n          <View style={styles.scanArea}>\n            <View style={styles.scanFrame}>\n              <View style={[styles.corner, styles.topLeft]} />\n              <View style={[styles.corner, styles.topRight]} />\n              <View style={[styles.corner, styles.bottomLeft]} />\n              <View style={[styles.corner, styles.bottomRight]} />\n              {!scanned && !loading && (\n                <Animated.View \n                  style={[\n                    styles.scanLine,\n                    { transform: [{ translateY: scanLinePosition }] }\n                  ]} \n                />\n              )}\n            </View>\n            <Text style={styles.instructionText}>\n              {loading ? 'Searching...' : 'Align barcode inside the frame'}\n            </Text>\n          </View>\n\n          <View style={styles.footer}>\n            <TouchableOpacity\n              style={styles.manualEntryButton}\n              onPress={() => setShowManualInput(true)}\n              accessibilityRole=\"button\"\n              accessibilityLabel=\"Enter barcode manually\"\n            >\n              <Text style={styles.manualEntryText}>Enter Barcode Manually</Text>\n            </TouchableOpacity>\n          </View>\n        </View>\n      </CameraView>\n\n      {loading && (\n        <View style={styles.loadingOverlay}>\n          <View style={styles.loadingCard}>\n            <ActivityIndicator size=\"large\" color={COLORS.primary} />\n            <Text style={styles.loadingText}>Searching for product...</Text>\n            <Text style={styles.loadingSubtext}>Please wait</Text>\n          </View>\n        </View>\n      )}\n\n      <Modal\n        visible={showManualInput}\n        animationType=\"slide\"\n        transparent={true}\n        onRequestClose={() => setShowManualInput(false)}\n      >\n        <KeyboardAvoidingView\n          behavior={Platform.OS === 'ios' ? 'padding' : 'height'}\n          style={styles.modalOverlay}\n        >\n          <View style={styles.modalContent}>\n            <View style={styles.modalHeader}>\n              <Text style={styles.modalTitle}>Enter Barcode</Text>\n              <TouchableOpacity onPress={() => setShowManualInput(false)}>\n                <Text style={styles.modalClose}>✕</Text>\n              </TouchableOpacity>\n            </View>\n            <Text style={styles.modalSubtitle}>\n              Type the barcode number manually\n            </Text>\n            <TextInput\n              style={styles.input}\n              value={manualBarcode}\n              onChangeText={setManualBarcode}\n              placeholder=\"e.g., 5000159484695\"\n              keyboardType=\"numeric\"\n              autoFocus\n              accessibilityLabel=\"Barcode input\"\n            />\n            <View style={styles.modalButtons}>\n              <Button\n                title=\"Cancel\"\n                onPress={() => {\n                  setShowManualInput(false);\n                  setManualBarcode('');\n                }}\n                variant=\"outline\"\n                style={styles.modalButton}\n              />\n              <Button\n                title=\"Search\"\n                onPress={handleManualSearch}\n                variant=\"primary\"\n                loading={loading}\n                style={styles.modalButton}\n              />\n            </View>\n          </View>\n        </KeyboardAvoidingView>\n      </Modal>\n\n      <Modal\n        visible={showAddProduct}\n        animationType=\"slide\"\n        transparent={false}\n        onRequestClose={() => setShowAddProduct(false)}\n      >\n        <KeyboardAvoidingView\n          behavior={Platform.OS === 'ios' ? 'padding' : 'height'}\n          style={styles.addProductContainer}\n        >\n          <ScrollView style={styles.addProductScroll}>\n            <View style={styles.addProductHeader}>\n              <TouchableOpacity onPress={() => setShowAddProduct(false)}>\n                <Text style={styles.backButton}>← Back</Text>\n              </TouchableOpacity>\n              <Text style={styles.addProductTitle}>Add New Product</Text>\n              <View style={{ width: 60 }} />\n            </View>\n            \n            <Text style={styles.addProductSubtitle}>\n              Add nutrition info per 100g serving\n            </Text>\n\n            <View style={styles.formGroup}>\n              <Text style={styles.label}>Product Name *</Text>\n              <TextInput\n                style={styles.formInput}\n                value={manualForm.name}\n                onChangeText={(text) => setManualForm({ ...manualForm, name: text })}\n                placeholder=\"e.g., Maggi Noodles\"\n                accessibilityLabel=\"Product name\"\n              />\n            </View>\n\n            <View style={styles.formGroup}>\n              <Text style={styles.label}>Brand</Text>\n              <TextInput\n                style={styles.formInput}\n                value={manualForm.brand}\n                onChangeText={(text) => setManualForm({ ...manualForm, brand: text })}\n                placeholder=\"e.g., Nestle\"\n                accessibilityLabel=\"Brand\"\n              />\n            </View>\n\n            <View style={styles.formRow}>\n              <View style={[styles.formGroup, { flex: 1 }]}>\n                <Text style={styles.label}>Calories (kcal)</Text>\n                <TextInput\n                  style={styles.formInput}\n                  value={manualForm.calories}\n                  onChangeText={(text) => setManualForm({ ...manualForm, calories: text })}\n                  placeholder=\"0\"\n                  keyboardType=\"numeric\"\n                />\n              </View>\n              <View style={[styles.formGroup, { flex: 1 }]}>\n                <Text style={styles.label}>Protein (g)</Text>\n                <TextInput\n                  style={styles.formInput}\n                  value={manualForm.protein}\n                  onChangeText={(text) => setManualForm({ ...manualForm, protein: text })}\n                  placeholder=\"0\"\n                  keyboardType=\"numeric\"\n                />\n              </View>\n            </View>\n\n            <View style={styles.formRow}>\n              <View style={[styles.formGroup, { flex: 1 }]}>\n                <Text style={styles.label}>Carbs (g)</Text>\n                <TextInput\n                  style={styles.formInput}\n                  value={manualForm.carbohydrates}\n                  onChangeText={(text) => setManualForm({ ...manualForm, carbohydrates: text })}\n                  placeholder=\"0\"\n                  keyboardType=\"numeric\"\n                />\n              </View>\n              <View style={[styles.formGroup, { flex: 1 }]}>\n                <Text style={styles.label}>Fat (g)</Text>\n                <TextInput\n                  style={styles.formInput}\n                  value={manualForm.fat}\n                  onChangeText={(text) => setManualForm({ ...manualForm, fat: text })}\n                  placeholder=\"0\"\n                  keyboardType=\"numeric\"\n                />\n              </View>\n            </View>\n\n            <View style={styles.formRow}>\n              <View style={[styles.formGroup, { flex: 1 }]}>\n                <Text style={styles.label}>Sugar (g)</Text>\n                <TextInput\n                  style={styles.formInput}\n                  value={manualForm.sugar}\n                  onChangeText={(text) => setManualForm({ ...manualForm, sugar: text })}\n                  placeholder=\"0\"\n                  keyboardType=\"numeric\"\n                />\n              </View>\n              <View style={[styles.formGroup, { flex: 1 }]}>\n                <Text style={styles.label}>Sodium (mg)</Text>\n                <TextInput\n                  style={styles.formInput}\n                  value={manualForm.sodium}\n                  onChangeText={(text) => setManualForm({ ...manualForm, sodium: text })}\n                  placeholder=\"0\"\n                  keyboardType=\"numeric\"\n                />\n              </View>\n            </View>\n\n            <View style={styles.formGroup}>\n              <Text style={styles.label}>Saturated Fat (g)</Text>\n              <TextInput\n                style={styles.formInput}\n                value={manualForm.saturatedFat}\n                onChangeText={(text) => setManualForm({ ...manualForm, saturatedFat: text })}\n                placeholder=\"0\"\n                keyboardType=\"numeric\"\n              />\n            </View>\n\n            <View style={styles.formButtons}>\n              <Button\n                title=\"Cancel\"\n                onPress={() => {\n                  setShowAddProduct(false);\n                  setManualForm(initialFormState);\n                }}\n                variant=\"outline\"\n                style={styles.formButton}\n              />\n              <Button\n                title=\"Add Product\"\n                onPress={handleAddManualProduct}\n                variant=\"primary\"\n                loading={loading}\n                style={styles.formButton}\n              />\n            </View>\n          </ScrollView>\n        </KeyboardAvoidingView>\n      </Modal>\n    </View>\n  );\n}\n\nconst styles = StyleSheet.create({\n  container: {\n    flex: 1,\n    backgroundColor: COLORS.black,\n  },\n  permissionContainer: {\n    flex: 1,\n    backgroundColor: COLORS.background,\n    justifyContent: 'center',\n    alignItems: 'center',\n    padding: SPACING.xl,\n  },\n  permissionIconContainer: {\n    width: 100,\n    height: 100,\n    borderRadius: 50,\n    backgroundColor: COLORS.primaryLight,\n    justifyContent: 'center',\n    alignItems: 'center',\n    marginBottom: SPACING.lg,\n  },\n  permissionIcon: {\n    fontSize: 48,\n  },\n  permissionTitle: {\n    fontSize: FONT_SIZE.xxl,\n    fontWeight: '800',\n    color: COLORS.text,\n    marginBottom: SPACING.sm,\n    textAlign: 'center',\n  },\n  permissionText: {\n    fontSize: FONT_SIZE.md,\n    color: COLORS.textSecondary,\n    textAlign: 'center',\n    marginBottom: SPACING.xl,\n    lineHeight: 22,\n  },\n  manualButton: {\n    marginTop: SPACING.lg,\n  },\n  manualButtonText: {\n    fontSize: FONT_SIZE.md,\n    color: COLORS.primary,\n    fontWeight: '600',\n  },\n  camera: {\n    flex: 1,\n  },\n  overlay: {\n    flex: 1,\n    backgroundColor: 'rgba(0,0,0,0.4)',\n  },\n  header: {\n    flexDirection: 'row',\n    justifyContent: 'space-between',\n    padding: SPACING.lg,\n    paddingTop: SPACING.xl,\n  },\n  closeButton: {\n    width: 44,\n    height: 44,\n    borderRadius: 22,\n    backgroundColor: 'rgba(255,255,255,0.2)',\n    justifyContent: 'center',\n    alignItems: 'center',\n  },\n  closeIcon: {\n    fontSize: 20,\n    color: COLORS.white,\n    fontWeight: '600',\n  },\n  flashButton: {\n    width: 44,\n    height: 44,\n    borderRadius: 22,\n    backgroundColor: 'rgba(255,255,255,0.2)',\n    justifyContent: 'center',\n    alignItems: 'center',\n  },\n  flashButtonActive: {\n    backgroundColor: COLORS.primary,\n  },\n  flashIcon: {\n    fontSize: 22,\n  },\n  scanArea: {\n    flex: 1,\n    justifyContent: 'center',\n    alignItems: 'center',\n  },\n  scanFrame: {\n    width: 280,\n    height: 180,\n    borderRadius: BORDER_RADIUS.lg,\n    backgroundColor: 'transparent',\n    position: 'relative',\n  },\n  corner: {\n    position: 'absolute',\n    width: 30,\n    height: 30,\n    borderColor: COLORS.primary,\n  },\n  topLeft: {\n    top: 0,\n    left: 0,\n    borderTopWidth: 4,\n    borderLeftWidth: 4,\n    borderTopLeftRadius: BORDER_RADIUS.lg,\n  },\n  topRight: {\n    top: 0,\n    right: 0,\n    borderTopWidth: 4,\n    borderRightWidth: 4,\n    borderTopRightRadius: BORDER_RADIUS.lg,\n  },\n  bottomLeft: {\n    bottom: 0,\n    left: 0,\n    borderBottomWidth: 4,\n    borderLeftWidth: 4,\n    borderBottomLeftRadius: BORDER_RADIUS.lg,\n  },\n  bottomRight: {\n    bottom: 0,\n    right: 0,\n    borderBottomWidth: 4,\n    borderRightWidth: 4,\n    borderBottomRightRadius: BORDER_RADIUS.lg,\n  },\n  scanLine: {\n    position: 'absolute',\n    left: 10,\n    right: 10,\n    height: 3,\n    backgroundColor: COLORS.primary,\n    borderRadius: 2,\n  },\n  footer: {\n    padding: SPACING.xl,\n    alignItems: 'center',\n  },\n  instructionText: {\n    fontSize: FONT_SIZE.lg,\n    color: COLORS.white,\n    fontWeight: '600',\n    marginTop: SPACING.lg,\n  },\n  manualEntryButton: {\n    padding: SPACING.md,\n  },\n  manualEntryText: {\n    fontSize: FONT_SIZE.md,\n    color: COLORS.primaryLight,\n    fontWeight: '600',\n  },\n  loadingOverlay: {\n    ...StyleSheet.absoluteFillObject,\n    backgroundColor: COLORS.overlay,\n    justifyContent: 'center',\n    alignItems: 'center',\n  },\n  loadingCard: {\n    backgroundColor: COLORS.white,\n    borderRadius: BORDER_RADIUS.xl,\n    padding: SPACING.xl,\n    alignItems: 'center',\n    ...SHADOWS.large,\n  },\n  loadingText: {\n    marginTop: SPACING.md,\n    fontSize: FONT_SIZE.lg,\n    fontWeight: '700',\n    color: COLORS.text,\n  },\n  loadingSubtext: {\n    marginTop: SPACING.xs,\n    fontSize: FONT_SIZE.sm,\n    color: COLORS.textSecondary,\n  },\n  modalOverlay: {\n    flex: 1,\n    backgroundColor: 'rgba(0,0,0,0.5)',\n    justifyContent: 'flex-end',\n  },\n  modalContent: {\n    backgroundColor: COLORS.white,\n    borderTopLeftRadius: BORDER_RADIUS.xl,\n    borderTopRightRadius: BORDER_RADIUS.xl,\n    padding: SPACING.lg,\n    paddingBottom: SPACING.xxl,\n  },\n  modalHeader: {\n    flexDirection: 'row',\n    justifyContent: 'space-between',\n    alignItems: 'center',\n    marginBottom: SPACING.xs,\n  },\n  modalTitle: {\n    fontSize: FONT_SIZE.xl,\n    fontWeight: '800',\n    color: COLORS.text,\n  },\n  modalClose: {\n    fontSize: FONT_SIZE.xl,\n    color: COLORS.textSecondary,\n    padding: SPACING.sm,\n  },\n  modalSubtitle: {\n    fontSize: FONT_SIZE.sm,\n    color: COLORS.textSecondary,\n    marginBottom: SPACING.lg,\n  },\n  input: {\n    borderWidth: 1,\n    borderColor: COLORS.border,\n    borderRadius: BORDER_RADIUS.lg,\n    padding: SPACING.md,\n    fontSize: FONT_SIZE.lg,\n    marginBottom: SPACING.lg,\n    backgroundColor: COLORS.surfaceAlt,\n  },\n  modalButtons: {\n    flexDirection: 'row',\n    gap: SPACING.md,\n  },\n  modalButton: {\n    flex: 1,\n  },\n  addProductContainer: {\n    flex: 1,\n    backgroundColor: COLORS.background,\n  },\n  addProductScroll: {\n    flex: 1,\n  },\n  addProductHeader: {\n    flexDirection: 'row',\n    justifyContent: 'space-between',\n    alignItems: 'center',\n    padding: SPACING.lg,\n    backgroundColor: COLORS.white,\n    borderBottomWidth: 1,\n    borderBottomColor: COLORS.border,\n  },\n  backButton: {\n    fontSize: FONT_SIZE.md,\n    color: COLORS.primary,\n    fontWeight: '600',\n  },\n  addProductTitle: {\n    fontSize: FONT_SIZE.xl,\n    fontWeight: '800',\n    color: COLORS.text,\n  },\n  addProductSubtitle: {\n    fontSize: FONT_SIZE.sm,\n    color: COLORS.textSecondary,\n    marginBottom: SPACING.lg,\n    paddingHorizontal: SPACING.lg,\n  },\n  formGroup: {\n    marginBottom: SPACING.md,\n    paddingHorizontal: SPACING.lg,\n  },\n  formRow: {\n    flexDirection: 'row',\n    gap: SPACING.md,\n  },\n  label: {\n    fontSize: FONT_SIZE.sm,\n    fontWeight: '600',\n    color: COLORS.text,\n    marginBottom: SPACING.xs,\n  },\n  formInput: {\n    borderWidth: 1,\n    borderColor: COLORS.border,\n    borderRadius: BORDER_RADIUS.lg,\n    padding: SPACING.md,\n    fontSize: FONT_SIZE.md,\n    backgroundColor: COLORS.white,\n  },\n  formButtons: {\n    flexDirection: 'row',\n    gap: SPACING.md,\n    padding: SPACING.lg,\n    marginTop: SPACING.md,\n  },\n  formButton: {\n    flex: 1,\n  },\n});\n",
+                "after": "import React, { useState, useEffect, useRef } from 'react';\nimport {\n  View,\n  Text,\n  StyleSheet,\n  TouchableOpacity,\n  Alert,\n  ActivityIndicator,\n  TextInput,\n  Modal,\n  KeyboardAvoidingView,\n  Platform,\n  ScrollView,\n  Animated,\n  Vibration,\n} from 'react-native';\nimport { CameraView, useCameraPermissions, BarcodeScanningResult } from 'expo-camera';\nimport { useRouter, useFocusEffect } from 'expo-router';\nimport { COLORS, SPACING, FONT_SIZE, BORDER_RADIUS, SHADOWS } from '../src/constants';\nimport { Button } from '../src/components';\nimport { fetchProductByBarcode, addManualProduct, ManualProductRequiredError } from '../src/services/foodApi';\nimport { Product } from '../src/types';\n\ninterface ManualProductForm {\n  name: string;\n  brand: string;\n  calories: string;\n  protein: string;\n  carbohydrates: string;\n  fat: string;\n  sugar: string;\n  sodium: string;\n  saturatedFat: string;\n}\n\nconst initialFormState: ManualProductForm = {\n  name: '',\n  brand: '',\n  calories: '',\n  protein: '',\n  carbohydrates: '',\n  fat: '',\n  sugar: '',\n  sodium: '',\n  saturatedFat: '',\n};\n\nexport default function ScannerScreen() {\n  const router = useRouter();\n  const [permission, requestPermission] = useCameraPermissions();\n  const [scanned, setScanned] = useState(false);\n  const [flashOn, setFlashOn] = useState(false);\n  const [loading, setLoading] = useState(false);\n  const [showManualInput, setShowManualInput] = useState(false);\n  const [manualBarcode, setManualBarcode] = useState('');\n  const [showAddProduct, setShowAddProduct] = useState(false);\n  const [manualForm, setManualForm] = useState<ManualProductForm>(initialFormState);\n  const [lastScannedBarcode, setLastScannedBarcode] = useState('');\n  const scanLineAnim = useRef(new Animated.Value(0)).current;\n  const lastScanTime = useRef(0);\n  const SCAN_DEBOUNCE_MS = 2000;\n\n  useEffect(() => {\n    let animation: Animated.CompositeAnimation;\n    if (!scanned && !loading) {\n      animation = Animated.loop(\n        Animated.sequence([\n          Animated.timing(scanLineAnim, {\n            toValue: 1,\n            duration: 2000,\n            useNativeDriver: true,\n          }),\n          Animated.timing(scanLineAnim, {\n            toValue: 0,\n            duration: 2000,\n            useNativeDriver: true,\n          }),\n        ])\n      );\n      animation.start();\n    }\n    return () => {\n      if (animation) {\n        animation.stop();\n      }\n    };\n  }, [scanned, loading]);\n\n  useFocusEffect(\n    React.useCallback(() => {\n      setScanned(false);\n      setLoading(false);\n      setLastScannedBarcode('');\n      lastScanTime.current = 0;\n      console.log('[Scanner] Screen focused, ready to scan');\n    }, [])\n  );\n\n  const handleBarCodeScanned = async (result: BarcodeScanningResult) => {\n    if (scanned || loading) return;\n    \n    const now = Date.now();\n    if (now - lastScanTime.current < SCAN_DEBOUNCE_MS) {\n      console.log('[Scanner] Debouncing - scan too soon after last scan');\n      return;\n    }\n    \n    const barcode = result.data;\n    console.log('[Scanner] Barcode detected:', barcode);\n    \n    if (lastScannedBarcode === barcode) {\n      console.log('[Scanner] Same barcode already scanned, ignoring');\n      return;\n    }\n    \n    lastScanTime.current = now;\n    \n    setScanned(true);\n    setLoading(true);\n    setLastScannedBarcode(barcode);\n    Vibration.vibrate(100);\n\n    const timeoutId = setTimeout(() => {\n      setLoading(false);\n      setScanned(false);\n      Alert.alert('Timeout', 'The request took too long. Please try again.');\n    }, 15000);\n\n    try {\n      console.log('[Scanner] Fetching product for barcode:', barcode);\n      const product = await fetchProductByBarcode(barcode);\n      console.log('[Scanner] Product found:', product.name);\n      \n      router.replace({\n        pathname: '/product/[id]',\n        params: { id: encodeURIComponent(product.barcode), product: JSON.stringify(product) },\n      });\n    } catch (error) {\n      console.log('[Scanner] Error fetching product:', error);\n      \n      if (error instanceof ManualProductRequiredError) {\n        Alert.alert(\n          'Product Not Found',\n          'We couldn\\'t find this product yet. Would you like to add it?',\n          [\n            {\n              text: 'Search Instead',\n              onPress: () => {\n                setScanned(false);\n                router.push('/search');\n              },\n            },\n            {\n              text: 'Add Manually',\n              onPress: () => {\n                setScanned(false);\n                setShowAddProduct(true);\n              },\n            },\n          ]\n        );\n      } else {\n        Alert.alert('Error', 'Failed to fetch product. Please try again.');\n        setScanned(false);\n      }\n    } finally {\n      clearTimeout(timeoutId);\n      setLoading(false);\n    }\n  };\n\n  const handleManualSearch = async () => {\n    if (!manualBarcode.trim()) {\n      Alert.alert('Error', 'Please enter a valid barcode');\n      return;\n    }\n\n    const barcode = manualBarcode.trim();\n    console.log('[Scanner] Manual search for barcode:', barcode);\n    \n    setLoading(true);\n    setShowManualInput(false);\n    setScanned(true);\n    setLastScannedBarcode(barcode);\n\n    const timeoutId = setTimeout(() => {\n      setLoading(false);\n      setScanned(false);\n      Alert.alert('Timeout', 'The request took too long. Please try again.');\n    }, 15000);\n\n    try {\n      const product = await fetchProductByBarcode(barcode);\n      console.log('[Scanner] Manual search found product:', product.name);\n      \n      router.replace({\n        pathname: '/product/[id]',\n        params: { id: encodeURIComponent(product.barcode), product: JSON.stringify(product) },\n      });\n    } catch (error) {\n      console.log('[Scanner] Manual search error:', error);\n      \n      if (error instanceof ManualProductRequiredError) {\n        Alert.alert(\n          'Product Not Found',\n          'We couldn\\'t find this product yet. Would you like to add it?',\n          [\n            {\n              text: 'Search Instead',\n              onPress: () => {\n                setScanned(false);\n                router.push('/search');\n              },\n            },\n            {\n              text: 'Add Manually',\n              onPress: () => {\n                setScanned(false);\n                setShowAddProduct(true);\n              },\n            },\n          ]\n        );\n      } else {\n        Alert.alert('Error', 'Failed to fetch product. Please try again.');\n        setScanned(false);\n      }\n    } finally {\n      clearTimeout(timeoutId);\n      setLoading(false);\n      setManualBarcode('');\n    }\n  };\n\n  const handleAddManualProduct = async () => {\n    if (!manualForm.name.trim()) {\n      Alert.alert('Error', 'Please enter product name');\n      return;\n    }\n\n    setLoading(true);\n\n    try {\n      const product = await addManualProduct(\n        manualForm.name.trim(),\n        manualForm.brand.trim(),\n        {\n          calories: parseFloat(manualForm.calories) || 0,\n          protein: parseFloat(manualForm.protein) || 0,\n          carbohydrates: parseFloat(manualForm.carbohydrates) || 0,\n          fat: parseFloat(manualForm.fat) || 0,\n          sugar: parseFloat(manualForm.sugar) || 0,\n          sodium: parseFloat(manualForm.sodium) || 0,\n          saturatedFat: parseFloat(manualForm.saturatedFat) || 0,\n          fiber: 0,\n        },\n        manualForm.brand.trim() || undefined\n      );\n\n      setShowAddProduct(false);\n      setManualForm(initialFormState);\n\n      router.replace({\n        pathname: '/product/[id]',\n        params: { id: encodeURIComponent(product.barcode), product: JSON.stringify(product) },\n      });\n    } catch (error) {\n      Alert.alert('Error', 'Failed to add product. Please try again.');\n    } finally {\n      setLoading(false);\n    }\n  };\n\n  if (!permission) {\n    return (\n      <View style={styles.container}>\n        <ActivityIndicator size=\"large\" color={COLORS.primary} />\n      </View>\n    );\n  }\n\n  if (!permission.granted) {\n    return (\n      <View style={styles.permissionContainer}>\n        <View style={styles.permissionIconContainer}>\n          <Text style={styles.permissionIcon}>📷</Text>\n        </View>\n        <Text style={styles.permissionTitle}>Camera Permission</Text>\n        <Text style={styles.permissionText}>\n          We need camera access to scan food barcodes\n        </Text>\n        <Button\n          title=\"Enable Camera\"\n          onPress={requestPermission}\n          variant=\"primary\"\n          size=\"large\"\n          fullWidth\n        />\n        <TouchableOpacity\n          style={styles.manualButton}\n          onPress={() => setShowManualInput(true)}\n        >\n          <Text style={styles.manualButtonText}>Enter Barcode Manually</Text>\n        </TouchableOpacity>\n      </View>\n    );\n  }\n\n  const scanLinePosition = scanLineAnim.interpolate({\n    inputRange: [0, 1],\n    outputRange: [0, 150],\n  });\n\n  return (\n    <View style={styles.container}>\n      <CameraView\n        style={styles.camera}\n        facing=\"back\"\n        enableTorch={flashOn}\n        focusMode=\"auto\"\n        preset=\"high\"\n        barcodeScannerSettings={{\n          barcodeTypes: [\n            'ean13',\n            'ean8',\n            'upc_a',\n            'upc_e',\n            'code128',\n          ],\n        }}\n        onBarcodeScanned={scanned ? undefined : handleBarCodeScanned}\n      >\n        <View style={styles.overlay}>\n          <View style={styles.header}>\n            <TouchableOpacity\n              style={styles.closeButton}\n              onPress={() => router.back()}\n              accessibilityRole=\"button\"\n              accessibilityLabel=\"Close scanner\"\n            >\n              <Text style={styles.closeIcon}>✕</Text>\n            </TouchableOpacity>\n            <TouchableOpacity\n              style={[styles.flashButton, flashOn && styles.flashButtonActive]}\n              onPress={() => setFlashOn(!flashOn)}\n              accessibilityRole=\"button\"\n              accessibilityLabel={flashOn ? 'Turn off flash' : 'Turn on flash'}\n            >\n              <Text style={styles.flashIcon}>{flashOn ? '⚡' : '🔦'}</Text>\n            </TouchableOpacity>\n          </View>\n          \n          <View style={styles.scanArea}>\n            <View style={styles.scanFrame}>\n              <View style={[styles.corner, styles.topLeft]} />\n              <View style={[styles.corner, styles.topRight]} />\n              <View style={[styles.corner, styles.bottomLeft]} />\n              <View style={[styles.corner, styles.bottomRight]} />\n              {!scanned && !loading && (\n                <Animated.View \n                  style={[\n                    styles.scanLine,\n                    { transform: [{ translateY: scanLinePosition }] }\n                  ]} \n                />\n              )}\n            </View>\n            <Text style={styles.instructionText}>\n              {loading ? 'Searching...' : 'Align barcode inside the frame'}\n            </Text>\n          </View>\n\n          <View style={styles.footer}>\n            <TouchableOpacity\n              style={styles.manualEntryButton}\n              onPress={() => setShowManualInput(true)}\n              accessibilityRole=\"button\"\n              accessibilityLabel=\"Enter barcode manually\"\n            >\n              <Text style={styles.manualEntryText}>Enter Barcode Manually</Text>\n            </TouchableOpacity>\n          </View>\n        </View>\n      </CameraView>\n\n      {loading && (\n        <View style={styles.loadingOverlay}>\n          <View style={styles.loadingCard}>\n            <ActivityIndicator size=\"large\" color={COLORS.primary} />\n            <Text style={styles.loadingText}>Searching for product...</Text>\n            <Text style={styles.loadingSubtext}>Please wait</Text>\n          </View>\n        </View>\n      )}\n\n      <Modal\n        visible={showManualInput}\n        animationType=\"slide\"\n        transparent={true}\n        onRequestClose={() => setShowManualInput(false)}\n      >\n        <KeyboardAvoidingView\n          behavior={Platform.OS === 'ios' ? 'padding' : 'height'}\n          style={styles.modalOverlay}\n        >\n          <View style={styles.modalContent}>\n            <View style={styles.modalHeader}>\n              <Text style={styles.modalTitle}>Enter Barcode</Text>\n              <TouchableOpacity onPress={() => setShowManualInput(false)}>\n                <Text style={styles.modalClose}>✕</Text>\n              </TouchableOpacity>\n            </View>\n            <Text style={styles.modalSubtitle}>\n              Type the barcode number manually\n            </Text>\n            <TextInput\n              style={styles.input}\n              value={manualBarcode}\n              onChangeText={setManualBarcode}\n              placeholder=\"e.g., 5000159484695\"\n              keyboardType=\"numeric\"\n              autoFocus\n              accessibilityLabel=\"Barcode input\"\n            />\n            <View style={styles.modalButtons}>\n              <Button\n                title=\"Cancel\"\n                onPress={() => {\n                  setShowManualInput(false);\n                  setManualBarcode('');\n                }}\n                variant=\"outline\"\n                style={styles.modalButton}\n              />\n              <Button\n                title=\"Search\"\n                onPress={handleManualSearch}\n                variant=\"primary\"\n                loading={loading}\n                style={styles.modalButton}\n              />\n            </View>\n          </View>\n        </KeyboardAvoidingView>\n      </Modal>\n\n      <Modal\n        visible={showAddProduct}\n        animationType=\"slide\"\n        transparent={false}\n        onRequestClose={() => setShowAddProduct(false)}\n      >\n        <KeyboardAvoidingView\n          behavior={Platform.OS === 'ios' ? 'padding' : 'height'}\n          style={styles.addProductContainer}\n        >\n          <ScrollView style={styles.addProductScroll}>\n            <View style={styles.addProductHeader}>\n              <TouchableOpacity onPress={() => setShowAddProduct(false)}>\n                <Text style={styles.backButton}>← Back</Text>\n              </TouchableOpacity>\n              <Text style={styles.addProductTitle}>Add New Product</Text>\n              <View style={{ width: 60 }} />\n            </View>\n            \n            <Text style={styles.addProductSubtitle}>\n              Add nutrition info per 100g serving\n            </Text>\n\n            <View style={styles.formGroup}>\n              <Text style={styles.label}>Product Name *</Text>\n              <TextInput\n                style={styles.formInput}\n                value={manualForm.name}\n                onChangeText={(text) => setManualForm({ ...manualForm, name: text })}\n                placeholder=\"e.g., Maggi Noodles\"\n                accessibilityLabel=\"Product name\"\n              />\n            </View>\n\n            <View style={styles.formGroup}>\n              <Text style={styles.label}>Brand</Text>\n              <TextInput\n                style={styles.formInput}\n                value={manualForm.brand}\n                onChangeText={(text) => setManualForm({ ...manualForm, brand: text })}\n                placeholder=\"e.g., Nestle\"\n                accessibilityLabel=\"Brand\"\n              />\n            </View>\n\n            <View style={styles.formRow}>\n              <View style={[styles.formGroup, { flex: 1 }]}>\n                <Text style={styles.label}>Calories (kcal)</Text>\n                <TextInput\n                  style={styles.formInput}\n                  value={manualForm.calories}\n                  onChangeText={(text) => setManualForm({ ...manualForm, calories: text })}\n                  placeholder=\"0\"\n                  keyboardType=\"numeric\"\n                />\n              </View>\n              <View style={[styles.formGroup, { flex: 1 }]}>\n                <Text style={styles.label}>Protein (g)</Text>\n                <TextInput\n                  style={styles.formInput}\n                  value={manualForm.protein}\n                  onChangeText={(text) => setManualForm({ ...manualForm, protein: text })}\n                  placeholder=\"0\"\n                  keyboardType=\"numeric\"\n                />\n              </View>\n            </View>\n\n            <View style={styles.formRow}>\n              <View style={[styles.formGroup, { flex: 1 }]}>\n                <Text style={styles.label}>Carbs (g)</Text>\n                <TextInput\n                  style={styles.formInput}\n                  value={manualForm.carbohydrates}\n                  onChangeText={(text) => setManualForm({ ...manualForm, carbohydrates: text })}\n                  placeholder=\"0\"\n                  keyboardType=\"numeric\"\n                />\n              </View>\n              <View style={[styles.formGroup, { flex: 1 }]}>\n                <Text style={styles.label}>Fat (g)</Text>\n                <TextInput\n                  style={styles.formInput}\n                  value={manualForm.fat}\n                  onChangeText={(text) => setManualForm({ ...manualForm, fat: text })}\n                  placeholder=\"0\"\n                  keyboardType=\"numeric\"\n                />\n              </View>\n            </View>\n\n            <View style={styles.formRow}>\n              <View style={[styles.formGroup, { flex: 1 }]}>\n                <Text style={styles.label}>Sugar (g)</Text>\n                <TextInput\n                  style={styles.formInput}\n                  value={manualForm.sugar}\n                  onChangeText={(text) => setManualForm({ ...manualForm, sugar: text })}\n                  placeholder=\"0\"\n                  keyboardType=\"numeric\"\n                />\n              </View>\n              <View style={[styles.formGroup, { flex: 1 }]}>\n                <Text style={styles.label}>Sodium (mg)</Text>\n                <TextInput\n                  style={styles.formInput}\n                  value={manualForm.sodium}\n                  onChangeText={(text) => setManualForm({ ...manualForm, sodium: text })}\n                  placeholder=\"0\"\n                  keyboardType=\"numeric\"\n                />\n              </View>\n            </View>\n\n            <View style={styles.formGroup}>\n              <Text style={styles.label}>Saturated Fat (g)</Text>\n              <TextInput\n                style={styles.formInput}\n                value={manualForm.saturatedFat}\n                onChangeText={(text) => setManualForm({ ...manualForm, saturatedFat: text })}\n                placeholder=\"0\"\n                keyboardType=\"numeric\"\n              />\n            </View>\n\n            <View style={styles.formButtons}>\n              <Button\n                title=\"Cancel\"\n                onPress={() => {\n                  setShowAddProduct(false);\n                  setManualForm(initialFormState);\n                }}\n                variant=\"outline\"\n                style={styles.formButton}\n              />\n              <Button\n                title=\"Add Product\"\n                onPress={handleAddManualProduct}\n                variant=\"primary\"\n                loading={loading}\n                style={styles.formButton}\n              />\n            </View>\n          </ScrollView>\n        </KeyboardAvoidingView>\n      </Modal>\n    </View>\n  );\n}\n\nconst styles = StyleSheet.create({\n  container: {\n    flex: 1,\n    backgroundColor: COLORS.black,\n  },\n  permissionContainer: {\n    flex: 1,\n    backgroundColor: COLORS.background,\n    justifyContent: 'center',\n    alignItems: 'center',\n    padding: SPACING.xl,\n  },\n  permissionIconContainer: {\n    width: 100,\n    height: 100,\n    borderRadius: 50,\n    backgroundColor: COLORS.primaryLight,\n    justifyContent: 'center',\n    alignItems: 'center',\n    marginBottom: SPACING.lg,\n  },\n  permissionIcon: {\n    fontSize: 48,\n  },\n  permissionTitle: {\n    fontSize: FONT_SIZE.xxl,\n    fontWeight: '800',\n    color: COLORS.text,\n    marginBottom: SPACING.sm,\n    textAlign: 'center',\n  },\n  permissionText: {\n    fontSize: FONT_SIZE.md,\n    color: COLORS.textSecondary,\n    textAlign: 'center',\n    marginBottom: SPACING.xl,\n    lineHeight: 22,\n  },\n  manualButton: {\n    marginTop: SPACING.lg,\n  },\n  manualButtonText: {\n    fontSize: FONT_SIZE.md,\n    color: COLORS.primary,\n    fontWeight: '600',\n  },\n  camera: {\n    flex: 1,\n  },\n  overlay: {\n    flex: 1,\n    backgroundColor: 'rgba(0,0,0,0.4)',\n  },\n  header: {\n    flexDirection: 'row',\n    justifyContent: 'space-between',\n    padding: SPACING.lg,\n    paddingTop: SPACING.xl,\n  },\n  closeButton: {\n    width: 44,\n    height: 44,\n    borderRadius: 22,\n    backgroundColor: 'rgba(255,255,255,0.2)',\n    justifyContent: 'center',\n    alignItems: 'center',\n  },\n  closeIcon: {\n    fontSize: 20,\n    color: COLORS.white,\n    fontWeight: '600',\n  },\n  flashButton: {\n    width: 44,\n    height: 44,\n    borderRadius: 22,\n    backgroundColor: 'rgba(255,255,255,0.2)',\n    justifyContent: 'center',\n    alignItems: 'center',\n  },\n  flashButtonActive: {\n    backgroundColor: COLORS.primary,\n  },\n  flashIcon: {\n    fontSize: 22,\n  },\n  scanArea: {\n    flex: 1,\n    justifyContent: 'center',\n    alignItems: 'center',\n  },\n  scanFrame: {\n    width: 280,\n    height: 180,\n    borderRadius: BORDER_RADIUS.lg,\n    backgroundColor: 'transparent',\n    position: 'relative',\n  },\n  corner: {\n    position: 'absolute',\n    width: 30,\n    height: 30,\n    borderColor: COLORS.primary,\n  },\n  topLeft: {\n    top: 0,\n    left: 0,\n    borderTopWidth: 4,\n    borderLeftWidth: 4,\n    borderTopLeftRadius: BORDER_RADIUS.lg,\n  },\n  topRight: {\n    top: 0,\n    right: 0,\n    borderTopWidth: 4,\n    borderRightWidth: 4,\n    borderTopRightRadius: BORDER_RADIUS.lg,\n  },\n  bottomLeft: {\n    bottom: 0,\n    left: 0,\n    borderBottomWidth: 4,\n    borderLeftWidth: 4,\n    borderBottomLeftRadius: BORDER_RADIUS.lg,\n  },\n  bottomRight: {\n    bottom: 0,\n    right: 0,\n    borderBottomWidth: 4,\n    borderRightWidth: 4,\n    borderBottomRightRadius: BORDER_RADIUS.lg,\n  },\n  scanLine: {\n    position: 'absolute',\n    left: 10,\n    right: 10,\n    height: 3,\n    backgroundColor: COLORS.primary,\n    borderRadius: 2,\n  },\n  footer: {\n    padding: SPACING.xl,\n    alignItems: 'center',\n  },\n  instructionText: {\n    fontSize: FONT_SIZE.lg,\n    color: COLORS.white,\n    fontWeight: '600',\n    marginTop: SPACING.lg,\n  },\n  manualEntryButton: {\n    padding: SPACING.md,\n  },\n  manualEntryText: {\n    fontSize: FONT_SIZE.md,\n    color: COLORS.primaryLight,\n    fontWeight: '600',\n  },\n  loadingOverlay: {\n    ...StyleSheet.absoluteFillObject,\n    backgroundColor: COLORS.overlay,\n    justifyContent: 'center',\n    alignItems: 'center',\n  },\n  loadingCard: {\n    backgroundColor: COLORS.white,\n    borderRadius: BORDER_RADIUS.xl,\n    padding: SPACING.xl,\n    alignItems: 'center',\n    ...SHADOWS.large,\n  },\n  loadingText: {\n    marginTop: SPACING.md,\n    fontSize: FONT_SIZE.lg,\n    fontWeight: '700',\n    color: COLORS.text,\n  },\n  loadingSubtext: {\n    marginTop: SPACING.xs,\n    fontSize: FONT_SIZE.sm,\n    color: COLORS.textSecondary,\n  },\n  modalOverlay: {\n    flex: 1,\n    backgroundColor: 'rgba(0,0,0,0.5)',\n    justifyContent: 'flex-end',\n  },\n  modalContent: {\n    backgroundColor: COLORS.white,\n    borderTopLeftRadius: BORDER_RADIUS.xl,\n    borderTopRightRadius: BORDER_RADIUS.xl,\n    padding: SPACING.lg,\n    paddingBottom: SPACING.xxl,\n  },\n  modalHeader: {\n    flexDirection: 'row',\n    justifyContent: 'space-between',\n    alignItems: 'center',\n    marginBottom: SPACING.xs,\n  },\n  modalTitle: {\n    fontSize: FONT_SIZE.xl,\n    fontWeight: '800',\n    color: COLORS.text,\n  },\n  modalClose: {\n    fontSize: FONT_SIZE.xl,\n    color: COLORS.textSecondary,\n    padding: SPACING.sm,\n  },\n  modalSubtitle: {\n    fontSize: FONT_SIZE.sm,\n    color: COLORS.textSecondary,\n    marginBottom: SPACING.lg,\n  },\n  input: {\n    borderWidth: 1,\n    borderColor: COLORS.border,\n    borderRadius: BORDER_RADIUS.lg,\n    padding: SPACING.md,\n    fontSize: FONT_SIZE.lg,\n    marginBottom: SPACING.lg,\n    backgroundColor: COLORS.surfaceAlt,\n  },\n  modalButtons: {\n    flexDirection: 'row',\n    gap: SPACING.md,\n  },\n  modalButton: {\n    flex: 1,\n  },\n  addProductContainer: {\n    flex: 1,\n    backgroundColor: COLORS.background,\n  },\n  addProductScroll: {\n    flex: 1,\n  },\n  addProductHeader: {\n    flexDirection: 'row',\n    justifyContent: 'space-between',\n    alignItems: 'center',\n    padding: SPACING.lg,\n    backgroundColor: COLORS.white,\n    borderBottomWidth: 1,\n    borderBottomColor: COLORS.border,\n  },\n  backButton: {\n    fontSize: FONT_SIZE.md,\n    color: COLORS.primary,\n    fontWeight: '600',\n  },\n  addProductTitle: {\n    fontSize: FONT_SIZE.xl,\n    fontWeight: '800',\n    color: COLORS.text,\n  },\n  addProductSubtitle: {\n    fontSize: FONT_SIZE.sm,\n    color: COLORS.textSecondary,\n    marginBottom: SPACING.lg,\n    paddingHorizontal: SPACING.lg,\n  },\n  formGroup: {\n    marginBottom: SPACING.md,\n    paddingHorizontal: SPACING.lg,\n  },\n  formRow: {\n    flexDirection: 'row',\n    gap: SPACING.md,\n  },\n  label: {\n    fontSize: FONT_SIZE.sm,\n    fontWeight: '600',\n    color: COLORS.text,\n    marginBottom: SPACING.xs,\n  },\n  formInput: {\n    borderWidth: 1,\n    borderColor: COLORS.border,\n    borderRadius: BORDER_RADIUS.lg,\n    padding: SPACING.md,\n    fontSize: FONT_SIZE.md,\n    backgroundColor: COLORS.white,\n  },\n  formButtons: {\n    flexDirection: 'row',\n    gap: SPACING.md,\n    padding: SPACING.lg,\n    marginTop: SPACING.md,\n  },\n  formButton: {\n    flex: 1,\n  },\n});\n",
+                "additions": 2,
+                "deletions": 5
+              },
+              "truncated": false
+            },
+            "time": {
+              "start": 1773504203294,
+              "end": 1773504207279
+            }
+          },
+          "id": "REDACTED",
+          "sessionID": "ses_312eb5505ffeLGy7mqwoGWAeqq",
+          "messageID": "msg_ced167317001LLzicStusUI1KC"
+        },
+        {
+          "type": "step-finish",
+          "reason": "tool-calls",
+          "snapshot": "00dc69df4dd172fa1abe185c5d3f2ebda88fd152",
+          "cost": 0,
+          "tokens": {
+            "total": 21841,
+            "input": 204,
+            "output": 285,
+            "reasoning": 0,
+            "cache": {
+              "read": 20461,
+              "write": 891
+            }
+          },
+          "id": "prt_ced169d480011SuuAwpIP0TEHQ",
+          "sessionID": "ses_312eb5505ffeLGy7mqwoGWAeqq",
+          "messageID": "msg_ced167317001LLzicStusUI1KC"
+        },
+        {
+          "type": "patch",
+          "hash": "1f651ba88031fd7c32eaac8349c04c86e0bf578a",
+          "files": [
+            "/home/veerendra/food/NutriScan/app/scanner.tsx"
+          ],
+          "id": "prt_ced169e7d00182UBgKgHHcz2nn",
+          "sessionID": "ses_312eb5505ffeLGy7mqwoGWAeqq",
+          "messageID": "msg_ced167317001LLzicStusUI1KC"
+        }
+      ]
+    },
+    {
+      "info": {
+        "role": "assistant",
+        "time": {
+          "created": 1773504208991,
+          "completed": 1773504214018
+        },
+        "parentID": "msg_ced15f21a0014TBu8spg4qC8a2",
+        "modelID": "big-pickle",
+        "providerID": "opencode",
+        "mode": "build",
+        "agent": "build",
+        "path": {
+          "cwd": "/home/veerendra/food/NutriScan",
+          "root": "/home/veerendra/food"
+        },
+        "cost": 0,
+        "tokens": {
+          "total": 22022,
+          "input": 92,
+          "output": 162,
+          "reasoning": 0,
+          "cache": {
+            "read": 20946,
+            "write": 822
+          }
+        },
+        "finish": "tool-calls",
+        "id": "msg_ced16a05f0014hmQIBtFTXI5No",
+        "sessionID": "ses_312eb5505ffeLGy7mqwoGWAeqq"
+      },
+      "parts": [
+        {
+          "type": "step-start",
+          "snapshot": "00dc69df4dd172fa1abe185c5d3f2ebda88fd152",
+          "id": "prt_ced16ac2d001jR7igd3LmmEcGC",
+          "sessionID": "ses_312eb5505ffeLGy7mqwoGWAeqq",
+          "messageID": "msg_ced16a05f0014hmQIBtFTXI5No"
+        },
+        {
+          "type": "reasoning",
+          "text": "Now let me update the todo list and verify the changes are complete. The scanner already has:\n- Scan frame overlay (with corners and scan line)\n- Stops scanning after detection (via scanned state)\n\nLet me verify everything is in place.",
+          "metadata": {
+            "anthropic": {
+              "signature": "3d031dc1863706bc15d2e8a29e76601c4cc503924604c0d7804faf7049a1e7e8"
+            }
+          },
+          "time": {
+            "start": 1773504212025,
+            "end": 1773504212885
+          },
+          "id": "REDACTED",
+          "sessionID": "ses_312eb5505ffeLGy7mqwoGWAeqq",
+          "messageID": "msg_ced16a05f0014hmQIBtFTXI5No"
+        },
+        {
+          "type": "tool",
+          "callID": "call_function_0tyggd478xk0_1",
+          "tool": "todowrite",
+          "state": {
+            "status": "completed",
+            "input": {
+              "todos": [
+                {
+                  "content": "Enable autofocus for camera",
+                  "priority": "high",
+                  "status": "completed"
+                },
+                {
+                  "content": "Restrict barcodeTypes to common formats",
+                  "priority": "high",
+                  "status": "completed"
+                },
+                {
+                  "content": "Improve camera resolution settings",
+                  "priority": "medium",
+                  "status": "completed"
+                },
+                {
+                  "content": "Verify scanner implementation",
+                  "priority": "medium",
+                  "status": "completed"
+                }
+              ]
+            },
+            "output": "[\n  {\n    \"content\": \"Enable autofocus for camera\",\n    \"priority\": \"high\",\n    \"status\": \"completed\"\n  },\n  {\n    \"content\": \"Restrict barcodeTypes to common formats\",\n    \"priority\": \"high\",\n    \"status\": \"completed\"\n  },\n  {\n    \"content\": \"Improve camera resolution settings\",\n    \"priority\": \"medium\",\n    \"status\": \"completed\"\n  },\n  {\n    \"content\": \"Verify scanner implementation\",\n    \"priority\": \"medium\",\n    \"status\": \"completed\"\n  }\n]",
+            "title": "0 todos",
+            "metadata": {
+              "todos": [
+                {
+                  "content": "Enable autofocus for camera",
+                  "priority": "high",
+                  "status": "completed"
+                },
+                {
+                  "content": "Restrict barcodeTypes to common formats",
+                  "priority": "high",
+                  "status": "completed"
+                },
+                {
+                  "content": "Improve camera resolution settings",
+                  "priority": "medium",
+                  "status": "completed"
+                },
+                {
+                  "content": "Verify scanner implementation",
+                  "priority": "medium",
+                  "status": "completed"
+                }
+              ],
+              "truncated": false
+            },
+            "time": {
+              "start": 1773504213910,
+              "end": 1773504213920
+            }
+          },
+          "id": "REDACTED",
+          "sessionID": "ses_312eb5505ffeLGy7mqwoGWAeqq",
+          "messageID": "msg_ced16a05f0014hmQIBtFTXI5No"
+        },
+        {
+          "type": "step-finish",
+          "reason": "tool-calls",
+          "snapshot": "00dc69df4dd172fa1abe185c5d3f2ebda88fd152",
+          "cost": 0,
+          "tokens": {
+            "total": 22022,
+            "input": 92,
+            "output": 162,
+            "reasoning": 0,
+            "cache": {
+              "read": 20946,
+              "write": 822
+            }
+          },
+          "id": "prt_ced16b3ad001QUceCpXD6zpw8s",
+          "sessionID": "ses_312eb5505ffeLGy7mqwoGWAeqq",
+          "messageID": "msg_ced16a05f0014hmQIBtFTXI5No"
+        }
+      ]
+    },
+    {
+      "info": {
+        "role": "assistant",
+        "time": {
+          "created": 1773504214031,
+          "completed": 1773504222222
+        },
+        "parentID": "msg_ced15f21a0014TBu8spg4qC8a2",
+        "modelID": "big-pickle",
+        "providerID": "opencode",
+        "mode": "build",
+        "agent": "build",
+        "path": {
+          "cwd": "/home/veerendra/food/NutriScan",
+          "root": "/home/veerendra/food"
+        },
+        "cost": 0,
+        "tokens": {
+          "total": 22450,
+          "input": 203,
+          "output": 298,
+          "reasoning": 0,
+          "cache": {
+            "read": 21478,
+            "write": 471
+          }
+        },
+        "finish": "stop",
+        "id": "msg_ced16b40f001XwbTMQaezAIApz",
+        "sessionID": "ses_312eb5505ffeLGy7mqwoGWAeqq"
+      },
+      "parts": [
+        {
+          "type": "step-start",
+          "snapshot": "00dc69df4dd172fa1abe185c5d3f2ebda88fd152",
+          "id": "prt_ced16c360001PrEIgXE44OKpEk",
+          "sessionID": "ses_312eb5505ffeLGy7mqwoGWAeqq",
+          "messageID": "msg_ced16b40f001XwbTMQaezAIApz"
+        },
+        {
+          "type": "reasoning",
+          "text": "Done! I've made the following improvements to the barcode scanner:\n\n1. **Enabled autofocus**: Added `focusMode=\"auto\"` to enable automatic focus\n2. **Restricted barcode types**: Limited to EAN13, EAN8, UPC_A, UPC_E, and CODE128 as requested\n3. **Improved camera resolution**: Added `preset=\"high\"` for better camera quality\n4. **Scan frame overlay**: Already exists in the code (lines 356-374 with corners and scan line animation)\n5. **Stops scanning after detection**: Already implemented via `onBarcodeScanned={scanned ? undefined : handleBarCodeScanned}`\n\nLet me provide a summary to the user.",
+          "metadata": {
+            "anthropic": {
+              "signature": "7edc4c5a55cd0a98bd7baa6e8611686b56aa170d50e3ee05d84c085d3adeca9c"
+            }
+          },
+          "time": {
+            "start": 1773504217956,
+            "end": 1773504219911
+          },
+          "id": "prt_ced16c364001FcRcB6ELiTIEra",
+          "sessionID": "ses_312eb5505ffeLGy7mqwoGWAeqq",
+          "messageID": "msg_ced16b40f001XwbTMQaezAIApz"
+        },
+        {
+          "type": "text",
+          "text": "Done! I've updated the scanner with these improvements:\n\n1. **Enabled autofocus**: Added `focusMode=\"auto\"` to enable automatic focus\n2. **Restricted barcodeTypes**: Limited to common formats: `ean13`, `ean8`, `upc_a`, `upc_e`, `code128`\n3. **Improved camera resolution**: Added `preset=\"high\"` for better image quality\n\nThe scanner already had:\n- **Scan frame overlay** with animated scan line and corner brackets (lines 356-374)\n- **Stops scanning after detection** via `onBarcodeScanned={scanned ? undefined : handleBarCodeScanned}` (line 334)\n\nThe key changes are in `app/scanner.tsx:316-335`.",
+          "time": {
+            "start": 1773504221885,
+            "end": 1773504221885
+          },
+          "id": "prt_ced16cb100010GBqdXiL58zsJl",
+          "sessionID": "ses_312eb5505ffeLGy7mqwoGWAeqq",
+          "messageID": "msg_ced16b40f001XwbTMQaezAIApz"
+        },
+        {
+          "type": "step-finish",
+          "reason": "stop",
+          "snapshot": "00dc69df4dd172fa1abe185c5d3f2ebda88fd152",
+          "cost": 0,
+          "tokens": {
+            "total": 22450,
+            "input": 203,
+            "output": 298,
+            "reasoning": 0,
+            "cache": {
+              "read": 21478,
+              "write": 471
+            }
+          },
+          "id": "prt_ced16d303001mvxhFe29vIItXb",
+          "sessionID": "ses_312eb5505ffeLGy7mqwoGWAeqq",
+          "messageID": "msg_ced16b40f001XwbTMQaezAIApz"
+        }
+      ]
+    }
+  ]
+}

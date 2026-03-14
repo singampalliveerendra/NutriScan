@@ -1,0 +1,27 @@
+{
+  "cli_version": "0.5.0",
+  "checkpoint_id": "f79a28a700b3",
+  "strategy": "manual-commit",
+  "branch": "main",
+  "checkpoints_count": 2,
+  "files_touched": [
+    "NutriScan/app/(tabs)/_layout.tsx",
+    "NutriScan/app/(tabs)/history.tsx",
+    "NutriScan/app/scanner.tsx"
+  ],
+  "sessions": [
+    {
+      "metadata": "/f7/9a28a700b3/0/metadata.json",
+      "transcript": "/f7/9a28a700b3/0/full.jsonl",
+      "content_hash": "/f7/9a28a700b3/0/content_hash.txt",
+      "prompt": "/f7/9a28a700b3/0/prompt.txt"
+    }
+  ],
+  "token_usage": {
+    "input_tokens": 10044,
+    "cache_creation_tokens": 22607,
+    "cache_read_tokens": 110021,
+    "output_tokens": 1491,
+    "api_call_count": 8
+  }
+}

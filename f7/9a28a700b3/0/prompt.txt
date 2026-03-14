@@ -1,0 +1,17 @@
+hi
+
+---
+
+Please review my React Native Expo project and fix the barcode scanner camera focus issue.
+
+The camera opens but it does not focus properly on barcodes. Improve the scanner so it can detect barcodes quickly and clearly.
+
+Tasks:
+1. Enable autofocus for the camera.
+2. Use expo-camera or expo-barcode-scanner correctly.
+3. Restrict barcodeTypes to common formats like EAN13, EAN8, UPC, and CODE128.
+4. Add a scan frame overlay so users know where to place the barcode.
+5. Ensure the scanner stops scanning after a barcode is detected.
+6. Improve camera resolution and focus settings if possible.
+
+Do not create a new project. Only update the existing scanner implementation.
