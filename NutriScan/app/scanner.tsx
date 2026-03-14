@@ -13,7 +13,7 @@ import {
   ScrollView,
 } from 'react-native';
 import { CameraView, useCameraPermissions, BarcodeScanningResult } from 'expo-camera';
-import { useRouter } from 'expo-router';
+import { useRouter, useFocusEffect } from 'expo-router';
 import { COLORS, SPACING, FONT_SIZE, BORDER_RADIUS } from '../src/constants';
 import { Button } from '../src/components';
 import { fetchProductByBarcode, addManualProduct, ManualProductRequiredError } from '../src/services/foodApi';
@@ -55,21 +55,41 @@ export default function ScannerScreen() {
   const [manualForm, setManualForm] = useState<ManualProductForm>(initialFormState);
   const [lastScannedBarcode, setLastScannedBarcode] = useState('');
 
+  useFocusEffect(
+    React.useCallback(() => {
+      setScanned(false);
+      setLoading(false);
+      console.log('[Scanner] Screen focused, ready to scan');
+    }, [])
+  );
+
   const handleBarCodeScanned = async (result: BarcodeScanningResult) => {
     if (scanned || loading) return;
     
+    const barcode = result.data;
+    console.log('[Scanner] Barcode detected:', barcode);
+    
+    if (lastScannedBarcode === barcode) {
+      console.log('[Scanner] Same barcode already scanned, ignoring');
+      return;
+    }
+    
     setScanned(true);
     setLoading(true);
-    setLastScannedBarcode(result.data);
+    setLastScannedBarcode(barcode);
 
     try {
-      const product = await fetchProductByBarcode(result.data);
+      console.log('[Scanner] Fetching product for barcode:', barcode);
+      const product = await fetchProductByBarcode(barcode);
+      console.log('[Scanner] Product found:', product.name);
       
       router.replace({
         pathname: '/product/[id]',
         params: { id: encodeURIComponent(product.barcode), product: JSON.stringify(product) },
       });
     } catch (error) {
+      console.log('[Scanner] Error fetching product:', error);
+      
       if (error instanceof ManualProductRequiredError) {
         Alert.alert(
           'Product Not Found',
@@ -78,12 +98,14 @@ export default function ScannerScreen() {
             {
               text: 'Search Instead',
               onPress: () => {
+                setScanned(false);
                 router.push('/search');
               },
             },
             {
               text: 'Add Manually',
               onPress: () => {
+                setScanned(false);
                 setShowAddProduct(true);
               },
             },
@@ -104,18 +126,25 @@ export default function ScannerScreen() {
       return;
     }
 
+    const barcode = manualBarcode.trim();
+    console.log('[Scanner] Manual search for barcode:', barcode);
+    
     setLoading(true);
     setShowManualInput(false);
-    setLastScannedBarcode(manualBarcode.trim());
+    setScanned(true);
+    setLastScannedBarcode(barcode);
 
     try {
-      const product = await fetchProductByBarcode(manualBarcode.trim());
+      const product = await fetchProductByBarcode(barcode);
+      console.log('[Scanner] Manual search found product:', product.name);
       
       router.replace({
         pathname: '/product/[id]',
         params: { id: encodeURIComponent(product.barcode), product: JSON.stringify(product) },
       });
     } catch (error) {
+      console.log('[Scanner] Manual search error:', error);
+      
       if (error instanceof ManualProductRequiredError) {
         Alert.alert(
           'Product Not Found',
@@ -124,12 +153,14 @@ export default function ScannerScreen() {
             {
               text: 'Search Instead',
               onPress: () => {
+                setScanned(false);
                 router.push('/search');
               },
             },
             {
               text: 'Add Manually',
               onPress: () => {
+                setScanned(false);
                 setShowAddProduct(true);
               },
             },
@@ -137,8 +168,8 @@ export default function ScannerScreen() {
         );
       } else {
         Alert.alert('Error', 'Failed to fetch product. Please try again.');
+        setScanned(false);
       }
-      setScanned(false);
     } finally {
       setLoading(false);
       setManualBarcode('');

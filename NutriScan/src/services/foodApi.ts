@@ -121,15 +121,20 @@ export async function fetchProductByBarcode(barcode: string): Promise<Product> {
 
   try {
     const openFoodFactsUrl = `https://world.openfoodfacts.org/api/v0/product/${cleanBarcode}.json`;
+    console.log('[FoodApi] Making API request to:', openFoodFactsUrl);
+    
     const response = await fetch(openFoodFactsUrl);
+    console.log('[FoodApi] Response status:', response.status);
     
     if (!response.ok) {
-      throw new Error('Network response was not ok');
+      throw new Error(`Network response was not ok: ${response.status}`);
     }
     
     const data: OpenFoodFactsProductResponse = await response.json();
+    console.log('[FoodApi] API response:', JSON.stringify(data));
     
     if (data.status === 1 && data.product) {
+      console.log('[FoodApi] Product found in Open Food Facts');
       const productData = data.product;
       
       const product: Product = {
@@ -145,19 +150,28 @@ export async function fetchProductByBarcode(barcode: string): Promise<Product> {
       await saveProduct(product);
       
       return product;
+    } else if (data.status === 0) {
+      console.log('[FoodApi] Product not found in Open Food Facts (status=0)');
     }
   } catch (error) {
-    console.log('OpenFoodFacts lookup failed, trying backup API:', error);
+    console.log('[FoodApi] OpenFoodFacts lookup failed, trying backup API:', error);
+    throw error;
   }
 
   try {
+    console.log('[FoodApi] Trying backup UPCItemDB API');
     const upcItemDbUrl = `https://api.upcitemdb.com/prod/trial/lookup?upc=${cleanBarcode}`;
+    console.log('[FoodApi] Backup API URL:', upcItemDbUrl);
+    
     const response = await fetch(upcItemDbUrl);
+    console.log('[FoodApi] Backup API response status:', response.status);
     
     if (response.ok) {
       const data: UPCItemDBResponse = await response.json();
+      console.log('[FoodApi] Backup API response:', JSON.stringify(data));
       
       if (data.total_matches > 0 && data.items && data.items.length > 0) {
+        console.log('[FoodApi] Product found in UPCItemDB');
         const item = data.items[0];
         
         const product: Product = {
@@ -183,9 +197,11 @@ export async function fetchProductByBarcode(barcode: string): Promise<Product> {
       }
     }
   } catch (error) {
-    console.log('UPCItemDB lookup failed:', error);
+    console.log('[FoodApi] UPCItemDB lookup failed:', error);
+    throw error;
   }
 
+  console.log('[FoodApi] Product not found in any database, throwing ManualProductRequiredError');
   throw new ManualProductRequiredError('Product not found in database. Please add manually or search.');
 }
 
