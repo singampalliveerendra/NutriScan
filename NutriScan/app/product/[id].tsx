@@ -10,24 +10,32 @@ import {
 } from 'react-native';
 import { useLocalSearchParams, useRouter, Stack } from 'expo-router';
 import { COLORS, SPACING, FONT_SIZE, BORDER_RADIUS, SHADOWS } from '../../src/constants';
-import { Button, NutritionFactsTable, RatingBadge } from '../../src/components';
+import { Button, RatingBadge, NutritionCard } from '../../src/components';
 import { useApp } from '../../src/context/AppContext';
 import { Product } from '../../src/types';
-import { calculateHealthRating, generateAIExplanation, getRatingLabel } from '../../src/utils';
+import { calculateHealthRating, generateAIExplanation, getRatingColor } from '../../src/utils';
 import { fetchProductByBarcode, saveScanRecord, ManualProductRequiredError } from '../../src/services/foodApi';
 
 export default function ProductDetailScreen() {
   const router = useRouter();
-  const { id, product: productParam, isSearch } = useLocalSearchParams<{
+  const { id, product: productParam } = useLocalSearchParams<{
     id: string;
     product?: string;
-    isSearch?: string;
   }>();
   const { addToHistory, state } = useApp();
   
   const [product, setProduct] = useState<Product | null>(null);
   const [loading, setLoading] = useState(!productParam);
   const [saved, setSaved] = useState(false);
+
+  useEffect(() => {
+    if (product) {
+      const exists = state.scanHistory.some(
+        item => item.product.barcode === product.barcode
+      );
+      setSaved(exists);
+    }
+  }, [state.scanHistory, product]);
 
   useEffect(() => {
     if (productParam) {
@@ -63,7 +71,7 @@ export default function ProductDetailScreen() {
       }
     } catch (error) {
       if (error instanceof ManualProductRequiredError) {
-        Alert.alert('Product Not Found', 'Product not found in database. Try manual search or add it manually.');
+        Alert.alert('Product Not Found', 'We couldn\'t find this product yet. Try manual search or scan a different barcode.');
       } else {
         Alert.alert('Error', 'Failed to load product details');
       }
@@ -84,7 +92,7 @@ export default function ProductDetailScreen() {
         console.log('Failed to save scan record to database:', err);
       }
       
-      Alert.alert('Saved', 'Product added to your history');
+      Alert.alert('Saved!', 'Product added to your history');
     }
   };
 
@@ -100,9 +108,11 @@ export default function ProductDetailScreen() {
   if (!product) {
     return (
       <View style={styles.errorContainer}>
-        <Text style={styles.errorIcon}>🔍</Text>
-        <Text style={styles.errorText}>Product not found in database</Text>
-        <Text style={styles.errorSubtext}>Try manual search or scan a different barcode</Text>
+        <View style={styles.errorIconContainer}>
+          <Text style={styles.errorIcon}>🔍</Text>
+        </View>
+        <Text style={styles.errorText}>Product not found</Text>
+        <Text style={styles.errorSubtext}>We couldn't find this product yet</Text>
         <View style={styles.errorButtons}>
           <Button
             title="Go Back"
@@ -123,10 +133,11 @@ export default function ProductDetailScreen() {
 
   const rating = calculateHealthRating(product.nutritionFacts);
   const aiExplanation = generateAIExplanation(product.nutritionFacts, rating);
+  const ratingColor = getRatingColor(rating);
 
   return (
     <>
-      <Stack.Screen options={{ title: product.name }} />
+      <Stack.Screen options={{ title: '' }} />
       <ScrollView style={styles.container} contentContainerStyle={styles.content}>
         <View style={styles.header}>
           <View style={styles.imageContainer}>
@@ -144,52 +155,94 @@ export default function ProductDetailScreen() {
             )}
           </View>
           
-          <View style={styles.productInfo}>
-            <Text style={styles.productName}>{product.name}</Text>
-            {product.brand && (
-              <Text style={styles.productBrand}>{product.brand}</Text>
-            )}
-            {product.barcode && (
-              <Text style={styles.barcode}>Barcode: {product.barcode}</Text>
-            )}
-          </View>
+          <Text style={styles.productName}>{product.name}</Text>
+          {product.brand && (
+            <Text style={styles.productBrand}>{product.brand}</Text>
+          )}
         </View>
 
-        <View style={styles.ratingSection}>
-          <Text style={styles.sectionTitle}>Health Rating</Text>
-          <View style={styles.ratingRow}>
-            <RatingBadge rating={rating} size="large" />
-            <Text style={styles.ratingDescription}>
-              Based on sugar, sodium, and saturated fat content
+        <View style={[styles.healthBadge, { backgroundColor: ratingColor + '15' }]}>
+          <View style={[styles.healthBadgeIcon, { backgroundColor: ratingColor }]}>
+            <Text style={styles.healthBadgeEmoji}>
+              {rating === 'healthy' ? '✓' : rating === 'moderate' ? '⚠' : '✕'}
+            </Text>
+          </View>
+          <View style={styles.healthBadgeContent}>
+            <Text style={[styles.healthBadgeTitle, { color: ratingColor }]}>
+              {rating === 'healthy' ? 'Healthy Choice!' : rating === 'moderate' ? 'Moderate' : 'Best to Avoid'}
+            </Text>
+            <Text style={styles.healthBadgeSubtitle}>
+              Based on sugar, sodium & saturated fat
             </Text>
           </View>
         </View>
 
+        <View style={styles.nutritionSection}>
+          <Text style={styles.sectionTitle}>Nutrition Facts</Text>
+          <Text style={styles.servingSize}>Per 100g serving</Text>
+          
+          <View style={styles.nutritionGrid}>
+            <NutritionCard
+              title="Calories"
+              value={product.nutritionFacts.calories}
+              unit="kcal"
+              icon="🔥"
+              color={COLORS.secondary}
+              size="medium"
+              style={styles.nutritionCard}
+            />
+            <NutritionCard
+              title="Protein"
+              value={product.nutritionFacts.protein}
+              unit="g"
+              icon="💪"
+              color={COLORS.primary}
+              size="medium"
+              style={styles.nutritionCard}
+            />
+            <NutritionCard
+              title="Sugar"
+              value={product.nutritionFacts.sugar}
+              unit="g"
+              icon="🍬"
+              color={ratingColor}
+              size="medium"
+              style={styles.nutritionCard}
+            />
+            <NutritionCard
+              title="Fat"
+              value={product.nutritionFacts.fat}
+              unit="g"
+              icon="🥑"
+              color={COLORS.warning}
+              size="medium"
+              style={styles.nutritionCard}
+            />
+          </View>
+        </View>
+
         <View style={styles.explanationSection}>
-          <Text style={styles.sectionTitle}>AI Analysis</Text>
-          <View style={styles.explanationCard}>
+          <View style={styles.explanationHeader}>
             <Text style={styles.explanationIcon}>💡</Text>
+            <Text style={styles.sectionTitle}>AI Analysis</Text>
+          </View>
+          <View style={styles.explanationCard}>
             <Text style={styles.explanationText}>{aiExplanation}</Text>
           </View>
         </View>
 
-        <View style={styles.nutritionSection}>
-          <NutritionFactsTable nutrition={product.nutritionFacts} />
-        </View>
-
-        {!saved && (
+        {!saved ? (
           <View style={styles.actionSection}>
             <Button
               title="Save to History"
               onPress={handleSaveToHistory}
               variant="primary"
               size="large"
+              fullWidth
               icon={<Text style={styles.buttonIcon}>💾</Text>}
             />
           </View>
-        )}
-
-        {saved && (
+        ) : (
           <View style={styles.savedBanner}>
             <Text style={styles.savedIcon}>✓</Text>
             <Text style={styles.savedText}>Saved to history</Text>
@@ -206,7 +259,8 @@ const styles = StyleSheet.create({
     backgroundColor: COLORS.background,
   },
   content: {
-    padding: SPACING.md,
+    padding: SPACING.lg,
+    paddingBottom: SPACING.xxl,
   },
   loadingContainer: {
     flex: 1,
@@ -226,26 +280,35 @@ const styles = StyleSheet.create({
     backgroundColor: COLORS.background,
     padding: SPACING.xl,
   },
-  errorIcon: {
-    fontSize: 64,
+  errorIconContainer: {
+    width: 80,
+    height: 80,
+    borderRadius: 40,
+    backgroundColor: COLORS.surfaceAlt,
+    justifyContent: 'center',
+    alignItems: 'center',
     marginBottom: SPACING.md,
   },
+  errorIcon: {
+    fontSize: 40,
+  },
   errorText: {
-    fontSize: FONT_SIZE.lg,
+    fontSize: FONT_SIZE.xl,
+    fontWeight: '700',
     color: COLORS.text,
     marginBottom: SPACING.sm,
     textAlign: 'center',
   },
   errorSubtext: {
-    fontSize: FONT_SIZE.sm,
+    fontSize: FONT_SIZE.md,
     color: COLORS.textSecondary,
-    marginBottom: SPACING.lg,
+    marginBottom: SPACING.xl,
     textAlign: 'center',
-    paddingHorizontal: SPACING.lg,
   },
   errorButtons: {
     flexDirection: 'row',
     gap: SPACING.md,
+    width: '100%',
   },
   errorButton: {
     flex: 1,
@@ -255,12 +318,13 @@ const styles = StyleSheet.create({
     marginBottom: SPACING.lg,
   },
   imageContainer: {
-    width: 200,
-    height: 200,
-    borderRadius: BORDER_RADIUS.lg,
+    width: 180,
+    height: 180,
+    borderRadius: BORDER_RADIUS.xl,
     overflow: 'hidden',
     backgroundColor: COLORS.surface,
     ...SHADOWS.medium,
+    marginBottom: SPACING.md,
   },
   productImage: {
     width: '100%',
@@ -276,13 +340,9 @@ const styles = StyleSheet.create({
   placeholderIcon: {
     fontSize: 64,
   },
-  productInfo: {
-    alignItems: 'center',
-    marginTop: SPACING.md,
-  },
   productName: {
-    fontSize: FONT_SIZE.xl,
-    fontWeight: '700',
+    fontSize: FONT_SIZE.xxl,
+    fontWeight: '800',
     color: COLORS.text,
     textAlign: 'center',
     marginBottom: SPACING.xs,
@@ -290,57 +350,89 @@ const styles = StyleSheet.create({
   productBrand: {
     fontSize: FONT_SIZE.md,
     color: COLORS.textSecondary,
-    marginBottom: SPACING.xs,
+    fontWeight: '500',
   },
-  barcode: {
-    fontSize: FONT_SIZE.sm,
-    color: COLORS.textLight,
-  },
-  ratingSection: {
-    marginBottom: SPACING.lg,
-  },
-  sectionTitle: {
-    fontSize: FONT_SIZE.lg,
-    fontWeight: '600',
-    color: COLORS.text,
-    marginBottom: SPACING.sm,
-  },
-  ratingRow: {
+  healthBadge: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: SPACING.md,
-  },
-  ratingDescription: {
-    fontSize: FONT_SIZE.sm,
-    color: COLORS.textSecondary,
-    flex: 1,
-  },
-  explanationSection: {
+    padding: SPACING.lg,
+    borderRadius: BORDER_RADIUS.xl,
     marginBottom: SPACING.lg,
-  },
-  explanationCard: {
-    backgroundColor: COLORS.surface,
-    borderRadius: BORDER_RADIUS.md,
-    padding: SPACING.md,
-    flexDirection: 'row',
-    alignItems: 'flex-start',
     ...SHADOWS.small,
   },
-  explanationIcon: {
-    fontSize: 24,
-    marginRight: SPACING.sm,
+  healthBadgeIcon: {
+    width: 56,
+    height: 56,
+    borderRadius: 28,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginRight: SPACING.md,
   },
-  explanationText: {
+  healthBadgeEmoji: {
+    fontSize: 28,
+    color: COLORS.white,
+    fontWeight: '800',
+  },
+  healthBadgeContent: {
     flex: 1,
-    fontSize: FONT_SIZE.md,
-    color: COLORS.text,
-    lineHeight: 22,
+  },
+  healthBadgeTitle: {
+    fontSize: FONT_SIZE.xl,
+    fontWeight: '800',
+    marginBottom: SPACING.xs,
+  },
+  healthBadgeSubtitle: {
+    fontSize: FONT_SIZE.sm,
+    color: COLORS.textSecondary,
   },
   nutritionSection: {
     marginBottom: SPACING.lg,
   },
-  actionSection: {
+  sectionTitle: {
+    fontSize: FONT_SIZE.lg,
+    fontWeight: '700',
+    color: COLORS.text,
+    marginBottom: SPACING.xs,
+  },
+  servingSize: {
+    fontSize: FONT_SIZE.sm,
+    color: COLORS.textSecondary,
+    marginBottom: SPACING.md,
+  },
+  nutritionGrid: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: SPACING.md,
+    justifyContent: 'space-between',
+  },
+  nutritionCard: {
+    width: '47%',
+  },
+  explanationSection: {
     marginBottom: SPACING.lg,
+  },
+  explanationHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: SPACING.sm,
+    marginBottom: SPACING.sm,
+  },
+  explanationIcon: {
+    fontSize: 24,
+  },
+  explanationCard: {
+    backgroundColor: COLORS.surface,
+    borderRadius: BORDER_RADIUS.lg,
+    padding: SPACING.lg,
+    ...SHADOWS.small,
+  },
+  explanationText: {
+    fontSize: FONT_SIZE.md,
+    color: COLORS.text,
+    lineHeight: 24,
+  },
+  actionSection: {
+    marginBottom: SPACING.md,
   },
   buttonIcon: {
     fontSize: 18,
@@ -350,17 +442,18 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     backgroundColor: COLORS.primaryLight,
-    padding: SPACING.md,
-    borderRadius: BORDER_RADIUS.md,
+    padding: SPACING.lg,
+    borderRadius: BORDER_RADIUS.lg,
     gap: SPACING.sm,
   },
   savedIcon: {
-    fontSize: FONT_SIZE.md,
+    fontSize: FONT_SIZE.lg,
     color: COLORS.primary,
+    fontWeight: '800',
   },
   savedText: {
     fontSize: FONT_SIZE.md,
     color: COLORS.primary,
-    fontWeight: '600',
+    fontWeight: '700',
   },
 });

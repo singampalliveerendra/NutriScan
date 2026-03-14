@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import {
   View,
   Text,
@@ -11,10 +11,12 @@ import {
   KeyboardAvoidingView,
   Platform,
   ScrollView,
+  Animated,
+  Vibration,
 } from 'react-native';
 import { CameraView, useCameraPermissions, BarcodeScanningResult } from 'expo-camera';
 import { useRouter, useFocusEffect } from 'expo-router';
-import { COLORS, SPACING, FONT_SIZE, BORDER_RADIUS } from '../src/constants';
+import { COLORS, SPACING, FONT_SIZE, BORDER_RADIUS, SHADOWS } from '../src/constants';
 import { Button } from '../src/components';
 import { fetchProductByBarcode, addManualProduct, ManualProductRequiredError } from '../src/services/foodApi';
 import { Product } from '../src/types';
@@ -54,11 +56,39 @@ export default function ScannerScreen() {
   const [showAddProduct, setShowAddProduct] = useState(false);
   const [manualForm, setManualForm] = useState<ManualProductForm>(initialFormState);
   const [lastScannedBarcode, setLastScannedBarcode] = useState('');
+  const scanLineAnim = useRef(new Animated.Value(0)).current;
+
+  useEffect(() => {
+    let animation: Animated.CompositeAnimation;
+    if (!scanned && !loading) {
+      animation = Animated.loop(
+        Animated.sequence([
+          Animated.timing(scanLineAnim, {
+            toValue: 1,
+            duration: 2000,
+            useNativeDriver: true,
+          }),
+          Animated.timing(scanLineAnim, {
+            toValue: 0,
+            duration: 2000,
+            useNativeDriver: true,
+          }),
+        ])
+      );
+      animation.start();
+    }
+    return () => {
+      if (animation) {
+        animation.stop();
+      }
+    };
+  }, [scanned, loading]);
 
   useFocusEffect(
     React.useCallback(() => {
       setScanned(false);
       setLoading(false);
+      setLastScannedBarcode('');
       console.log('[Scanner] Screen focused, ready to scan');
     }, [])
   );
@@ -77,6 +107,13 @@ export default function ScannerScreen() {
     setScanned(true);
     setLoading(true);
     setLastScannedBarcode(barcode);
+    Vibration.vibrate(100);
+
+    const timeoutId = setTimeout(() => {
+      setLoading(false);
+      setScanned(false);
+      Alert.alert('Timeout', 'The request took too long. Please try again.');
+    }, 15000);
 
     try {
       console.log('[Scanner] Fetching product for barcode:', barcode);
@@ -93,7 +130,7 @@ export default function ScannerScreen() {
       if (error instanceof ManualProductRequiredError) {
         Alert.alert(
           'Product Not Found',
-          'This product is not in our database. Would you like to add it manually?',
+          'We couldn\'t find this product yet. Would you like to add it?',
           [
             {
               text: 'Search Instead',
@@ -116,6 +153,7 @@ export default function ScannerScreen() {
         setScanned(false);
       }
     } finally {
+      clearTimeout(timeoutId);
       setLoading(false);
     }
   };
@@ -134,6 +172,12 @@ export default function ScannerScreen() {
     setScanned(true);
     setLastScannedBarcode(barcode);
 
+    const timeoutId = setTimeout(() => {
+      setLoading(false);
+      setScanned(false);
+      Alert.alert('Timeout', 'The request took too long. Please try again.');
+    }, 15000);
+
     try {
       const product = await fetchProductByBarcode(barcode);
       console.log('[Scanner] Manual search found product:', product.name);
@@ -148,7 +192,7 @@ export default function ScannerScreen() {
       if (error instanceof ManualProductRequiredError) {
         Alert.alert(
           'Product Not Found',
-          'This product is not in our database. Would you like to add it manually?',
+          'We couldn\'t find this product yet. Would you like to add it?',
           [
             {
               text: 'Search Instead',
@@ -171,6 +215,7 @@ export default function ScannerScreen() {
         setScanned(false);
       }
     } finally {
+      clearTimeout(timeoutId);
       setLoading(false);
       setManualBarcode('');
     }
@@ -226,16 +271,19 @@ export default function ScannerScreen() {
   if (!permission.granted) {
     return (
       <View style={styles.permissionContainer}>
-        <Text style={styles.permissionIcon}>📷</Text>
-        <Text style={styles.permissionTitle}>Camera Permission Required</Text>
+        <View style={styles.permissionIconContainer}>
+          <Text style={styles.permissionIcon}>📷</Text>
+        </View>
+        <Text style={styles.permissionTitle}>Camera Permission</Text>
         <Text style={styles.permissionText}>
           We need camera access to scan food barcodes
         </Text>
         <Button
-          title="Grant Permission"
+          title="Enable Camera"
           onPress={requestPermission}
           variant="primary"
           size="large"
+          fullWidth
         />
         <TouchableOpacity
           style={styles.manualButton}
@@ -246,6 +294,11 @@ export default function ScannerScreen() {
       </View>
     );
   }
+
+  const scanLinePosition = scanLineAnim.interpolate({
+    inputRange: [0, 1],
+    outputRange: [0, 150],
+  });
 
   return (
     <View style={styles.container}>
@@ -272,7 +325,15 @@ export default function ScannerScreen() {
         <View style={styles.overlay}>
           <View style={styles.header}>
             <TouchableOpacity
-              style={styles.flashButton}
+              style={styles.closeButton}
+              onPress={() => router.back()}
+              accessibilityRole="button"
+              accessibilityLabel="Close scanner"
+            >
+              <Text style={styles.closeIcon}>✕</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={[styles.flashButton, flashOn && styles.flashButtonActive]}
               onPress={() => setFlashOn(!flashOn)}
               accessibilityRole="button"
               accessibilityLabel={flashOn ? 'Turn off flash' : 'Turn on flash'}
@@ -282,14 +343,26 @@ export default function ScannerScreen() {
           </View>
           
           <View style={styles.scanArea}>
-            <View style={styles.scanFrame} />
-          </View>
-
-          <View style={styles.footer}>
+            <View style={styles.scanFrame}>
+              <View style={[styles.corner, styles.topLeft]} />
+              <View style={[styles.corner, styles.topRight]} />
+              <View style={[styles.corner, styles.bottomLeft]} />
+              <View style={[styles.corner, styles.bottomRight]} />
+              {!scanned && !loading && (
+                <Animated.View 
+                  style={[
+                    styles.scanLine,
+                    { transform: [{ translateY: scanLinePosition }] }
+                  ]} 
+                />
+              )}
+            </View>
             <Text style={styles.instructionText}>
               {loading ? 'Searching...' : 'Point camera at barcode'}
             </Text>
-            
+          </View>
+
+          <View style={styles.footer}>
             <TouchableOpacity
               style={styles.manualEntryButton}
               onPress={() => setShowManualInput(true)}
@@ -304,8 +377,11 @@ export default function ScannerScreen() {
 
       {loading && (
         <View style={styles.loadingOverlay}>
-          <ActivityIndicator size="large" color={COLORS.primary} />
-          <Text style={styles.loadingText}>Searching for product...</Text>
+          <View style={styles.loadingCard}>
+            <ActivityIndicator size="large" color={COLORS.primary} />
+            <Text style={styles.loadingText}>Searching for product...</Text>
+            <Text style={styles.loadingSubtext}>Please wait</Text>
+          </View>
         </View>
       )}
 
@@ -320,7 +396,12 @@ export default function ScannerScreen() {
           style={styles.modalOverlay}
         >
           <View style={styles.modalContent}>
-            <Text style={styles.modalTitle}>Enter Barcode</Text>
+            <View style={styles.modalHeader}>
+              <Text style={styles.modalTitle}>Enter Barcode</Text>
+              <TouchableOpacity onPress={() => setShowManualInput(false)}>
+                <Text style={styles.modalClose}>✕</Text>
+              </TouchableOpacity>
+            </View>
             <Text style={styles.modalSubtitle}>
               Type the barcode number manually
             </Text>
@@ -328,7 +409,7 @@ export default function ScannerScreen() {
               style={styles.input}
               value={manualBarcode}
               onChangeText={setManualBarcode}
-              placeholder="Enter barcode"
+              placeholder="e.g., 5000159484695"
               keyboardType="numeric"
               autoFocus
               accessibilityLabel="Barcode input"
@@ -367,10 +448,11 @@ export default function ScannerScreen() {
         >
           <ScrollView style={styles.addProductScroll}>
             <View style={styles.addProductHeader}>
-              <Text style={styles.addProductTitle}>Add New Product</Text>
               <TouchableOpacity onPress={() => setShowAddProduct(false)}>
-                <Text style={styles.closeButton}>✕</Text>
+                <Text style={styles.backButton}>← Back</Text>
               </TouchableOpacity>
+              <Text style={styles.addProductTitle}>Add New Product</Text>
+              <View style={{ width: 60 }} />
             </View>
             
             <Text style={styles.addProductSubtitle}>
@@ -516,13 +598,21 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     padding: SPACING.xl,
   },
-  permissionIcon: {
-    fontSize: 64,
+  permissionIconContainer: {
+    width: 100,
+    height: 100,
+    borderRadius: 50,
+    backgroundColor: COLORS.primaryLight,
+    justifyContent: 'center',
+    alignItems: 'center',
     marginBottom: SPACING.lg,
   },
+  permissionIcon: {
+    fontSize: 48,
+  },
   permissionTitle: {
-    fontSize: FONT_SIZE.xl,
-    fontWeight: '700',
+    fontSize: FONT_SIZE.xxl,
+    fontWeight: '800',
     color: COLORS.text,
     marginBottom: SPACING.sm,
     textAlign: 'center',
@@ -532,6 +622,7 @@ const styles = StyleSheet.create({
     color: COLORS.textSecondary,
     textAlign: 'center',
     marginBottom: SPACING.xl,
+    lineHeight: 22,
   },
   manualButton: {
     marginTop: SPACING.lg,
@@ -546,24 +637,40 @@ const styles = StyleSheet.create({
   },
   overlay: {
     flex: 1,
-    backgroundColor: 'rgba(0,0,0,0.5)',
+    backgroundColor: 'rgba(0,0,0,0.4)',
   },
   header: {
     flexDirection: 'row',
-    justifyContent: 'flex-end',
+    justifyContent: 'space-between',
     padding: SPACING.lg,
     paddingTop: SPACING.xl,
   },
-  flashButton: {
+  closeButton: {
     width: 44,
     height: 44,
-    borderRadius: BORDER_RADIUS.full,
+    borderRadius: 22,
     backgroundColor: 'rgba(255,255,255,0.2)',
     justifyContent: 'center',
     alignItems: 'center',
   },
+  closeIcon: {
+    fontSize: 20,
+    color: COLORS.white,
+    fontWeight: '600',
+  },
+  flashButton: {
+    width: 44,
+    height: 44,
+    borderRadius: 22,
+    backgroundColor: 'rgba(255,255,255,0.2)',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  flashButtonActive: {
+    backgroundColor: COLORS.primary,
+  },
   flashIcon: {
-    fontSize: 24,
+    fontSize: 22,
   },
   scanArea: {
     flex: 1,
@@ -573,19 +680,61 @@ const styles = StyleSheet.create({
   scanFrame: {
     width: 280,
     height: 180,
-    borderWidth: 3,
-    borderColor: COLORS.primary,
     borderRadius: BORDER_RADIUS.lg,
     backgroundColor: 'transparent',
+    position: 'relative',
+  },
+  corner: {
+    position: 'absolute',
+    width: 30,
+    height: 30,
+    borderColor: COLORS.primary,
+  },
+  topLeft: {
+    top: 0,
+    left: 0,
+    borderTopWidth: 4,
+    borderLeftWidth: 4,
+    borderTopLeftRadius: BORDER_RADIUS.lg,
+  },
+  topRight: {
+    top: 0,
+    right: 0,
+    borderTopWidth: 4,
+    borderRightWidth: 4,
+    borderTopRightRadius: BORDER_RADIUS.lg,
+  },
+  bottomLeft: {
+    bottom: 0,
+    left: 0,
+    borderBottomWidth: 4,
+    borderLeftWidth: 4,
+    borderBottomLeftRadius: BORDER_RADIUS.lg,
+  },
+  bottomRight: {
+    bottom: 0,
+    right: 0,
+    borderBottomWidth: 4,
+    borderRightWidth: 4,
+    borderBottomRightRadius: BORDER_RADIUS.lg,
+  },
+  scanLine: {
+    position: 'absolute',
+    left: 10,
+    right: 10,
+    height: 3,
+    backgroundColor: COLORS.primary,
+    borderRadius: 2,
   },
   footer: {
     padding: SPACING.xl,
     alignItems: 'center',
   },
   instructionText: {
-    fontSize: FONT_SIZE.md,
+    fontSize: FONT_SIZE.lg,
     color: COLORS.white,
-    marginBottom: SPACING.md,
+    fontWeight: '600',
+    marginTop: SPACING.lg,
   },
   manualEntryButton: {
     padding: SPACING.md,
@@ -597,34 +746,55 @@ const styles = StyleSheet.create({
   },
   loadingOverlay: {
     ...StyleSheet.absoluteFillObject,
-    backgroundColor: 'rgba(0,0,0,0.7)',
+    backgroundColor: COLORS.overlay,
     justifyContent: 'center',
     alignItems: 'center',
   },
+  loadingCard: {
+    backgroundColor: COLORS.white,
+    borderRadius: BORDER_RADIUS.xl,
+    padding: SPACING.xl,
+    alignItems: 'center',
+    ...SHADOWS.large,
+  },
   loadingText: {
     marginTop: SPACING.md,
-    fontSize: FONT_SIZE.md,
-    color: COLORS.white,
+    fontSize: FONT_SIZE.lg,
+    fontWeight: '700',
+    color: COLORS.text,
+  },
+  loadingSubtext: {
+    marginTop: SPACING.xs,
+    fontSize: FONT_SIZE.sm,
+    color: COLORS.textSecondary,
   },
   modalOverlay: {
     flex: 1,
     backgroundColor: 'rgba(0,0,0,0.5)',
-    justifyContent: 'center',
-    alignItems: 'center',
-    padding: SPACING.md,
+    justifyContent: 'flex-end',
   },
   modalContent: {
     backgroundColor: COLORS.white,
-    borderRadius: BORDER_RADIUS.lg,
+    borderTopLeftRadius: BORDER_RADIUS.xl,
+    borderTopRightRadius: BORDER_RADIUS.xl,
     padding: SPACING.lg,
-    width: '100%',
-    maxWidth: 400,
+    paddingBottom: SPACING.xxl,
+  },
+  modalHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: SPACING.xs,
   },
   modalTitle: {
     fontSize: FONT_SIZE.xl,
-    fontWeight: '700',
+    fontWeight: '800',
     color: COLORS.text,
-    marginBottom: SPACING.xs,
+  },
+  modalClose: {
+    fontSize: FONT_SIZE.xl,
+    color: COLORS.textSecondary,
+    padding: SPACING.sm,
   },
   modalSubtitle: {
     fontSize: FONT_SIZE.sm,
@@ -634,10 +804,11 @@ const styles = StyleSheet.create({
   input: {
     borderWidth: 1,
     borderColor: COLORS.border,
-    borderRadius: BORDER_RADIUS.md,
+    borderRadius: BORDER_RADIUS.lg,
     padding: SPACING.md,
     fontSize: FONT_SIZE.lg,
     marginBottom: SPACING.lg,
+    backgroundColor: COLORS.surfaceAlt,
   },
   modalButtons: {
     flexDirection: 'row',
@@ -658,19 +829,19 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
     padding: SPACING.lg,
+    backgroundColor: COLORS.white,
     borderBottomWidth: 1,
     borderBottomColor: COLORS.border,
-    backgroundColor: COLORS.white,
+  },
+  backButton: {
+    fontSize: FONT_SIZE.md,
+    color: COLORS.primary,
+    fontWeight: '600',
   },
   addProductTitle: {
     fontSize: FONT_SIZE.xl,
-    fontWeight: '700',
+    fontWeight: '800',
     color: COLORS.text,
-  },
-  closeButton: {
-    fontSize: FONT_SIZE.xl,
-    color: COLORS.textSecondary,
-    padding: SPACING.sm,
   },
   addProductSubtitle: {
     fontSize: FONT_SIZE.sm,
@@ -695,7 +866,7 @@ const styles = StyleSheet.create({
   formInput: {
     borderWidth: 1,
     borderColor: COLORS.border,
-    borderRadius: BORDER_RADIUS.md,
+    borderRadius: BORDER_RADIUS.lg,
     padding: SPACING.md,
     fontSize: FONT_SIZE.md,
     backgroundColor: COLORS.white,

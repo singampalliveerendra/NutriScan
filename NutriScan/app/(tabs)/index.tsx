@@ -6,7 +6,6 @@ import {
   ScrollView,
   TouchableOpacity,
   Image,
-  ActivityIndicator,
 } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useApp } from '../../src/context/AppContext';
@@ -40,66 +39,76 @@ export default function HomeScreen() {
   return (
     <ScrollView style={styles.container} contentContainerStyle={styles.content}>
       <View style={styles.heroSection}>
+        <View style={styles.waveContainer}>
+          <Text style={styles.waveEmoji}>👋</Text>
+        </View>
         <Text style={styles.welcomeText}>Welcome to</Text>
         <Text style={styles.appName}>NutriScan</Text>
         <Text style={styles.tagline}>
-          Make healthier food choices with instant nutrition info
+          Scan your food to check health
         </Text>
       </View>
 
-      <View style={styles.actionButtons}>
-        <TouchableOpacity
-          style={[styles.actionButton, styles.scanButton]}
-          onPress={handleScanPress}
-          activeOpacity={0.8}
-          accessibilityRole="button"
-          accessibilityLabel="Scan Barcode"
-          accessibilityHint="Opens camera to scan food barcode"
-        >
-          <Text style={styles.actionIcon}>📷</Text>
-          <Text style={styles.actionText}>Scan Barcode</Text>
-        </TouchableOpacity>
+      <TouchableOpacity
+        style={styles.scanButton}
+        onPress={handleScanPress}
+        activeOpacity={0.9}
+        accessibilityRole="button"
+        accessibilityLabel="Scan Food"
+        accessibilityHint="Opens camera to scan food barcode"
+      >
+        <View style={styles.scanButtonContent}>
+          <View style={styles.scanIconContainer}>
+            <Text style={styles.scanIcon}>📷</Text>
+          </View>
+          <Text style={styles.scanButtonTitle}>Scan Food</Text>
+          <Text style={styles.scanButtonSubtitle}>
+            Point camera at barcode
+          </Text>
+        </View>
+        <View style={styles.scanButtonArrow}>
+          <Text style={styles.arrowIcon}>→</Text>
+        </View>
+      </TouchableOpacity>
 
-        <TouchableOpacity
-          style={[styles.actionButton, styles.searchButton]}
-          onPress={handleSearchPress}
-          activeOpacity={0.8}
-          accessibilityRole="button"
-          accessibilityLabel="Search Manually"
-          accessibilityHint="Opens search to find food manually"
-        >
-          <Text style={styles.actionIcon}>🔍</Text>
-          <Text style={[styles.actionText, styles.searchButtonText]}>Search Manually</Text>
-        </TouchableOpacity>
-      </View>
+      <TouchableOpacity
+        style={styles.searchButton}
+        onPress={handleSearchPress}
+        activeOpacity={0.8}
+        accessibilityRole="button"
+        accessibilityLabel="Search Food"
+        accessibilityHint="Opens search to find food manually"
+      >
+        <View style={styles.searchIconContainer}>
+          <Text style={styles.searchIcon}>🔍</Text>
+        </View>
+        <Text style={styles.searchButtonTitle}>Search Food</Text>
+        <Text style={styles.searchButtonSubtitle}>
+          Find nutrition info manually
+        </Text>
+      </TouchableOpacity>
 
-      <View style={styles.statsSection}>
+      <View style={styles.statsRow}>
         <View style={styles.statCard}>
           <Text style={styles.statNumber}>{todayScans}</Text>
-          <Text style={styles.statLabel}>Scans Today</Text>
+          <Text style={styles.statLabel}>Today</Text>
         </View>
+        <View style={styles.statDivider} />
         <View style={styles.statCard}>
           <Text style={styles.statNumber}>{state.scanHistory.length}</Text>
-          <Text style={styles.statLabel}>Total Scans</Text>
+          <Text style={styles.statLabel}>Total</Text>
         </View>
       </View>
 
-      <View style={styles.recentSection}>
-        <View style={styles.sectionHeader}>
-          <Text style={styles.sectionTitle}>Recent Scans</Text>
-        </View>
-
-        {state.isLoading ? (
-          <ActivityIndicator size="large" color={COLORS.primary} />
-        ) : recentScans.length === 0 ? (
-          <View style={styles.emptyState}>
-            <Text style={styles.emptyIcon}>📦</Text>
-            <Text style={styles.emptyText}>No scans yet</Text>
-            <Text style={styles.emptySubtext}>
-              Scan a barcode or search for a product to get started
-            </Text>
+      {recentScans.length > 0 && (
+        <View style={styles.recentSection}>
+          <View style={styles.sectionHeader}>
+            <Text style={styles.sectionTitle}>Recent Scans</Text>
+            <TouchableOpacity onPress={() => router.push('/(tabs)/history')}>
+              <Text style={styles.seeAllText}>See All</Text>
+            </TouchableOpacity>
           </View>
-        ) : (
+
           <ScrollView horizontal showsHorizontalScrollIndicator={false}>
             {recentScans.map((item) => {
               const rating = calculateHealthRating(item.product.nutritionFacts);
@@ -120,9 +129,13 @@ export default function HomeScreen() {
                       />
                     ) : (
                       <View style={styles.recentPlaceholder}>
-                        <Text>📦</Text>
+                        <Text style={styles.placeholderEmoji}>📦</Text>
                       </View>
                     )}
+                    <View style={[
+                      styles.ratingIndicator,
+                      { backgroundColor: getRatingColor(rating) }
+                    ]} />
                   </View>
                   <Text style={styles.recentName} numberOfLines={2}>
                     {item.product.name}
@@ -131,11 +144,14 @@ export default function HomeScreen() {
                     style={[
                       styles.recentRating,
                       {
-                        backgroundColor: getRatingColor(rating),
+                        backgroundColor: getRatingColor(rating) + '20',
                       },
                     ]}
                   >
-                    <Text style={styles.recentRatingText}>
+                    <Text style={[
+                      styles.recentRatingText,
+                      { color: getRatingColor(rating) }
+                    ]}>
                       {getRatingLabel(rating)}
                     </Text>
                   </View>
@@ -143,8 +159,29 @@ export default function HomeScreen() {
               );
             })}
           </ScrollView>
-        )}
-      </View>
+        </View>
+      )}
+
+      {recentScans.length === 0 && (
+        <View style={styles.emptyState}>
+          <View style={styles.emptyIconContainer}>
+            <Text style={styles.emptyIcon}>🥗</Text>
+          </View>
+          <Text style={styles.emptyTitle}>Start Scanning!</Text>
+          <Text style={styles.emptyText}>
+            Scan a barcode or search for a product to see nutrition info
+          </Text>
+          <View style={styles.emptyButtons}>
+            <Button
+              title="Scan Now"
+              onPress={handleScanPress}
+              variant="primary"
+              size="large"
+              icon={<Text style={styles.buttonIcon}>📷</Text>}
+            />
+          </View>
+        </View>
+      )}
     </ScrollView>
   );
 }
@@ -155,86 +192,153 @@ const styles = StyleSheet.create({
     backgroundColor: COLORS.background,
   },
   content: {
-    padding: SPACING.md,
+    padding: SPACING.lg,
+    paddingBottom: SPACING.xxl,
   },
   heroSection: {
     alignItems: 'center',
-    paddingVertical: SPACING.xl,
+    paddingVertical: SPACING.lg,
+  },
+  waveContainer: {
+    width: 64,
+    height: 64,
+    borderRadius: 32,
+    backgroundColor: COLORS.primaryLight,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: SPACING.md,
+  },
+  waveEmoji: {
+    fontSize: 32,
   },
   welcomeText: {
-    fontSize: FONT_SIZE.lg,
+    fontSize: FONT_SIZE.md,
     color: COLORS.textSecondary,
+    fontWeight: '500',
   },
   appName: {
-    fontSize: FONT_SIZE.xxxl,
+    fontSize: FONT_SIZE.title,
     fontWeight: '800',
     color: COLORS.primary,
     marginBottom: SPACING.xs,
   },
   tagline: {
-    fontSize: FONT_SIZE.md,
+    fontSize: FONT_SIZE.lg,
     color: COLORS.textSecondary,
     textAlign: 'center',
   },
-  actionButtons: {
-    flexDirection: 'row',
-    gap: SPACING.md,
-    marginBottom: SPACING.lg,
-  },
-  actionButton: {
-    flex: 1,
-    flexDirection: 'column',
-    alignItems: 'center',
-    justifyContent: 'center',
-    padding: SPACING.lg,
-    borderRadius: BORDER_RADIUS.lg,
-    ...SHADOWS.medium,
-  },
   scanButton: {
     backgroundColor: COLORS.primary,
+    borderRadius: BORDER_RADIUS.xl,
+    padding: SPACING.lg,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    ...SHADOWS.large,
+    marginBottom: SPACING.md,
   },
-  searchButton: {
-    backgroundColor: COLORS.white,
-    borderWidth: 2,
-    borderColor: COLORS.secondary,
+  scanButtonContent: {
+    flex: 1,
   },
-  actionIcon: {
-    fontSize: 32,
+  scanIconContainer: {
+    width: 56,
+    height: 56,
+    borderRadius: BORDER_RADIUS.lg,
+    backgroundColor: 'rgba(255,255,255,0.2)',
+    justifyContent: 'center',
+    alignItems: 'center',
     marginBottom: SPACING.sm,
   },
-  actionText: {
+  scanIcon: {
+    fontSize: 28,
+  },
+  scanButtonTitle: {
+    fontSize: FONT_SIZE.xxl,
+    fontWeight: '800',
+    color: COLORS.white,
+    marginBottom: SPACING.xs,
+  },
+  scanButtonSubtitle: {
     fontSize: FONT_SIZE.md,
-    fontWeight: '600',
+    color: 'rgba(255,255,255,0.8)',
+    fontWeight: '500',
+  },
+  scanButtonArrow: {
+    width: 48,
+    height: 48,
+    borderRadius: 24,
+    backgroundColor: 'rgba(255,255,255,0.2)',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  arrowIcon: {
+    fontSize: 24,
     color: COLORS.white,
   },
-  searchButtonText: {
-    color: COLORS.secondary,
-  },
-  statsSection: {
+  searchButton: {
+    backgroundColor: COLORS.surface,
+    borderRadius: BORDER_RADIUS.xl,
+    padding: SPACING.lg,
     flexDirection: 'row',
-    gap: SPACING.md,
+    alignItems: 'center',
+    borderWidth: 2,
+    borderColor: COLORS.border,
+    ...SHADOWS.small,
     marginBottom: SPACING.lg,
+  },
+  searchIconContainer: {
+    width: 48,
+    height: 48,
+    borderRadius: BORDER_RADIUS.md,
+    backgroundColor: COLORS.surfaceAlt,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginRight: SPACING.md,
+  },
+  searchIcon: {
+    fontSize: 24,
+  },
+  searchButtonTitle: {
+    fontSize: FONT_SIZE.xl,
+    fontWeight: '700',
+    color: COLORS.text,
+    marginBottom: SPACING.xs,
+  },
+  searchButtonSubtitle: {
+    fontSize: FONT_SIZE.sm,
+    color: COLORS.textSecondary,
+    fontWeight: '500',
+  },
+  statsRow: {
+    flexDirection: 'row',
+    backgroundColor: COLORS.surface,
+    borderRadius: BORDER_RADIUS.xl,
+    padding: SPACING.lg,
+    marginBottom: SPACING.lg,
+    ...SHADOWS.small,
   },
   statCard: {
     flex: 1,
-    backgroundColor: COLORS.surface,
-    padding: SPACING.md,
-    borderRadius: BORDER_RADIUS.md,
     alignItems: 'center',
-    ...SHADOWS.small,
+  },
+  statDivider: {
+    width: 1,
+    backgroundColor: COLORS.border,
+    marginHorizontal: SPACING.md,
   },
   statNumber: {
-    fontSize: FONT_SIZE.xxl,
-    fontWeight: '700',
+    fontSize: FONT_SIZE.xxxl,
+    fontWeight: '800',
     color: COLORS.primary,
   },
   statLabel: {
     fontSize: FONT_SIZE.sm,
     color: COLORS.textSecondary,
+    fontWeight: '600',
     marginTop: SPACING.xs,
   },
   recentSection: {
-    marginTop: SPACING.md,
+    marginTop: SPACING.sm,
   },
   sectionHeader: {
     flexDirection: 'row',
@@ -244,45 +348,29 @@ const styles = StyleSheet.create({
   },
   sectionTitle: {
     fontSize: FONT_SIZE.lg,
-    fontWeight: '600',
+    fontWeight: '700',
     color: COLORS.text,
   },
-  emptyState: {
-    alignItems: 'center',
-    paddingVertical: SPACING.xl,
-    backgroundColor: COLORS.surface,
-    borderRadius: BORDER_RADIUS.md,
-  },
-  emptyIcon: {
-    fontSize: 48,
-    marginBottom: SPACING.md,
-  },
-  emptyText: {
-    fontSize: FONT_SIZE.lg,
+  seeAllText: {
+    fontSize: FONT_SIZE.md,
+    color: COLORS.primary,
     fontWeight: '600',
-    color: COLORS.text,
-  },
-  emptySubtext: {
-    fontSize: FONT_SIZE.sm,
-    color: COLORS.textSecondary,
-    textAlign: 'center',
-    marginTop: SPACING.xs,
-    paddingHorizontal: SPACING.lg,
   },
   recentCard: {
-    width: 120,
+    width: 130,
     marginRight: SPACING.md,
-    backgroundColor: COLORS.white,
-    borderRadius: BORDER_RADIUS.md,
+    backgroundColor: COLORS.surface,
+    borderRadius: BORDER_RADIUS.lg,
     padding: SPACING.sm,
     ...SHADOWS.small,
   },
   recentImageContainer: {
     width: '100%',
-    height: 80,
-    borderRadius: BORDER_RADIUS.sm,
+    height: 90,
+    borderRadius: BORDER_RADIUS.md,
     overflow: 'hidden',
     marginBottom: SPACING.sm,
+    position: 'relative',
   },
   recentImage: {
     width: '100%',
@@ -295,21 +383,73 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
+  placeholderEmoji: {
+    fontSize: 36,
+  },
+  ratingIndicator: {
+    position: 'absolute',
+    top: SPACING.xs,
+    right: SPACING.xs,
+    width: 12,
+    height: 12,
+    borderRadius: 6,
+  },
   recentName: {
     fontSize: FONT_SIZE.sm,
-    fontWeight: '500',
+    fontWeight: '600',
     color: COLORS.text,
     marginBottom: SPACING.xs,
+    lineHeight: 18,
   },
   recentRating: {
     paddingHorizontal: SPACING.sm,
-    paddingVertical: 2,
+    paddingVertical: 3,
     borderRadius: BORDER_RADIUS.sm,
     alignSelf: 'flex-start',
   },
   recentRatingText: {
     fontSize: FONT_SIZE.xs,
-    color: COLORS.white,
-    fontWeight: '600',
+    fontWeight: '700',
+  },
+  emptyState: {
+    alignItems: 'center',
+    paddingVertical: SPACING.xl,
+    backgroundColor: COLORS.surface,
+    borderRadius: BORDER_RADIUS.xl,
+    marginTop: SPACING.md,
+    ...SHADOWS.small,
+  },
+  emptyIconContainer: {
+    width: 80,
+    height: 80,
+    borderRadius: 40,
+    backgroundColor: COLORS.primaryLight,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: SPACING.md,
+  },
+  emptyIcon: {
+    fontSize: 40,
+  },
+  emptyTitle: {
+    fontSize: FONT_SIZE.xl,
+    fontWeight: '700',
+    color: COLORS.text,
+    marginBottom: SPACING.sm,
+  },
+  emptyText: {
+    fontSize: FONT_SIZE.md,
+    color: COLORS.textSecondary,
+    textAlign: 'center',
+    marginBottom: SPACING.lg,
+    paddingHorizontal: SPACING.lg,
+    lineHeight: 22,
+  },
+  emptyButtons: {
+    width: '100%',
+    paddingHorizontal: SPACING.xl,
+  },
+  buttonIcon: {
+    fontSize: 18,
   },
 });

@@ -1,6 +1,15 @@
 import { Tabs } from 'expo-router';
-import { Text, StyleSheet } from 'react-native';
-import { COLORS, FONT_SIZE } from '../../src/constants';
+import { View, Text, StyleSheet } from 'react-native';
+import { COLORS, FONT_SIZE, SPACING, BORDER_RADIUS, SHADOWS } from '../../src/constants';
+
+function TabIcon({ icon, label, focused }: { icon: string; label: string; focused: boolean }) {
+  return (
+    <View style={[styles.tabIconContainer, focused && styles.tabIconFocused]}>
+      <Text style={styles.tabIcon}>{icon}</Text>
+      <Text style={[styles.tabLabel, focused && styles.tabLabelFocused]}>{label}</Text>
+    </View>
+  );
+}
 
 export default function TabLayout() {
   return (
@@ -9,21 +18,22 @@ export default function TabLayout() {
         tabBarActiveTintColor: COLORS.primary,
         tabBarInactiveTintColor: COLORS.textSecondary,
         tabBarStyle: {
-          backgroundColor: COLORS.background,
-          borderTopColor: COLORS.border,
-          height: 60,
-          paddingBottom: 8,
-          paddingTop: 8,
+          backgroundColor: COLORS.surface,
+          borderTopWidth: 0,
+          height: 80,
+          paddingBottom: SPACING.sm,
+          paddingTop: SPACING.sm,
+          ...SHADOWS.medium,
         },
         tabBarLabelStyle: {
           fontSize: FONT_SIZE.xs,
-          fontWeight: '500',
+          fontWeight: '600',
         },
         headerStyle: {
           backgroundColor: COLORS.background,
         },
         headerTitleStyle: {
-          fontWeight: '700',
+          fontWeight: '800',
           fontSize: FONT_SIZE.xl,
           color: COLORS.text,
         },
@@ -34,8 +44,8 @@ export default function TabLayout() {
         name="index"
         options={{
           title: 'Home',
-          tabBarIcon: ({ color }) => (
-            <Text style={{ fontSize: 24 }}>🏠</Text>
+          tabBarIcon: ({ focused }) => (
+            <TabIcon icon="🏠" label="Home" focused={focused} />
           ),
           headerTitle: 'NutriScan',
         }}
@@ -44,11 +54,37 @@ export default function TabLayout() {
         name="history"
         options={{
           title: 'History',
-          tabBarIcon: ({ color }) => (
-            <Text style={{ fontSize: 24 }}>📋</Text>
+          tabBarIcon: ({ focused }) => (
+            <TabIcon icon="📋" label="History" focused={focused} />
           ),
         }}
       />
     </Tabs>
   );
 }
+
+const styles = StyleSheet.create({
+  tabIconContainer: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: SPACING.xs,
+    paddingHorizontal: SPACING.md,
+    borderRadius: BORDER_RADIUS.lg,
+  },
+  tabIconFocused: {
+    backgroundColor: COLORS.primaryLight,
+  },
+  tabIcon: {
+    fontSize: 22,
+    marginBottom: 2,
+  },
+  tabLabel: {
+    fontSize: FONT_SIZE.xs,
+    fontWeight: '500',
+    color: COLORS.textSecondary,
+  },
+  tabLabelFocused: {
+    color: COLORS.primary,
+    fontWeight: '700',
+  },
+});

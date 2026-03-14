@@ -1,9 +1,39 @@
+import { Platform } from 'react-native';
 import * as SQLite from 'expo-sqlite';
 import { Product, NutritionFacts } from '../types';
 
 let db: SQLite.SQLiteDatabase | null = null;
 
+const isWeb = Platform.OS === 'web';
+
+const webStorage: Map<string, unknown> = new Map();
+
+async function webExecAsync(sql: string): Promise<void> {
+  await new Promise(resolve => setTimeout(resolve, 10));
+}
+
+async function webRunAsync(sql: string, params: unknown[] = []): Promise<void> {
+  const key = sql.includes('INSERT') ? 'insert' : 'update';
+  webStorage.set(key, { sql, params, timestamp: Date.now() });
+  await new Promise(resolve => setTimeout(resolve, 10));
+}
+
+async function webGetFirstAsync<T>(sql: string, params: unknown[] = []): Promise<T | null> {
+  await new Promise(resolve => setTimeout(resolve, 10));
+  return null;
+}
+
+async function webGetAllAsync<T>(sql: string, params: unknown[] = []): Promise<T[]> {
+  await new Promise(resolve => setTimeout(resolve, 10));
+  return [];
+}
+
 export async function initDatabase(): Promise<void> {
+  if (isWeb) {
+    console.log('[Database] Running in web mode - SQLite not available');
+    return;
+  }
+  
   if (db) return;
   
   db = await SQLite.openDatabaseAsync('nutriscan.db');
@@ -37,6 +67,8 @@ export async function initDatabase(): Promise<void> {
 }
 
 export async function getProductByBarcode(barcode: string): Promise<Product | null> {
+  if (isWeb) return null;
+  
   if (!db) await initDatabase();
   
   const result = await db!.getFirstAsync<{
@@ -78,6 +110,8 @@ export async function getProductByBarcode(barcode: string): Promise<Product | nu
 }
 
 export async function saveProduct(product: Product): Promise<void> {
+  if (isWeb) return;
+  
   if (!db) await initDatabase();
   
   await db!.runAsync(
@@ -107,6 +141,8 @@ export async function saveScanHistory(
   productName: string,
   verdict: string
 ): Promise<void> {
+  if (isWeb) return;
+  
   if (!db) await initDatabase();
   
   await db!.runAsync(
@@ -122,6 +158,8 @@ export async function getScanHistory(limit: number = 50): Promise<Array<{
   verdict: string;
   created_at: string;
 }>> {
+  if (isWeb) return [];
+  
   if (!db) await initDatabase();
   
   return await db!.getAllAsync(
@@ -131,6 +169,8 @@ export async function getScanHistory(limit: number = 50): Promise<Array<{
 }
 
 export async function searchProductsLocal(query: string): Promise<Product[]> {
+  if (isWeb) return [];
+  
   if (!db) await initDatabase();
   
   const results = await db!.getAllAsync<{
@@ -173,6 +213,8 @@ export async function searchProductsLocal(query: string): Promise<Product[]> {
 }
 
 export async function getAllLocalProducts(): Promise<Product[]> {
+  if (isWeb) return [];
+  
   if (!db) await initDatabase();
   
   const results = await db!.getAllAsync<{

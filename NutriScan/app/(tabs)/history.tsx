@@ -65,58 +65,70 @@ export default function HistoryScreen() {
     } else if (diffDays < 7) {
       return `${diffDays} days ago`;
     } else {
-      return date.toLocaleDateString();
+      return date.toLocaleDateString('en-US', { 
+        month: 'short', 
+        day: 'numeric',
+        year: date.getFullYear() !== now.getFullYear() ? 'numeric' : undefined
+      });
     }
   };
 
   const renderItem = ({ item }: { item: ScanHistoryItem }) => {
     const rating = calculateHealthRating(item.product.nutritionFacts);
+    const ratingColor = getRatingColor(rating);
     
     return (
       <TouchableOpacity
-        style={styles.historyItem}
+        style={styles.historyCard}
         onPress={() => handleProductPress(item)}
         onLongPress={() => handleRemoveItem(item.id)}
         accessibilityRole="button"
         accessibilityLabel={`${item.product.name}, scanned ${formatDate(item.scannedAt)}`}
       >
-        <View style={styles.itemImageContainer}>
-          {item.product.imageUrl ? (
-            <Image
-              source={{ uri: item.product.imageUrl }}
-              style={styles.itemImage}
-              resizeMode="cover"
-            />
-          ) : (
-            <View style={styles.itemPlaceholder}>
-              <Text>📦</Text>
-            </View>
-          )}
-        </View>
-        <View style={styles.itemContent}>
-          <Text style={styles.itemName} numberOfLines={2}>
-            {item.product.name}
-          </Text>
-          {item.product.brand && (
-            <Text style={styles.itemBrand} numberOfLines={1}>
-              {item.product.brand}
+        <View style={styles.cardContent}>
+          <View style={styles.imageContainer}>
+            {item.product.imageUrl ? (
+              <Image
+                source={{ uri: item.product.imageUrl }}
+                style={styles.productImage}
+                resizeMode="cover"
+              />
+            ) : (
+              <View style={styles.imagePlaceholder}>
+                <Text style={styles.placeholderEmoji}>📦</Text>
+              </View>
+            )}
+          </View>
+          
+          <View style={styles.infoContainer}>
+            <Text style={styles.productName} numberOfLines={2}>
+              {item.product.name}
             </Text>
-          )}
-          <View style={styles.itemMeta}>
-            <Text style={styles.itemDate}>{formatDate(item.scannedAt)}</Text>
-            <View style={[styles.ratingBadge, { backgroundColor: getRatingColor(rating) }]}>
-              <Text style={styles.ratingText}>{getRatingLabel(rating)}</Text>
+            {item.product.brand && (
+              <Text style={styles.productBrand} numberOfLines={1}>
+                {item.product.brand}
+              </Text>
+            )}
+            <View style={styles.metaRow}>
+              <Text style={styles.dateText}>{formatDate(item.scannedAt)}</Text>
+              <View style={[styles.ratingBadge, { backgroundColor: ratingColor + '20' }]}>
+                <View style={[styles.ratingDot, { backgroundColor: ratingColor }]} />
+                <Text style={[styles.ratingText, { color: ratingColor }]}>
+                  {getRatingLabel(rating)}
+                </Text>
+              </View>
             </View>
           </View>
+          
+          <TouchableOpacity
+            style={styles.moreButton}
+            onPress={() => handleRemoveItem(item.id)}
+            accessibilityRole="button"
+            accessibilityLabel="Delete item"
+          >
+            <Text style={styles.moreIcon}>•••</Text>
+          </TouchableOpacity>
         </View>
-        <TouchableOpacity
-          style={styles.deleteButton}
-          onPress={() => handleRemoveItem(item.id)}
-          accessibilityRole="button"
-          accessibilityLabel="Delete item"
-        >
-          <Text style={styles.deleteIcon}>✕</Text>
-        </TouchableOpacity>
       </TouchableOpacity>
     );
   };
@@ -125,9 +137,11 @@ export default function HistoryScreen() {
     <View style={styles.container}>
       {state.scanHistory.length > 0 && (
         <View style={styles.header}>
-          <Text style={styles.headerText}>
-            {state.scanHistory.length} item{state.scanHistory.length !== 1 ? 's' : ''} in history
-          </Text>
+          <View style={styles.headerLeft}>
+            <Text style={styles.headerTitle}>
+              {state.scanHistory.length} {state.scanHistory.length === 1 ? 'Item' : 'Items'}
+            </Text>
+          </View>
           <TouchableOpacity
             onPress={handleClearHistory}
             accessibilityRole="button"
@@ -143,13 +157,22 @@ export default function HistoryScreen() {
         renderItem={renderItem}
         keyExtractor={(item) => item.id}
         contentContainerStyle={styles.listContent}
+        showsVerticalScrollIndicator={false}
         ListEmptyComponent={
           <View style={styles.emptyState}>
-            <Text style={styles.emptyIcon}>📋</Text>
-            <Text style={styles.emptyText}>No scan history</Text>
-            <Text style={styles.emptySubtext}>
-              Products you scan will appear here
+            <View style={styles.emptyIconContainer}>
+              <Text style={styles.emptyIcon}>📋</Text>
+            </View>
+            <Text style={styles.emptyTitle}>No Scan History</Text>
+            <Text style={styles.emptyText}>
+              Products you scan will appear here for easy access
             </Text>
+            <TouchableOpacity 
+              style={styles.scanButton}
+              onPress={() => router.push('/scanner')}
+            >
+              <Text style={styles.scanButtonText}>Scan Now</Text>
+            </TouchableOpacity>
           </View>
         }
       />
@@ -166,110 +189,154 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    padding: SPACING.md,
+    padding: SPACING.lg,
     backgroundColor: COLORS.surface,
     borderBottomWidth: 1,
     borderBottomColor: COLORS.border,
   },
-  headerText: {
-    fontSize: FONT_SIZE.sm,
+  headerLeft: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: SPACING.sm,
+  },
+  headerTitle: {
+    fontSize: FONT_SIZE.md,
     color: COLORS.textSecondary,
+    fontWeight: '600',
   },
   clearButton: {
-    fontSize: FONT_SIZE.sm,
+    fontSize: FONT_SIZE.md,
     color: COLORS.error,
     fontWeight: '600',
   },
   listContent: {
     padding: SPACING.md,
+    paddingBottom: SPACING.xxl,
   },
-  historyItem: {
-    flexDirection: 'row',
-    backgroundColor: COLORS.white,
-    borderRadius: BORDER_RADIUS.md,
-    padding: SPACING.md,
+  historyCard: {
+    backgroundColor: COLORS.surface,
+    borderRadius: BORDER_RADIUS.xl,
     marginBottom: SPACING.md,
     ...SHADOWS.small,
-  },
-  itemImageContainer: {
-    width: 70,
-    height: 70,
-    borderRadius: BORDER_RADIUS.sm,
     overflow: 'hidden',
   },
-  itemImage: {
+  cardContent: {
+    flexDirection: 'row',
+    padding: SPACING.md,
+    alignItems: 'center',
+  },
+  imageContainer: {
+    width: 72,
+    height: 72,
+    borderRadius: BORDER_RADIUS.lg,
+    overflow: 'hidden',
+    backgroundColor: COLORS.surfaceAlt,
+  },
+  productImage: {
     width: '100%',
     height: '100%',
   },
-  itemPlaceholder: {
+  imagePlaceholder: {
     width: '100%',
     height: '100%',
-    backgroundColor: COLORS.surfaceAlt,
     justifyContent: 'center',
     alignItems: 'center',
   },
-  itemContent: {
+  placeholderEmoji: {
+    fontSize: 28,
+  },
+  infoContainer: {
     flex: 1,
     marginLeft: SPACING.md,
-    justifyContent: 'center',
   },
-  itemName: {
+  productName: {
     fontSize: FONT_SIZE.md,
-    fontWeight: '600',
+    fontWeight: '700',
     color: COLORS.text,
     marginBottom: 2,
+    lineHeight: 20,
   },
-  itemBrand: {
+  productBrand: {
     fontSize: FONT_SIZE.sm,
     color: COLORS.textSecondary,
     marginBottom: SPACING.xs,
   },
-  itemMeta: {
+  metaRow: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: SPACING.sm,
   },
-  itemDate: {
+  dateText: {
     fontSize: FONT_SIZE.xs,
     color: COLORS.textLight,
   },
   ratingBadge: {
+    flexDirection: 'row',
+    alignItems: 'center',
     paddingHorizontal: SPACING.sm,
-    paddingVertical: 2,
+    paddingVertical: 3,
     borderRadius: BORDER_RADIUS.sm,
+    gap: 4,
+  },
+  ratingDot: {
+    width: 6,
+    height: 6,
+    borderRadius: 3,
   },
   ratingText: {
     fontSize: FONT_SIZE.xs,
-    color: COLORS.white,
     fontWeight: '600',
   },
-  deleteButton: {
-    padding: SPACING.xs,
-    alignSelf: 'flex-start',
+  moreButton: {
+    padding: SPACING.sm,
+    marginLeft: SPACING.xs,
   },
-  deleteIcon: {
-    fontSize: FONT_SIZE.md,
+  moreIcon: {
+    fontSize: FONT_SIZE.lg,
     color: COLORS.textLight,
+    letterSpacing: -2,
   },
   emptyState: {
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
     paddingVertical: SPACING.xxl * 2,
+    paddingHorizontal: SPACING.xl,
   },
-  emptyIcon: {
-    fontSize: 64,
+  emptyIconContainer: {
+    width: 80,
+    height: 80,
+    borderRadius: 40,
+    backgroundColor: COLORS.surfaceAlt,
+    justifyContent: 'center',
+    alignItems: 'center',
     marginBottom: SPACING.md,
   },
-  emptyText: {
-    fontSize: FONT_SIZE.lg,
-    fontWeight: '600',
-    color: COLORS.text,
-    marginBottom: SPACING.xs,
+  emptyIcon: {
+    fontSize: 40,
   },
-  emptySubtext: {
-    fontSize: FONT_SIZE.sm,
+  emptyTitle: {
+    fontSize: FONT_SIZE.xl,
+    fontWeight: '700',
+    color: COLORS.text,
+    marginBottom: SPACING.sm,
+  },
+  emptyText: {
+    fontSize: FONT_SIZE.md,
     color: COLORS.textSecondary,
     textAlign: 'center',
+    marginBottom: SPACING.lg,
+    lineHeight: 22,
+  },
+  scanButton: {
+    backgroundColor: COLORS.primary,
+    paddingVertical: SPACING.md,
+    paddingHorizontal: SPACING.xl,
+    borderRadius: BORDER_RADIUS.lg,
+  },
+  scanButtonText: {
+    fontSize: FONT_SIZE.md,
+    fontWeight: '700',
+    color: COLORS.white,
   },
 });

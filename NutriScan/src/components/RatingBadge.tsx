@@ -1,16 +1,17 @@
 import React from 'react';
 import { View, Text, StyleSheet, ViewStyle } from 'react-native';
-import { COLORS, SPACING, FONT_SIZE, BORDER_RADIUS } from '../constants';
+import { COLORS, SPACING, FONT_SIZE, BORDER_RADIUS, SHADOWS } from '../constants';
 import { HealthRating } from '../types';
 import { getRatingColor, getRatingLabel } from '../utils';
 
 interface RatingBadgeProps {
   rating: HealthRating;
-  size?: 'small' | 'medium' | 'large';
+  size?: 'small' | 'medium' | 'large' | 'xlarge';
   style?: ViewStyle;
+  showIcon?: boolean;
 }
 
-export function RatingBadge({ rating, size = 'medium', style }: RatingBadgeProps) {
+export function RatingBadge({ rating, size = 'medium', style, showIcon = true }: RatingBadgeProps) {
   const sizeStyles = {
     small: {
       paddingHorizontal: SPACING.sm,
@@ -25,15 +26,28 @@ export function RatingBadge({ rating, size = 'medium', style }: RatingBadgeProps
     large: {
       paddingHorizontal: SPACING.lg,
       paddingVertical: SPACING.md,
-      fontSize: FONT_SIZE.md,
+      fontSize: FONT_SIZE.lg,
+    },
+    xlarge: {
+      paddingHorizontal: SPACING.xl,
+      paddingVertical: SPACING.lg,
+      fontSize: FONT_SIZE.xxl,
     },
   };
+
+  const icons = {
+    healthy: '✓',
+    moderate: '⚠',
+    avoid: '✕',
+  };
+
+  const color = getRatingColor(rating);
 
   return (
     <View
       style={[
         styles.badge,
-        { backgroundColor: getRatingColor(rating) },
+        { backgroundColor: color },
         {
           paddingHorizontal: sizeStyles[size].paddingHorizontal,
           paddingVertical: sizeStyles[size].paddingVertical,
@@ -43,6 +57,11 @@ export function RatingBadge({ rating, size = 'medium', style }: RatingBadgeProps
       accessibilityRole="text"
       accessibilityLabel={`Health rating: ${getRatingLabel(rating)}`}
     >
+      {showIcon && size !== 'small' && (
+        <Text style={[styles.icon, { fontSize: sizeStyles[size].fontSize + 4 }]}>
+          {icons[rating]}
+        </Text>
+      )}
       <Text style={[styles.text, { fontSize: sizeStyles[size].fontSize }]}>
         {getRatingLabel(rating)}
       </Text>
@@ -52,8 +71,16 @@ export function RatingBadge({ rating, size = 'medium', style }: RatingBadgeProps
 
 const styles = StyleSheet.create({
   badge: {
-    borderRadius: BORDER_RADIUS.sm,
+    borderRadius: BORDER_RADIUS.lg,
     alignSelf: 'flex-start',
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: SPACING.xs,
+    ...SHADOWS.small,
+  },
+  icon: {
+    color: COLORS.white,
+    fontWeight: '700',
   },
   text: {
     color: COLORS.white,

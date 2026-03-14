@@ -7,10 +7,10 @@ import {
   ActivityIndicator,
   TouchableOpacity,
   Image,
+  TextInput,
 } from 'react-native';
 import { useRouter } from 'expo-router';
 import { COLORS, SPACING, FONT_SIZE, BORDER_RADIUS, SHADOWS } from '../src/constants';
-import { SearchBar } from '../src/components';
 import { searchProducts, ProductNotFoundError } from '../src/services/foodApi';
 import { Product } from '../src/types';
 import { calculateHealthRating, getRatingLabel, getRatingColor } from '../src/utils';
@@ -78,52 +78,60 @@ export default function SearchScreen() {
 
   const renderItem = ({ item }: { item: Product }) => {
     const rating = calculateHealthRating(item.nutritionFacts);
+    const ratingColor = getRatingColor(rating);
     
     return (
       <TouchableOpacity
-        style={styles.resultItem}
+        style={styles.resultCard}
         onPress={() => handleProductPress(item)}
         accessibilityRole="button"
         accessibilityLabel={`${item.name}, ${getRatingLabel(rating)} rating`}
       >
-        <View style={styles.itemImageContainer}>
-          {item.imageUrl ? (
-            <Image
-              source={{ uri: item.imageUrl }}
-              style={styles.itemImage}
-              resizeMode="cover"
-            />
-          ) : (
-            <View style={styles.itemPlaceholder}>
-              <Text>📦</Text>
+        <View style={styles.cardContent}>
+          <View style={styles.imageContainer}>
+            {item.imageUrl ? (
+              <Image
+                source={{ uri: item.imageUrl }}
+                style={styles.productImage}
+                resizeMode="cover"
+              />
+            ) : (
+              <View style={styles.imagePlaceholder}>
+                <Text style={styles.placeholderEmoji}>📦</Text>
+              </View>
+            )}
+          </View>
+          
+          <View style={styles.infoContainer}>
+            <Text style={styles.productName} numberOfLines={2}>
+              {item.name}
+            </Text>
+            {item.brand && (
+              <Text style={styles.productBrand} numberOfLines={1}>
+                {item.brand}
+              </Text>
+            )}
+            <View style={styles.nutritionRow}>
+              <Text style={styles.nutritionText}>
+                {item.nutritionFacts.calories.toFixed(0)} kcal
+              </Text>
+              <Text style={styles.nutritionDot}>•</Text>
+              <Text style={styles.nutritionText}>
+                P: {item.nutritionFacts.protein.toFixed(1)}g
+              </Text>
+              <Text style={styles.nutritionDot}>•</Text>
+              <Text style={styles.nutritionText}>
+                C: {item.nutritionFacts.carbohydrates.toFixed(1)}g
+              </Text>
             </View>
-          )}
-        </View>
-        <View style={styles.itemContent}>
-          <Text style={styles.itemName} numberOfLines={2}>
-            {item.name}
-          </Text>
-          {item.brand && (
-            <Text style={styles.itemBrand} numberOfLines={1}>
-              {item.brand}
-            </Text>
-          )}
-          <View style={styles.itemNutrition}>
-            <Text style={styles.nutritionText}>
-              {item.nutritionFacts.calories.toFixed(0)} kcal
-            </Text>
-            <Text style={styles.nutritionDot}>•</Text>
-            <Text style={styles.nutritionText}>
-              P: {item.nutritionFacts.protein.toFixed(1)}g
-            </Text>
-            <Text style={styles.nutritionDot}>•</Text>
-            <Text style={styles.nutritionText}>
-              C: {item.nutritionFacts.carbohydrates.toFixed(1)}g
+          </View>
+          
+          <View style={[styles.ratingBadge, { backgroundColor: ratingColor + '20' }]}>
+            <View style={[styles.ratingDot, { backgroundColor: ratingColor }]} />
+            <Text style={[styles.ratingText, { color: ratingColor }]}>
+              {getRatingLabel(rating)}
             </Text>
           </View>
-        </View>
-        <View style={[styles.ratingBadge, { backgroundColor: getRatingColor(rating) }]}>
-          <Text style={styles.ratingText}>{getRatingLabel(rating)}</Text>
         </View>
       </TouchableOpacity>
     );
@@ -132,13 +140,24 @@ export default function SearchScreen() {
   return (
     <View style={styles.container}>
       <View style={styles.searchContainer}>
-        <SearchBar
-          value={query}
-          onChangeText={handleQueryChange}
-          onSubmit={() => handleSearch(query)}
-          placeholder="Search for food products..."
-          autoFocus
-        />
+        <View style={styles.searchInputContainer}>
+          <Text style={styles.searchIcon}>🔍</Text>
+          <TextInput
+            style={styles.searchInput}
+            value={query}
+            onChangeText={handleQueryChange}
+            onSubmitEditing={() => handleSearch(query)}
+            placeholder="Search for food products..."
+            placeholderTextColor={COLORS.textLight}
+            returnKeyType="search"
+            autoFocus
+          />
+          {query.length > 0 && (
+            <TouchableOpacity onPress={() => setQuery('')}>
+              <Text style={styles.clearIcon}>✕</Text>
+            </TouchableOpacity>
+          )}
+        </View>
       </View>
 
       {loading ? (
@@ -147,23 +166,29 @@ export default function SearchScreen() {
           <Text style={styles.loadingText}>Searching...</Text>
         </View>
       ) : error ? (
-        <View style={styles.errorContainer}>
-          <Text style={styles.errorIcon}>⚠️</Text>
-          <Text style={styles.errorText}>{error}</Text>
+        <View style={styles.stateContainer}>
+          <View style={styles.stateIconContainer}>
+            <Text style={styles.stateIcon}>⚠️</Text>
+          </View>
+          <Text style={styles.stateTitle}>{error}</Text>
         </View>
       ) : hasSearched && results.length === 0 ? (
-        <View style={styles.emptyState}>
-          <Text style={styles.emptyIcon}>🔍</Text>
-          <Text style={styles.emptyText}>No results found</Text>
-          <Text style={styles.emptySubtext}>
+        <View style={styles.stateContainer}>
+          <View style={styles.stateIconContainer}>
+            <Text style={styles.stateIcon}>🔍</Text>
+          </View>
+          <Text style={styles.stateTitle}>No results found</Text>
+          <Text style={styles.stateSubtext}>
             Try searching with different keywords
           </Text>
         </View>
       ) : !hasSearched ? (
-        <View style={styles.emptyState}>
-          <Text style={styles.emptyIcon}>🍎</Text>
-          <Text style={styles.emptyText}>Search for food</Text>
-          <Text style={styles.emptySubtext}>
+        <View style={styles.stateContainer}>
+          <View style={styles.stateIconContainer}>
+            <Text style={styles.stateIcon}>🍎</Text>
+          </View>
+          <Text style={styles.stateTitle}>Search for food</Text>
+          <Text style={styles.stateSubtext}>
             Find nutritional information for thousands of products
           </Text>
         </View>
@@ -187,7 +212,32 @@ const styles = StyleSheet.create({
   },
   searchContainer: {
     padding: SPACING.md,
-    backgroundColor: COLORS.background,
+    backgroundColor: COLORS.surface,
+    borderBottomWidth: 1,
+    borderBottomColor: COLORS.border,
+  },
+  searchInputContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: COLORS.surfaceAlt,
+    borderRadius: BORDER_RADIUS.lg,
+    paddingHorizontal: SPACING.md,
+    paddingVertical: SPACING.sm,
+  },
+  searchIcon: {
+    fontSize: 18,
+    marginRight: SPACING.sm,
+  },
+  searchInput: {
+    flex: 1,
+    fontSize: FONT_SIZE.md,
+    color: COLORS.text,
+    paddingVertical: SPACING.xs,
+  },
+  clearIcon: {
+    fontSize: 16,
+    color: COLORS.textLight,
+    padding: SPACING.xs,
   },
   loadingContainer: {
     flex: 1,
@@ -201,50 +251,57 @@ const styles = StyleSheet.create({
   },
   listContent: {
     padding: SPACING.md,
-    paddingTop: 0,
+    paddingBottom: SPACING.xxl,
   },
-  resultItem: {
-    flexDirection: 'row',
-    backgroundColor: COLORS.white,
-    borderRadius: BORDER_RADIUS.md,
-    padding: SPACING.md,
+  resultCard: {
+    backgroundColor: COLORS.surface,
+    borderRadius: BORDER_RADIUS.xl,
     marginBottom: SPACING.md,
     ...SHADOWS.small,
-  },
-  itemImageContainer: {
-    width: 70,
-    height: 70,
-    borderRadius: BORDER_RADIUS.sm,
     overflow: 'hidden',
   },
-  itemImage: {
+  cardContent: {
+    flexDirection: 'row',
+    padding: SPACING.md,
+    alignItems: 'center',
+  },
+  imageContainer: {
+    width: 72,
+    height: 72,
+    borderRadius: BORDER_RADIUS.lg,
+    overflow: 'hidden',
+    backgroundColor: COLORS.surfaceAlt,
+  },
+  productImage: {
     width: '100%',
     height: '100%',
   },
-  itemPlaceholder: {
+  imagePlaceholder: {
     width: '100%',
     height: '100%',
-    backgroundColor: COLORS.surfaceAlt,
     justifyContent: 'center',
     alignItems: 'center',
   },
-  itemContent: {
+  placeholderEmoji: {
+    fontSize: 28,
+  },
+  infoContainer: {
     flex: 1,
     marginLeft: SPACING.md,
-    justifyContent: 'center',
   },
-  itemName: {
+  productName: {
     fontSize: FONT_SIZE.md,
-    fontWeight: '600',
+    fontWeight: '700',
     color: COLORS.text,
     marginBottom: 2,
+    lineHeight: 20,
   },
-  itemBrand: {
+  productBrand: {
     fontSize: FONT_SIZE.sm,
     color: COLORS.textSecondary,
     marginBottom: SPACING.xs,
   },
-  itemNutrition: {
+  nutritionRow: {
     flexDirection: 'row',
     alignItems: 'center',
   },
@@ -258,50 +315,51 @@ const styles = StyleSheet.create({
     marginHorizontal: 4,
   },
   ratingBadge: {
+    flexDirection: 'row',
+    alignItems: 'center',
     paddingHorizontal: SPACING.sm,
-    paddingVertical: SPACING.xs,
+    paddingVertical: 4,
     borderRadius: BORDER_RADIUS.sm,
-    alignSelf: 'center',
+    gap: 4,
+  },
+  ratingDot: {
+    width: 6,
+    height: 6,
+    borderRadius: 3,
   },
   ratingText: {
     fontSize: FONT_SIZE.xs,
-    color: COLORS.white,
     fontWeight: '600',
   },
-  emptyState: {
+  stateContainer: {
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
     paddingHorizontal: SPACING.xl,
   },
-  emptyIcon: {
-    fontSize: 64,
+  stateIconContainer: {
+    width: 80,
+    height: 80,
+    borderRadius: 40,
+    backgroundColor: COLORS.surfaceAlt,
+    justifyContent: 'center',
+    alignItems: 'center',
     marginBottom: SPACING.md,
   },
-  emptyText: {
+  stateIcon: {
+    fontSize: 40,
+  },
+  stateTitle: {
     fontSize: FONT_SIZE.lg,
-    fontWeight: '600',
+    fontWeight: '700',
     color: COLORS.text,
     marginBottom: SPACING.xs,
+    textAlign: 'center',
   },
-  emptySubtext: {
-    fontSize: FONT_SIZE.sm,
+  stateSubtext: {
+    fontSize: FONT_SIZE.md,
     color: COLORS.textSecondary,
     textAlign: 'center',
-  },
-  errorContainer: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-    paddingHorizontal: SPACING.xl,
-  },
-  errorIcon: {
-    fontSize: 64,
-    marginBottom: SPACING.md,
-  },
-  errorText: {
-    fontSize: FONT_SIZE.md,
-    color: COLORS.error,
-    textAlign: 'center',
+    lineHeight: 22,
   },
 });
