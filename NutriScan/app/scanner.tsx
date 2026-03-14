@@ -57,6 +57,8 @@ export default function ScannerScreen() {
   const [manualForm, setManualForm] = useState<ManualProductForm>(initialFormState);
   const [lastScannedBarcode, setLastScannedBarcode] = useState('');
   const scanLineAnim = useRef(new Animated.Value(0)).current;
+  const lastScanTime = useRef(0);
+  const SCAN_DEBOUNCE_MS = 2000;
 
   useEffect(() => {
     let animation: Animated.CompositeAnimation;
@@ -89,12 +91,19 @@ export default function ScannerScreen() {
       setScanned(false);
       setLoading(false);
       setLastScannedBarcode('');
+      lastScanTime.current = 0;
       console.log('[Scanner] Screen focused, ready to scan');
     }, [])
   );
 
   const handleBarCodeScanned = async (result: BarcodeScanningResult) => {
     if (scanned || loading) return;
+    
+    const now = Date.now();
+    if (now - lastScanTime.current < SCAN_DEBOUNCE_MS) {
+      console.log('[Scanner] Debouncing - scan too soon after last scan');
+      return;
+    }
     
     const barcode = result.data;
     console.log('[Scanner] Barcode detected:', barcode);
@@ -103,6 +112,8 @@ export default function ScannerScreen() {
       console.log('[Scanner] Same barcode already scanned, ignoring');
       return;
     }
+    
+    lastScanTime.current = now;
     
     setScanned(true);
     setLoading(true);
@@ -306,6 +317,8 @@ export default function ScannerScreen() {
         style={styles.camera}
         facing="back"
         enableTorch={flashOn}
+        focusMode="auto"
+        preset="high"
         barcodeScannerSettings={{
           barcodeTypes: [
             'ean13',
@@ -313,11 +326,6 @@ export default function ScannerScreen() {
             'upc_a',
             'upc_e',
             'code128',
-            'code39',
-            'code93',
-            'itf14',
-            'codabar',
-            'qr',
           ],
         }}
         onBarcodeScanned={scanned ? undefined : handleBarCodeScanned}
@@ -358,7 +366,7 @@ export default function ScannerScreen() {
               )}
             </View>
             <Text style={styles.instructionText}>
-              {loading ? 'Searching...' : 'Point camera at barcode'}
+              {loading ? 'Searching...' : 'Align barcode inside the frame'}
             </Text>
           </View>
 

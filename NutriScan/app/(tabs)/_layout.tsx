@@ -2,11 +2,10 @@ import { Tabs } from 'expo-router';
 import { View, Text, StyleSheet } from 'react-native';
 import { COLORS, FONT_SIZE, SPACING, BORDER_RADIUS, SHADOWS } from '../../src/constants';
 
-function TabIcon({ icon, label, focused }: { icon: string; label: string; focused: boolean }) {
+function TabIcon({ icon, focused }: { icon: string; focused: boolean }) {
   return (
     <View style={[styles.tabIconContainer, focused && styles.tabIconFocused]}>
       <Text style={styles.tabIcon}>{icon}</Text>
-      <Text style={[styles.tabLabel, focused && styles.tabLabelFocused]}>{label}</Text>
     </View>
   );
 }
@@ -45,7 +44,7 @@ export default function TabLayout() {
         options={{
           title: 'Home',
           tabBarIcon: ({ focused }) => (
-            <TabIcon icon="🏠" label="Home" focused={focused} />
+            <TabIcon icon="🏠" focused={focused} />
           ),
           headerTitle: 'NutriScan',
         }}
@@ -55,7 +54,7 @@ export default function TabLayout() {
         options={{
           title: 'History',
           tabBarIcon: ({ focused }) => (
-            <TabIcon icon="📋" label="History" focused={focused} />
+            <TabIcon icon="📋" focused={focused} />
           ),
         }}
       />
@@ -76,15 +75,5 @@ const styles = StyleSheet.create({
   },
   tabIcon: {
     fontSize: 22,
-    marginBottom: 2,
-  },
-  tabLabel: {
-    fontSize: FONT_SIZE.xs,
-    fontWeight: '500',
-    color: COLORS.textSecondary,
-  },
-  tabLabelFocused: {
-    color: COLORS.primary,
-    fontWeight: '700',
   },
 });

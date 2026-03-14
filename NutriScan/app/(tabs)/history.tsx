@@ -78,58 +78,60 @@ export default function HistoryScreen() {
     const ratingColor = getRatingColor(rating);
     
     return (
-      <TouchableOpacity
-        style={styles.historyCard}
-        onPress={() => handleProductPress(item)}
-        onLongPress={() => handleRemoveItem(item.id)}
-        accessibilityRole="button"
-        accessibilityLabel={`${item.product.name}, scanned ${formatDate(item.scannedAt)}`}
-      >
-        <View style={styles.cardContent}>
-          <View style={styles.imageContainer}>
-            {item.product.imageUrl ? (
-              <Image
-                source={{ uri: item.product.imageUrl }}
-                style={styles.productImage}
-                resizeMode="cover"
-              />
-            ) : (
-              <View style={styles.imagePlaceholder}>
-                <Text style={styles.placeholderEmoji}>📦</Text>
-              </View>
-            )}
-          </View>
-          
-          <View style={styles.infoContainer}>
-            <Text style={styles.productName} numberOfLines={2}>
-              {item.product.name}
-            </Text>
-            {item.product.brand && (
-              <Text style={styles.productBrand} numberOfLines={1}>
-                {item.product.brand}
+      <View style={styles.historyCard}>
+        <TouchableOpacity
+          style={styles.cardTouchable}
+          onPress={() => handleProductPress(item)}
+          onLongPress={() => handleRemoveItem(item.id)}
+          accessibilityRole="button"
+          accessibilityLabel={`${item.product.name}, scanned ${formatDate(item.scannedAt)}`}
+        >
+          <View style={styles.cardContent}>
+            <View style={styles.imageContainer}>
+              {item.product.imageUrl ? (
+                <Image
+                  source={{ uri: item.product.imageUrl }}
+                  style={styles.productImage}
+                  resizeMode="cover"
+                />
+              ) : (
+                <View style={styles.imagePlaceholder}>
+                  <Text style={styles.placeholderEmoji}>📦</Text>
+                </View>
+              )}
+            </View>
+            
+            <View style={styles.infoContainer}>
+              <Text style={styles.productName} numberOfLines={2}>
+                {item.product.name}
               </Text>
-            )}
-            <View style={styles.metaRow}>
-              <Text style={styles.dateText}>{formatDate(item.scannedAt)}</Text>
-              <View style={[styles.ratingBadge, { backgroundColor: ratingColor + '20' }]}>
-                <View style={[styles.ratingDot, { backgroundColor: ratingColor }]} />
-                <Text style={[styles.ratingText, { color: ratingColor }]}>
-                  {getRatingLabel(rating)}
+              {item.product.brand && (
+                <Text style={styles.productBrand} numberOfLines={1}>
+                  {item.product.brand}
                 </Text>
+              )}
+              <View style={styles.metaRow}>
+                <Text style={styles.dateText}>{formatDate(item.scannedAt)}</Text>
+                <View style={[styles.ratingBadge, { backgroundColor: ratingColor + '20' }]}>
+                  <View style={[styles.ratingDot, { backgroundColor: ratingColor }]} />
+                  <Text style={[styles.ratingText, { color: ratingColor }]}>
+                    {getRatingLabel(rating)}
+                  </Text>
+                </View>
               </View>
             </View>
           </View>
-          
-          <TouchableOpacity
-            style={styles.moreButton}
-            onPress={() => handleRemoveItem(item.id)}
-            accessibilityRole="button"
-            accessibilityLabel="Delete item"
-          >
-            <Text style={styles.moreIcon}>•••</Text>
-          </TouchableOpacity>
-        </View>
-      </TouchableOpacity>
+        </TouchableOpacity>
+        
+        <TouchableOpacity
+          style={styles.moreButton}
+          onPress={() => handleRemoveItem(item.id)}
+          accessibilityRole="button"
+          accessibilityLabel="Delete item"
+        >
+          <Text style={styles.moreIcon}>•••</Text>
+        </TouchableOpacity>
+      </View>
     );
   };
 
@@ -219,6 +221,11 @@ const styles = StyleSheet.create({
     marginBottom: SPACING.md,
     ...SHADOWS.small,
     overflow: 'hidden',
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  cardTouchable: {
+    flex: 1,
   },
   cardContent: {
     flexDirection: 'row',
