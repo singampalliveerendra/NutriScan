@@ -1,0 +1,45 @@
+hi code
+
+---
+
+Review the existing NutriScan React Native Expo project and fix two issues without creating a new project.
+
+Issue 1: Duplicate navigation labels
+The bottom navigation bar shows labels twice (for example "Home Home" and "History History").
+Investigate the navigation setup (expo-router tabs layout) and fix the configuration so that each tab displays the icon and label only once.
+
+Check:
+
+* app/(tabs)/_layout.tsx
+* Tab.Screen options
+* tabBarLabel and title settings
+  Ensure the bottom tab shows:
+  Home icon + "Home"
+  History icon + "History"
+  with no duplicated text.
+
+Issue 2: Barcode camera not focusing
+The scanner detects the camera but struggles to focus on barcodes.
+
+Improve the barcode scanning experience by:
+
+* Using expo-camera or expo-barcode-scanner properly
+* Enabling autofocus
+* Setting focus depth and camera settings for barcode detection
+* Adding a visible scan frame overlay
+* Ensuring the scanner stops scanning after a barcode is detected
+
+Example improvements:
+
+* autofocus enabled
+* barcodeTypes set to common types (EAN13, UPC, CODE128)
+* debounce scanning so multiple scans don't trigger repeatedly
+
+Also improve UX:
+
+* Show instruction text: "Align barcode inside the frame"
+* Provide vibration feedback when a barcode is detected
+* Show loading indicator while fetching product info
+
+Goal:
+Fix duplicate navigation labels and make the barcode scanner focus and detect codes reliably while keeping the existing project structure unchanged.
