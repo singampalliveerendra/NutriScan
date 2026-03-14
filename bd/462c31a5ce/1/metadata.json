@@ -1,0 +1,37 @@
+{
+  "cli_version": "0.5.0",
+  "checkpoint_id": "bd462c31a5ce",
+  "session_id": "ses_313277c76ffePJyzucmSqMtJYH",
+  "strategy": "manual-commit",
+  "created_at": "2026-03-14T15:37:04.180825985Z",
+  "branch": "main",
+  "checkpoints_count": 1,
+  "files_touched": [
+    "NutriScan/app/product/[id].tsx",
+    "NutriScan/app/scanner.tsx",
+    "NutriScan/metro.config.js",
+    "NutriScan/src/services/databaseService.ts"
+  ],
+  "agent": "OpenCode",
+  "model": "big-pickle",
+  "turn_id": "4a3ad3863724",
+  "token_usage": {
+    "input_tokens": 32889,
+    "cache_creation_tokens": 55619,
+    "cache_read_tokens": 1339301,
+    "output_tokens": 7515,
+    "api_call_count": 37
+  },
+  "session_metrics": {
+    "turn_count": 2
+  },
+  "initial_attribution": {
+    "calculated_at": "2026-03-14T15:37:03.847977836Z",
+    "agent_lines": 450,
+    "human_added": 859,
+    "human_modified": 0,
+    "human_removed": 0,
+    "total_committed": 1309,
+    "agent_percentage": 34.37738731856379
+  }
+}

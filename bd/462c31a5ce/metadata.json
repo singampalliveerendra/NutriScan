@@ -3,7 +3,7 @@
   "checkpoint_id": "bd462c31a5ce",
   "strategy": "manual-commit",
   "branch": "main",
-  "checkpoints_count": 2,
+  "checkpoints_count": 3,
   "files_touched": [
     "NutriScan/app/(tabs)/_layout.tsx",
     "NutriScan/app/(tabs)/history.tsx",
@@ -11,6 +11,7 @@
     "NutriScan/app/product/[id].tsx",
     "NutriScan/app/scanner.tsx",
     "NutriScan/app/search.tsx",
+    "NutriScan/metro.config.js",
     "NutriScan/src/components/Button.tsx",
     "NutriScan/src/components/NutritionCard.tsx",
     "NutriScan/src/components/RatingBadge.tsx",
@@ -25,13 +26,19 @@
       "transcript": "/bd/462c31a5ce/0/full.jsonl",
       "content_hash": "/bd/462c31a5ce/0/content_hash.txt",
       "prompt": "/bd/462c31a5ce/0/prompt.txt"
+    },
+    {
+      "metadata": "/bd/462c31a5ce/1/metadata.json",
+      "transcript": "/bd/462c31a5ce/1/full.jsonl",
+      "content_hash": "/bd/462c31a5ce/1/content_hash.txt",
+      "prompt": "/bd/462c31a5ce/1/prompt.txt"
     }
   ],
   "token_usage": {
-    "input_tokens": 32300,
-    "cache_creation_tokens": 95566,
-    "cache_read_tokens": 1650265,
-    "output_tokens": 26973,
-    "api_call_count": 38
+    "input_tokens": 65189,
+    "cache_creation_tokens": 151185,
+    "cache_read_tokens": 2989566,
+    "output_tokens": 34488,
+    "api_call_count": 75
   }
 }
