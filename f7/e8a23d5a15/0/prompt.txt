@@ -1,0 +1,77 @@
+how to open this nutriscan app in my friends phone
+
+---
+
+how to open this nutriscan app in my friends phone
+
+---
+
+opt 3
+
+---
+
+opt 3
+
+---
+
+veerendra@DESKTOP-A42QL39:~/food/NutriScan$ npx eas login
+npm error could not determine executable to run
+npm error A complete log of this run can be found in: /home/veerendra/.npm/_logs/2026-03-30T16_33_03_029Z-debug-0.log
+veerendra@DESKTOP-A42QL39:~/food/NutriScan$ ls
+
+---
+
+veerendra@DESKTOP-A42QL39:~/food/NutriScan$ npx eas login
+npm error could not determine executable to run
+npm error A complete log of this run can be found in: /home/veerendra/.npm/_logs/2026-03-30T16_33_03_029Z-debug-0.log
+veerendra@DESKTOP-A42QL39:~/food/NutriScan$ ls
+
+---
+
+Error: account:login command failed.
+veerendra@DESKTOP-A42QL39:~/food/NutriScan$ npx eas login
+Log in to EAS with email or username (exit and run eas login --help to see other login options)
+✔ Email or username … singampalliveerendra5@gmail.com
+✔ Password … *********
+User doesn't exist in database.
+    Error: account:login command failed.
+veerendra@DESKTOP-A42QL39:~/food/NutriScan$
+
+---
+
+Error: account:login command failed.
+veerendra@DESKTOP-A42QL39:~/food/NutriScan$ npx eas login
+Log in to EAS with email or username (exit and run eas login --help to see other login options)
+✔ Email or username … singampalliveerendra5@gmail.com
+✔ Password … *********
+User doesn't exist in database.
+    Error: account:login command failed.
+veerendra@DESKTOP-A42QL39:~/food/NutriScan$
+
+---
+
+done whats next
+
+---
+
+done whats next
+
+---
+
+its taking more time i think so
+
+---
+
+its workign it created a application right
+
+---
+
+its workign it created a application right
+
+---
+
+explain the whole stack and application from end to end in detail and save in explain.txt
+
+---
+
+explain the whole stack and application from end to end in detail and save in explain.txt

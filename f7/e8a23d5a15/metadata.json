@@ -1,0 +1,42 @@
+{
+  "cli_version": "0.5.0",
+  "checkpoint_id": "f7e8a23d5a15",
+  "strategy": "manual-commit",
+  "branch": "main",
+  "checkpoints_count": 7,
+  "files_touched": [
+    ".gitignore",
+    "app.json",
+    "app/(tabs)/_layout.tsx",
+    "app/(tabs)/history.tsx",
+    "app/(tabs)/index.tsx",
+    "app/_layout.tsx",
+    "app/product/[id].tsx",
+    "app/scanner.tsx",
+    "app/search.tsx",
+    "explain.txt",
+    "metro.config.js",
+    "package-lock.json",
+    "package.json",
+    "src/components/index.ts",
+    "src/constants/index.ts",
+    "src/data/indianFoods.ts",
+    "src/services/databaseService.ts",
+    "src/services/foodApi.ts"
+  ],
+  "sessions": [
+    {
+      "metadata": "/f7/e8a23d5a15/0/metadata.json",
+      "transcript": "/f7/e8a23d5a15/0/full.jsonl",
+      "content_hash": "/f7/e8a23d5a15/0/content_hash.txt",
+      "prompt": "/f7/e8a23d5a15/0/prompt.txt"
+    }
+  ],
+  "token_usage": {
+    "input_tokens": 2095,
+    "cache_creation_tokens": 51635,
+    "cache_read_tokens": 97757,
+    "output_tokens": 1272,
+    "api_call_count": 12
+  }
+}
