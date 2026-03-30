@@ -1,0 +1,211 @@
+hi
+
+---
+
+hi
+
+---
+
+open food/nutriscan folder and Redesign the existing NutriScan React Native Expo project UI completely. Do NOT keep the current layout or styles. Replace the current UI with a modern, futuristic, premium mobile app design similar to top apps like Swiggy, Zomato, and Apple Health.
+
+Strict requirements:
+
+1. REMOVE unused features
+
+* Remove "Discovery" tab completely
+* Keep only:
+
+  * Home
+  * Scan
+  * History
+
+2. FULL UI REDESIGN (do not reuse old styles)
+
+* Replace all existing styles, components, and layout
+* Use modern design principles:
+
+  * Glassmorphism / soft shadows
+  * Gradient backgrounds
+  * Rounded cards (16–24 radius)
+  * Clean spacing and typography
+* Make UI feel like a production-level app, not a basic project
+
+3. DARK & LIGHT MODE
+
+* Implement theme toggle (light/dark)
+* Use Context or global state for theme
+* Dark mode should be premium (not plain black)
+* Light mode should be clean and soft
+
+4. HOME SCREEN (completely redesign)
+
+* Hero section with gradient card:
+
+  * Title: “Scan your food”
+  * Subtitle: “Know what you eat instantly”
+  * Big animated Scan button
+* Add modern cards:
+
+  * Scan Food
+  * Search Food
+  * Enter Barcode
+* Add subtle animations (scale on press)
+
+5. SCANNER SCREEN
+
+* Full screen camera UI
+* Add animated scan frame (pulse effect)
+* Add instruction text
+* Add vibration feedback
+* Smooth transition after scan
+
+6. RESULT SCREEN
+
+* Show product name with bold typography
+* Large health badge:
+
+  * Green / Yellow / Red
+* Nutrition cards with icons
+* Smooth fade-in animation
+* Add loading skeleton before data loads
+
+7. HISTORY SCREEN
+
+* Card-based list (like Zomato orders)
+* Each item:
+
+  * Name
+  * Health color
+  * Date
+* Smooth scroll + ripple effect
+
+8. ANIMATIONS (IMPORTANT)
+
+* Use React Native Reanimated or Animated API
+* Add:
+
+  * Fade-in
+  * Slide-up transitions
+  * Button press scaling
+  * Loading shimmer
+
+9. PERFORMANCE
+
+* Optimize rendering
+* Avoid unnecessary re-renders
+* Ensure fast API response handling
+
+10. UX IMPROVEMENTS
+
+* Friendly messages:
+
+  * “Scanning...”
+  * “Product not found”
+* Skeleton loaders instead of blank screens
+* Large touch-friendly buttons
+
+Goal:
+Transform this project into a high-quality, futuristic, production-ready mobile app UI with smooth animations, premium design, dark/light themes, and excellent user experience. The current UI must be completely replaced.
+
+---
+
+open food/nutriscan folder and Redesign the existing NutriScan React Native Expo project UI completely. Do NOT keep the current layout or styles. Replace the current UI with a modern, futuristic, premium mobile app design similar to top apps like Swiggy, Zomato, and Apple Health.
+
+Strict requirements:
+
+1. REMOVE unused features
+
+* Remove "Discovery" tab completely
+* Keep only:
+
+  * Home
+  * Scan
+  * History
+
+2. FULL UI REDESIGN (do not reuse old styles)
+
+* Replace all existing styles, components, and layout
+* Use modern design principles:
+
+  * Glassmorphism / soft shadows
+  * Gradient backgrounds
+  * Rounded cards (16–24 radius)
+  * Clean spacing and typography
+* Make UI feel like a production-level app, not a basic project
+
+3. DARK & LIGHT MODE
+
+* Implement theme toggle (light/dark)
+* Use Context or global state for theme
+* Dark mode should be premium (not plain black)
+* Light mode should be clean and soft
+
+4. HOME SCREEN (completely redesign)
+
+* Hero section with gradient card:
+
+  * Title: “Scan your food”
+  * Subtitle: “Know what you eat instantly”
+  * Big animated Scan button
+* Add modern cards:
+
+  * Scan Food
+  * Search Food
+  * Enter Barcode
+* Add subtle animations (scale on press)
+
+5. SCANNER SCREEN
+
+* Full screen camera UI
+* Add animated scan frame (pulse effect)
+* Add instruction text
+* Add vibration feedback
+* Smooth transition after scan
+
+6. RESULT SCREEN
+
+* Show product name with bold typography
+* Large health badge:
+
+  * Green / Yellow / Red
+* Nutrition cards with icons
+* Smooth fade-in animation
+* Add loading skeleton before data loads
+
+7. HISTORY SCREEN
+
+* Card-based list (like Zomato orders)
+* Each item:
+
+  * Name
+  * Health color
+  * Date
+* Smooth scroll + ripple effect
+
+8. ANIMATIONS (IMPORTANT)
+
+* Use React Native Reanimated or Animated API
+* Add:
+
+  * Fade-in
+  * Slide-up transitions
+  * Button press scaling
+  * Loading shimmer
+
+9. PERFORMANCE
+
+* Optimize rendering
+* Avoid unnecessary re-renders
+* Ensure fast API response handling
+
+10. UX IMPROVEMENTS
+
+* Friendly messages:
+
+  * “Scanning...”
+  * “Product not found”
+* Skeleton loaders instead of blank screens
+* Large touch-friendly buttons
+
+Goal:
+Transform this project into a high-quality, futuristic, production-ready mobile app UI with smooth animations, premium design, dark/light themes, and excellent user experience. The current UI must be completely replaced.

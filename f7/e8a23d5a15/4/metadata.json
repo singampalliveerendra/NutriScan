@@ -1,0 +1,56 @@
+{
+  "cli_version": "0.5.0",
+  "checkpoint_id": "f7e8a23d5a15",
+  "session_id": "ses_2c2008fd4ffeEKLeKgzQjIj6ov",
+  "strategy": "manual-commit",
+  "created_at": "2026-03-30T17:40:57.524415044Z",
+  "branch": "main",
+  "checkpoints_count": 2,
+  "files_touched": [
+    ".gitignore",
+    "app/(tabs)/_layout.tsx",
+    "app/(tabs)/history.tsx",
+    "app/(tabs)/index.tsx",
+    "app/(tabs)/scan.tsx",
+    "app/_layout.tsx",
+    "app/product/[id].tsx",
+    "app/scanner.tsx",
+    "app/search.tsx",
+    "babel.config.js",
+    "metro.config.js",
+    "package-lock.json",
+    "package.json",
+    "src/components/index.ts",
+    "src/components/ui/AnimatedPress.tsx",
+    "src/components/ui/GlassCard.tsx",
+    "src/components/ui/GradientButton.tsx",
+    "src/components/ui/Skeleton.tsx",
+    "src/components/ui/index.ts",
+    "src/constants/index.ts",
+    "src/context/ThemeContext.tsx",
+    "src/services/databaseService.ts",
+    "src/services/foodApi.ts"
+  ],
+  "agent": "OpenCode",
+  "model": "big-pickle",
+  "turn_id": "fa65388ecee6",
+  "token_usage": {
+    "input_tokens": 65,
+    "cache_creation_tokens": 10620,
+    "cache_read_tokens": 510,
+    "output_tokens": 39,
+    "api_call_count": 1
+  },
+  "session_metrics": {
+    "turn_count": 4
+  },
+  "initial_attribution": {
+    "calculated_at": "2026-03-30T17:40:57.519061435Z",
+    "agent_lines": 6418,
+    "human_added": 1771,
+    "human_modified": 0,
+    "human_removed": 0,
+    "total_committed": 8189,
+    "agent_percentage": 78.37342776895836
+  }
+}
