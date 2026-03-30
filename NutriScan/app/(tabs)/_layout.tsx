@@ -1,60 +1,103 @@
 import { Tabs } from 'expo-router';
-import { View, Text, StyleSheet } from 'react-native';
-import { COLORS, FONT_SIZE, SPACING, BORDER_RADIUS, SHADOWS } from '../../src/constants';
+import { View, Text, StyleSheet, Pressable } from 'react-native';
+import { useTheme } from '../../src/context/ThemeContext';
+import { BORDER_RADIUS, SPACING, SHADOWS } from '../../src/constants';
 
-function TabIcon({ icon, focused }: { icon: string; focused: boolean }) {
+function TabIcon({ icon, label, focused, color }: { icon: string; label: string; focused: boolean; color: string }) {
   return (
-    <View style={[styles.tabIconContainer, focused && styles.tabIconFocused]}>
-      <Text style={styles.tabIcon}>{icon}</Text>
+    <View style={styles.tabItem}>
+      <View style={[
+        styles.iconContainer, 
+        focused && { backgroundColor: color + '20' }
+      ]}>
+        <Text style={[styles.tabIcon, focused && { opacity: 1 }]}>{icon}</Text>
+        {focused && <View style={[styles.activeIndicator, { backgroundColor: color }]} />}
+      </View>
+      <Text style={[
+        styles.tabLabel, 
+        focused && { color: color, fontWeight: '700' }
+      ]}>
+        {label}
+      </Text>
     </View>
   );
 }
 
+function ThemeToggle() {
+  const { isDark, toggleTheme, colors } = useTheme();
+  
+  return (
+    <Pressable 
+      onPress={toggleTheme} 
+      style={[styles.themeButton, { backgroundColor: colors.surfaceAlt }]}
+    >
+      <Text style={styles.themeIcon}>{isDark ? '🌙' : '☀️'}</Text>
+    </Pressable>
+  );
+}
+
 export default function TabLayout() {
+  const { colors, isDark } = useTheme();
+  
   return (
     <Tabs
       screenOptions={{
-        tabBarActiveTintColor: COLORS.primary,
-        tabBarInactiveTintColor: COLORS.textSecondary,
+        tabBarActiveTintColor: colors.primary,
+        tabBarInactiveTintColor: colors.textTertiary,
         tabBarStyle: {
-          backgroundColor: COLORS.surface,
+          backgroundColor: isDark ? 'rgba(18, 18, 26, 0.95)' : 'rgba(255, 255, 255, 0.95)',
           borderTopWidth: 0,
-          height: 80,
+          height: 85,
           paddingBottom: SPACING.sm,
           paddingTop: SPACING.sm,
           ...SHADOWS.medium,
+          position: 'absolute',
+          left: 0,
+          right: 0,
+          bottom: 0,
         },
-        tabBarLabelStyle: {
-          fontSize: FONT_SIZE.xs,
-          fontWeight: '600',
-        },
+        tabBarShowLabel: false,
         headerStyle: {
-          backgroundColor: COLORS.background,
+          backgroundColor: colors.background,
         },
         headerTitleStyle: {
           fontWeight: '800',
-          fontSize: FONT_SIZE.xl,
-          color: COLORS.text,
+          fontSize: 22,
+          color: colors.text,
         },
         headerShadowVisible: false,
+        headerRight: () => <ThemeToggle />,
+        headerLeftContainerStyle: { paddingLeft: SPACING.md },
+        headerRightContainerStyle: { paddingRight: SPACING.md },
       }}
     >
       <Tabs.Screen
         name="index"
         options={{
           title: 'Home',
-          tabBarIcon: ({ focused }) => (
-            <TabIcon icon="🏠" focused={focused} />
-          ),
           headerTitle: 'NutriScan',
+          tabBarIcon: ({ focused }) => (
+            <TabIcon icon="🏠" label="Home" focused={focused} color={colors.primary} />
+          ),
+        }}
+      />
+      <Tabs.Screen
+        name="scan"
+        options={{
+          title: 'Scan',
+          headerTitle: 'Scan Food',
+          tabBarIcon: ({ focused }) => (
+            <TabIcon icon="📷" label="Scan" focused={focused} color={colors.primary} />
+          ),
         }}
       />
       <Tabs.Screen
         name="history"
         options={{
           title: 'History',
+          headerTitle: 'Scan History',
           tabBarIcon: ({ focused }) => (
-            <TabIcon icon="📋" focused={focused} />
+            <TabIcon icon="📋" label="History" focused={focused} color={colors.primary} />
           ),
         }}
       />
@@ -63,17 +106,44 @@ export default function TabLayout() {
 }
 
 const styles = StyleSheet.create({
-  tabIconContainer: {
+  tabItem: {
     alignItems: 'center',
     justifyContent: 'center',
-    paddingVertical: SPACING.xs,
-    paddingHorizontal: SPACING.md,
-    borderRadius: BORDER_RADIUS.lg,
+    paddingTop: SPACING.xs,
   },
-  tabIconFocused: {
-    backgroundColor: COLORS.primaryLight,
+  iconContainer: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    width: 48,
+    height: 32,
+    borderRadius: BORDER_RADIUS.lg,
+    position: 'relative',
   },
   tabIcon: {
     fontSize: 22,
+    opacity: 0.6,
+  },
+  activeIndicator: {
+    position: 'absolute',
+    bottom: -6,
+    width: 20,
+    height: 3,
+    borderRadius: 2,
+  },
+  tabLabel: {
+    fontSize: 11,
+    fontWeight: '500',
+    color: '#94A3B8',
+    marginTop: 4,
+  },
+  themeButton: {
+    width: 40,
+    height: 40,
+    borderRadius: BORDER_RADIUS.full,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  themeIcon: {
+    fontSize: 20,
   },
 });

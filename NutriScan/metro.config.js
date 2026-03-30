@@ -8,6 +8,8 @@ config.resolver.extraNodeModules = {
 
 config.resolver.sourceExts = [...config.resolver.sourceExts, 'cjs'];
 
+config.resolver.resolverMainFields = ['react-native', 'browser', 'main'];
+
 config.watchFolders = [...(config.watchFolders || [])];
 
 module.exports = config;

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useRef } from 'react';
 import {
   View,
   Text,
@@ -6,18 +6,61 @@ import {
   ScrollView,
   TouchableOpacity,
   Image,
+  Animated,
+  Dimensions,
 } from 'react-native';
 import { useRouter } from 'expo-router';
+import { LinearGradient } from 'expo-linear-gradient';
+import { useTheme } from '../../src/context/ThemeContext';
 import { useApp } from '../../src/context/AppContext';
-import { Button } from '../../src/components';
-import { COLORS, SPACING, FONT_SIZE, BORDER_RADIUS, SHADOWS } from '../../src/constants';
+import { AnimatedPress, GlassCard } from '../../src/components';
+import { BORDER_RADIUS, SPACING, FONT_SIZE, SHADOWS } from '../../src/constants';
 import { Product, HealthRating } from '../../src/types';
 import { calculateHealthRating, getRatingColor, getRatingLabel } from '../../src/utils';
 
+const { width: SCREEN_WIDTH } = Dimensions.get('window');
+
 export default function HomeScreen() {
   const router = useRouter();
+  const { colors, isDark } = useTheme();
   const { state, getRecentScans } = useApp();
   const recentScans = getRecentScans(5);
+  
+  const pulseAnim = useRef(new Animated.Value(1)).current;
+  const fadeAnim = useRef(new Animated.Value(0)).current;
+  const slideAnim = useRef(new Animated.Value(30)).current;
+
+  useEffect(() => {
+    Animated.parallel([
+      Animated.timing(fadeAnim, {
+        toValue: 1,
+        duration: 600,
+        useNativeDriver: true,
+      }),
+      Animated.timing(slideAnim, {
+        toValue: 0,
+        duration: 600,
+        useNativeDriver: true,
+      }),
+    ]).start();
+
+    const pulse = Animated.loop(
+      Animated.sequence([
+        Animated.timing(pulseAnim, {
+          toValue: 1.03,
+          duration: 1500,
+          useNativeDriver: true,
+        }),
+        Animated.timing(pulseAnim, {
+          toValue: 1,
+          duration: 1500,
+          useNativeDriver: true,
+        }),
+      ])
+    );
+    pulse.start();
+    return () => pulse.stop();
+  }, []);
 
   const handleScanPress = () => {
     router.push('/scanner');
@@ -25,6 +68,10 @@ export default function HomeScreen() {
 
   const handleSearchPress = () => {
     router.push('/search');
+  };
+
+  const handleBarcodePress = () => {
+    router.push('/scanner');
   };
 
   const handleProductPress = (product: Product) => {
@@ -36,89 +83,145 @@ export default function HomeScreen() {
     return new Date(item.scannedAt).toDateString() === today;
   }).length;
 
+  const weekScans = state.scanHistory.filter(item => {
+    const weekAgo = new Date();
+    weekAgo.setDate(weekAgo.getDate() - 7);
+    return new Date(item.scannedAt) >= weekAgo;
+  }).length;
+
   return (
-    <ScrollView style={styles.container} contentContainerStyle={styles.content}>
-      <View style={styles.heroSection}>
-        <View style={styles.waveContainer}>
-          <Text style={styles.waveEmoji}>👋</Text>
-        </View>
-        <Text style={styles.welcomeText}>Welcome to</Text>
-        <Text style={styles.appName}>NutriScan</Text>
-        <Text style={styles.tagline}>
-          Scan your food to check health
-        </Text>
+    <ScrollView 
+      style={[styles.container, { backgroundColor: colors.background }]} 
+      contentContainerStyle={styles.content}
+      showsVerticalScrollIndicator={false}
+    >
+      <Animated.View style={[styles.heroSection, { opacity: fadeAnim, transform: [{ translateY: slideAnim }] }]}>
+        <LinearGradient
+          colors={isDark ? ['#1a1a2e', '#16213e'] : ['#10B981', '#059669']}
+          start={{ x: 0, y: 0 }}
+          end={{ x: 1, y: 1 }}
+          style={styles.heroGradient}
+        >
+          <View style={styles.heroContent}>
+            <Text style={styles.heroTitle}>Scan your food</Text>
+            <Text style={styles.heroSubtitle}>Know what you eat instantly</Text>
+            
+            <Animated.View style={{ transform: [{ scale: pulseAnim }] }}>
+              <TouchableOpacity
+                style={styles.scanButton}
+                onPress={handleScanPress}
+                activeOpacity={0.9}
+              >
+                <View style={styles.scanButtonContent}>
+                  <View style={styles.scanIconContainer}>
+                    <Text style={styles.scanIcon}>📷</Text>
+                  </View>
+                  <Text style={styles.scanButtonTitle}>Tap to Scan</Text>
+                  <Text style={styles.scanButtonSubtitle}>
+                    Point at barcode
+                  </Text>
+                </View>
+                <View style={styles.scanButtonArrow}>
+                  <Text style={styles.arrowIcon}>→</Text>
+                </View>
+              </TouchableOpacity>
+            </Animated.View>
+          </View>
+          
+          <View style={styles.heroDecor}>
+            <View style={styles.decorCircle1} />
+            <View style={styles.decorCircle2} />
+          </View>
+        </LinearGradient>
+      </Animated.View>
+
+      <View style={styles.quickActions}>
+        <AnimatedPress
+          onPress={handleScanPress}
+          style={[styles.actionCard, { backgroundColor: colors.surface }]}
+        >
+          <View style={[styles.actionIconContainer, { backgroundColor: colors.primaryLight }]}>
+            <Text style={styles.actionIcon}>📷</Text>
+          </View>
+          <Text style={[styles.actionTitle, { color: colors.text }]}>Scan Food</Text>
+          <Text style={[styles.actionSubtitle, { color: colors.textSecondary }]}>
+            Use camera
+          </Text>
+        </AnimatedPress>
+
+        <AnimatedPress
+          onPress={handleSearchPress}
+          style={[styles.actionCard, { backgroundColor: colors.surface }]}
+        >
+          <View style={[styles.actionIconContainer, { backgroundColor: '#FEF3C7' }]}>
+            <Text style={styles.actionIcon}>🔍</Text>
+          </View>
+          <Text style={[styles.actionTitle, { color: colors.text }]}>Search</Text>
+          <Text style={[styles.actionSubtitle, { color: colors.textSecondary }]}>
+            Find manually
+          </Text>
+        </AnimatedPress>
+
+        <AnimatedPress
+          onPress={handleBarcodePress}
+          style={[styles.actionCard, { backgroundColor: colors.surface }]}
+        >
+          <View style={[styles.actionIconContainer, { backgroundColor: '#DBEAFE' }]}>
+            <Text style={styles.actionIcon}>🔢</Text>
+          </View>
+          <Text style={[styles.actionTitle, { color: colors.text }]}>Barcode</Text>
+          <Text style={[styles.actionSubtitle, { color: colors.textSecondary }]}>
+            Enter number
+          </Text>
+        </AnimatedPress>
       </View>
 
-      <TouchableOpacity
-        style={styles.scanButton}
-        onPress={handleScanPress}
-        activeOpacity={0.9}
-        accessibilityRole="button"
-        accessibilityLabel="Scan Food"
-        accessibilityHint="Opens camera to scan food barcode"
-      >
-        <View style={styles.scanButtonContent}>
-          <View style={styles.scanIconContainer}>
-            <Text style={styles.scanIcon}>📷</Text>
-          </View>
-          <Text style={styles.scanButtonTitle}>Scan Food</Text>
-          <Text style={styles.scanButtonSubtitle}>
-            Point camera at barcode
-          </Text>
-        </View>
-        <View style={styles.scanButtonArrow}>
-          <Text style={styles.arrowIcon}>→</Text>
-        </View>
-      </TouchableOpacity>
-
-      <TouchableOpacity
-        style={styles.searchButton}
-        onPress={handleSearchPress}
-        activeOpacity={0.8}
-        accessibilityRole="button"
-        accessibilityLabel="Search Food"
-        accessibilityHint="Opens search to find food manually"
-      >
-        <View style={styles.searchIconContainer}>
-          <Text style={styles.searchIcon}>🔍</Text>
-        </View>
-        <Text style={styles.searchButtonTitle}>Search Food</Text>
-        <Text style={styles.searchButtonSubtitle}>
-          Find nutrition info manually
-        </Text>
-      </TouchableOpacity>
-
-      <View style={styles.statsRow}>
-        <View style={styles.statCard}>
-          <Text style={styles.statNumber}>{todayScans}</Text>
-          <Text style={styles.statLabel}>Today</Text>
-        </View>
-        <View style={styles.statDivider} />
-        <View style={styles.statCard}>
-          <Text style={styles.statNumber}>{state.scanHistory.length}</Text>
-          <Text style={styles.statLabel}>Total</Text>
+      <View style={styles.statsSection}>
+        <Text style={[styles.sectionTitle, { color: colors.text }]}>Your Activity</Text>
+        <View style={styles.statsRow}>
+          <GlassCard style={styles.statCard}>
+            <Text style={styles.statNumber}>{todayScans}</Text>
+            <Text style={[styles.statLabel, { color: colors.textSecondary }]}>Today</Text>
+            <View style={[styles.statIndicator, { backgroundColor: colors.primary }]} />
+          </GlassCard>
+          <View style={{ width: SPACING.md }} />
+          <GlassCard style={styles.statCard}>
+            <Text style={styles.statNumber}>{weekScans}</Text>
+            <Text style={[styles.statLabel, { color: colors.textSecondary }]}>This Week</Text>
+            <View style={[styles.statIndicator, { backgroundColor: colors.secondary }]} />
+          </GlassCard>
+          <View style={{ width: SPACING.md }} />
+          <GlassCard style={styles.statCard}>
+            <Text style={styles.statNumber}>{state.scanHistory.length}</Text>
+            <Text style={[styles.statLabel, { color: colors.textSecondary }]}>Total</Text>
+            <View style={[styles.statIndicator, { backgroundColor: colors.warning }]} />
+          </GlassCard>
         </View>
       </View>
 
       {recentScans.length > 0 && (
         <View style={styles.recentSection}>
           <View style={styles.sectionHeader}>
-            <Text style={styles.sectionTitle}>Recent Scans</Text>
+            <Text style={[styles.sectionTitle, { color: colors.text }]}>Recent Scans</Text>
             <TouchableOpacity onPress={() => router.push('/(tabs)/history')}>
-              <Text style={styles.seeAllText}>See All</Text>
+              <Text style={[styles.seeAllText, { color: colors.primary }]}>See All →</Text>
             </TouchableOpacity>
           </View>
 
-          <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-            {recentScans.map((item) => {
+          <ScrollView 
+            horizontal 
+            showsHorizontalScrollIndicator={false}
+            contentContainerStyle={styles.recentScrollContent}
+          >
+            {recentScans.map((item, index) => {
               const rating = calculateHealthRating(item.product.nutritionFacts);
+              const ratingColor = getRatingColor(rating);
               return (
                 <TouchableOpacity
                   key={item.id}
-                  style={styles.recentCard}
+                  style={[styles.recentCard, { backgroundColor: colors.surface }]}
                   onPress={() => handleProductPress(item.product)}
-                  accessibilityRole="button"
-                  accessibilityLabel={`${item.product.name}, ${rating} rating`}
+                  activeOpacity={0.9}
                 >
                   <View style={styles.recentImageContainer}>
                     {item.product.imageUrl ? (
@@ -128,30 +231,17 @@ export default function HomeScreen() {
                         resizeMode="cover"
                       />
                     ) : (
-                      <View style={styles.recentPlaceholder}>
+                      <View style={[styles.recentPlaceholder, { backgroundColor: colors.surfaceAlt }]}>
                         <Text style={styles.placeholderEmoji}>📦</Text>
                       </View>
                     )}
-                    <View style={[
-                      styles.ratingIndicator,
-                      { backgroundColor: getRatingColor(rating) }
-                    ]} />
+                    <View style={[styles.ratingIndicator, { backgroundColor: ratingColor }]} />
                   </View>
-                  <Text style={styles.recentName} numberOfLines={2}>
+                  <Text style={[styles.recentName, { color: colors.text }]} numberOfLines={2}>
                     {item.product.name}
                   </Text>
-                  <View
-                    style={[
-                      styles.recentRating,
-                      {
-                        backgroundColor: getRatingColor(rating) + '20',
-                      },
-                    ]}
-                  >
-                    <Text style={[
-                      styles.recentRatingText,
-                      { color: getRatingColor(rating) }
-                    ]}>
+                  <View style={[styles.recentRatingBadge, { backgroundColor: ratingColor + '20' }]}>
+                    <Text style={[styles.recentRatingText, { color: ratingColor }]}>
                       {getRatingLabel(rating)}
                     </Text>
                   </View>
@@ -163,25 +253,28 @@ export default function HomeScreen() {
       )}
 
       {recentScans.length === 0 && (
-        <View style={styles.emptyState}>
+        <GlassCard style={styles.emptyState}>
           <View style={styles.emptyIconContainer}>
             <Text style={styles.emptyIcon}>🥗</Text>
           </View>
-          <Text style={styles.emptyTitle}>Start Scanning!</Text>
-          <Text style={styles.emptyText}>
+          <Text style={[styles.emptyTitle, { color: colors.text }]}>Start Scanning!</Text>
+          <Text style={[styles.emptyText, { color: colors.textSecondary }]}>
             Scan a barcode or search for a product to see nutrition info
           </Text>
-          <View style={styles.emptyButtons}>
-            <Button
-              title="Scan Now"
-              onPress={handleScanPress}
-              variant="primary"
-              size="large"
-              icon={<Text style={styles.buttonIcon}>📷</Text>}
-            />
-          </View>
-        </View>
+          <TouchableOpacity
+            style={[styles.emptyButton, { backgroundColor: colors.primary }]}
+            onPress={handleScanPress}
+          >
+            <Text style={styles.emptyButtonText}>Scan Now</Text>
+          </TouchableOpacity>
+        </GlassCard>
       )}
+
+      <View style={styles.footer}>
+        <Text style={[styles.footerText, { color: colors.textTertiary }]}>
+          Made with ❤️ for healthier choices
+        </Text>
+      </View>
     </ScrollView>
   );
 }
@@ -189,185 +282,204 @@ export default function HomeScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: COLORS.background,
   },
   content: {
-    padding: SPACING.lg,
     paddingBottom: SPACING.xxl,
   },
   heroSection: {
-    alignItems: 'center',
-    paddingVertical: SPACING.lg,
+    marginHorizontal: SPACING.md,
+    marginTop: SPACING.md,
   },
-  waveContainer: {
-    width: 64,
-    height: 64,
-    borderRadius: 32,
-    backgroundColor: COLORS.primaryLight,
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginBottom: SPACING.md,
+  heroGradient: {
+    borderRadius: BORDER_RADIUS.xxl,
+    overflow: 'hidden',
+    padding: SPACING.lg,
+    minHeight: 240,
+    position: 'relative',
   },
-  waveEmoji: {
-    fontSize: 32,
+  heroContent: {
+    position: 'relative',
+    zIndex: 1,
   },
-  welcomeText: {
-    fontSize: FONT_SIZE.md,
-    color: COLORS.textSecondary,
-    fontWeight: '500',
-  },
-  appName: {
-    fontSize: FONT_SIZE.title,
+  heroTitle: {
+    fontSize: FONT_SIZE.hero,
     fontWeight: '800',
-    color: COLORS.primary,
+    color: '#FFFFFF',
     marginBottom: SPACING.xs,
   },
-  tagline: {
+  heroSubtitle: {
     fontSize: FONT_SIZE.lg,
-    color: COLORS.textSecondary,
-    textAlign: 'center',
+    color: 'rgba(255, 255, 255, 0.85)',
+    marginBottom: SPACING.lg,
   },
   scanButton: {
-    backgroundColor: COLORS.primary,
-    borderRadius: BORDER_RADIUS.xl,
-    padding: SPACING.lg,
+    backgroundColor: 'rgba(255, 255, 255, 0.2)',
+    borderRadius: BORDER_RADIUS.xxl,
+    padding: SPACING.md,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    ...SHADOWS.large,
-    marginBottom: SPACING.md,
+    borderWidth: 1,
+    borderColor: 'rgba(255, 255, 255, 0.3)',
   },
   scanButtonContent: {
     flex: 1,
-  },
-  scanIconContainer: {
-    width: 56,
-    height: 56,
-    borderRadius: BORDER_RADIUS.lg,
-    backgroundColor: 'rgba(255,255,255,0.2)',
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginBottom: SPACING.sm,
-  },
-  scanIcon: {
-    fontSize: 28,
-  },
-  scanButtonTitle: {
-    fontSize: FONT_SIZE.xxl,
-    fontWeight: '800',
-    color: COLORS.white,
-    marginBottom: SPACING.xs,
-  },
-  scanButtonSubtitle: {
-    fontSize: FONT_SIZE.md,
-    color: 'rgba(255,255,255,0.8)',
-    fontWeight: '500',
-  },
-  scanButtonArrow: {
-    width: 48,
-    height: 48,
-    borderRadius: 24,
-    backgroundColor: 'rgba(255,255,255,0.2)',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  arrowIcon: {
-    fontSize: 24,
-    color: COLORS.white,
-  },
-  searchButton: {
-    backgroundColor: COLORS.surface,
-    borderRadius: BORDER_RADIUS.xl,
-    padding: SPACING.lg,
     flexDirection: 'row',
     alignItems: 'center',
-    borderWidth: 2,
-    borderColor: COLORS.border,
-    ...SHADOWS.small,
-    marginBottom: SPACING.lg,
   },
-  searchIconContainer: {
-    width: 48,
-    height: 48,
-    borderRadius: BORDER_RADIUS.md,
-    backgroundColor: COLORS.surfaceAlt,
+  scanIconContainer: {
+    width: 52,
+    height: 52,
+    borderRadius: BORDER_RADIUS.lg,
+    backgroundColor: '#FFFFFF',
     justifyContent: 'center',
     alignItems: 'center',
     marginRight: SPACING.md,
   },
-  searchIcon: {
+  scanIcon: {
     fontSize: 24,
   },
-  searchButtonTitle: {
-    fontSize: FONT_SIZE.xl,
+  scanButtonTitle: {
+    fontSize: FONT_SIZE.lg,
     fontWeight: '700',
-    color: COLORS.text,
-    marginBottom: SPACING.xs,
+    color: '#FFFFFF',
   },
-  searchButtonSubtitle: {
+  scanButtonSubtitle: {
     fontSize: FONT_SIZE.sm,
-    color: COLORS.textSecondary,
-    fontWeight: '500',
+    color: 'rgba(255, 255, 255, 0.8)',
+  },
+  scanButtonArrow: {
+    width: 44,
+    height: 44,
+    borderRadius: 22,
+    backgroundColor: '#FFFFFF',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  arrowIcon: {
+    fontSize: 20,
+    color: '#10B981',
+  },
+  heroDecor: {
+    position: 'absolute',
+    right: -20,
+    top: -20,
+  },
+  decorCircle1: {
+    width: 100,
+    height: 100,
+    borderRadius: 50,
+    backgroundColor: 'rgba(255, 255, 255, 0.1)',
+    position: 'absolute',
+    right: 0,
+    top: 0,
+  },
+  decorCircle2: {
+    width: 60,
+    height: 60,
+    borderRadius: 30,
+    backgroundColor: 'rgba(255, 255, 255, 0.08)',
+    position: 'absolute',
+    right: 60,
+    top: 40,
+  },
+  quickActions: {
+    flexDirection: 'row',
+    paddingHorizontal: SPACING.md,
+    marginTop: SPACING.lg,
+    gap: SPACING.sm,
+  },
+  actionCard: {
+    flex: 1,
+    borderRadius: BORDER_RADIUS.xl,
+    padding: SPACING.md,
+    alignItems: 'center',
+    ...SHADOWS.small,
+  },
+  actionIconContainer: {
+    width: 48,
+    height: 48,
+    borderRadius: BORDER_RADIUS.lg,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: SPACING.sm,
+  },
+  actionIcon: {
+    fontSize: 22,
+  },
+  actionTitle: {
+    fontSize: FONT_SIZE.sm,
+    fontWeight: '700',
+    marginBottom: 2,
+  },
+  actionSubtitle: {
+    fontSize: FONT_SIZE.xs,
+  },
+  statsSection: {
+    paddingHorizontal: SPACING.md,
+    marginTop: SPACING.lg,
+  },
+  sectionTitle: {
+    fontSize: FONT_SIZE.lg,
+    fontWeight: '700',
+    marginBottom: SPACING.md,
   },
   statsRow: {
     flexDirection: 'row',
-    backgroundColor: COLORS.surface,
-    borderRadius: BORDER_RADIUS.xl,
-    padding: SPACING.lg,
-    marginBottom: SPACING.lg,
-    ...SHADOWS.small,
+  },
+  statCardBase: {
+    alignItems: 'center',
+    padding: SPACING.md,
   },
   statCard: {
     flex: 1,
     alignItems: 'center',
-  },
-  statDivider: {
-    width: 1,
-    backgroundColor: COLORS.border,
-    marginHorizontal: SPACING.md,
+    padding: SPACING.md,
   },
   statNumber: {
     fontSize: FONT_SIZE.xxxl,
     fontWeight: '800',
-    color: COLORS.primary,
+    color: '#10B981',
   },
   statLabel: {
-    fontSize: FONT_SIZE.sm,
-    color: COLORS.textSecondary,
-    fontWeight: '600',
+    fontSize: FONT_SIZE.xs,
+    fontWeight: '500',
     marginTop: SPACING.xs,
   },
-  recentSection: {
+  statIndicator: {
+    width: 24,
+    height: 3,
+    borderRadius: 2,
     marginTop: SPACING.sm,
+  },
+  recentSection: {
+    marginTop: SPACING.lg,
   },
   sectionHeader: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
+    paddingHorizontal: SPACING.md,
     marginBottom: SPACING.md,
   },
-  sectionTitle: {
-    fontSize: FONT_SIZE.lg,
-    fontWeight: '700',
-    color: COLORS.text,
-  },
   seeAllText: {
-    fontSize: FONT_SIZE.md,
-    color: COLORS.primary,
+    fontSize: FONT_SIZE.sm,
     fontWeight: '600',
   },
+  recentScrollContent: {
+    paddingHorizontal: SPACING.md,
+  },
   recentCard: {
-    width: 130,
+    width: SCREEN_WIDTH * 0.38,
     marginRight: SPACING.md,
-    backgroundColor: COLORS.surface,
-    borderRadius: BORDER_RADIUS.lg,
+    borderRadius: BORDER_RADIUS.xl,
     padding: SPACING.sm,
     ...SHADOWS.small,
   },
   recentImageContainer: {
     width: '100%',
     height: 90,
-    borderRadius: BORDER_RADIUS.md,
+    borderRadius: BORDER_RADIUS.lg,
     overflow: 'hidden',
     marginBottom: SPACING.sm,
     position: 'relative',
@@ -379,12 +491,11 @@ const styles = StyleSheet.create({
   recentPlaceholder: {
     width: '100%',
     height: '100%',
-    backgroundColor: COLORS.surfaceAlt,
     justifyContent: 'center',
     alignItems: 'center',
   },
   placeholderEmoji: {
-    fontSize: 36,
+    fontSize: 32,
   },
   ratingIndicator: {
     position: 'absolute',
@@ -397,13 +508,12 @@ const styles = StyleSheet.create({
   recentName: {
     fontSize: FONT_SIZE.sm,
     fontWeight: '600',
-    color: COLORS.text,
     marginBottom: SPACING.xs,
     lineHeight: 18,
   },
-  recentRating: {
+  recentRatingBadge: {
     paddingHorizontal: SPACING.sm,
-    paddingVertical: 3,
+    paddingVertical: 2,
     borderRadius: BORDER_RADIUS.sm,
     alignSelf: 'flex-start',
   },
@@ -412,18 +522,16 @@ const styles = StyleSheet.create({
     fontWeight: '700',
   },
   emptyState: {
+    marginHorizontal: SPACING.md,
+    marginTop: SPACING.lg,
     alignItems: 'center',
     paddingVertical: SPACING.xl,
-    backgroundColor: COLORS.surface,
-    borderRadius: BORDER_RADIUS.xl,
-    marginTop: SPACING.md,
-    ...SHADOWS.small,
   },
   emptyIconContainer: {
     width: 80,
     height: 80,
     borderRadius: 40,
-    backgroundColor: COLORS.primaryLight,
+    backgroundColor: '#D1FAE5',
     justifyContent: 'center',
     alignItems: 'center',
     marginBottom: SPACING.md,
@@ -434,22 +542,30 @@ const styles = StyleSheet.create({
   emptyTitle: {
     fontSize: FONT_SIZE.xl,
     fontWeight: '700',
-    color: COLORS.text,
     marginBottom: SPACING.sm,
   },
   emptyText: {
     fontSize: FONT_SIZE.md,
-    color: COLORS.textSecondary,
     textAlign: 'center',
     marginBottom: SPACING.lg,
-    paddingHorizontal: SPACING.lg,
     lineHeight: 22,
   },
-  emptyButtons: {
-    width: '100%',
+  emptyButton: {
+    paddingVertical: SPACING.md,
     paddingHorizontal: SPACING.xl,
+    borderRadius: BORDER_RADIUS.lg,
   },
-  buttonIcon: {
-    fontSize: 18,
+  emptyButtonText: {
+    fontSize: FONT_SIZE.md,
+    fontWeight: '700',
+    color: '#FFFFFF',
+  },
+  footer: {
+    alignItems: 'center',
+    marginTop: SPACING.xl,
+    paddingTop: SPACING.lg,
+  },
+  footerText: {
+    fontSize: FONT_SIZE.sm,
   },
 });

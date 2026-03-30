@@ -9,13 +9,17 @@ import {
   Alert,
 } from 'react-native';
 import { useRouter } from 'expo-router';
+import { LinearGradient } from 'expo-linear-gradient';
+import { useTheme } from '../../src/context/ThemeContext';
 import { useApp } from '../../src/context/AppContext';
-import { COLORS, SPACING, FONT_SIZE, BORDER_RADIUS, SHADOWS } from '../../src/constants';
+import { SPACING, FONT_SIZE, BORDER_RADIUS, SHADOWS } from '../../src/constants';
+import { AnimatedPress, GlassCard } from '../../src/components';
 import { calculateHealthRating, getRatingLabel, getRatingColor } from '../../src/utils';
 import { ScanHistoryItem } from '../../src/types';
 
 export default function HistoryScreen() {
   const router = useRouter();
+  const { colors, isDark } = useTheme();
   const { state, clearHistory, removeFromHistory } = useApp();
 
   const handleProductPress = (item: ScanHistoryItem) => {
@@ -73,83 +77,103 @@ export default function HistoryScreen() {
     }
   };
 
-  const renderItem = ({ item }: { item: ScanHistoryItem }) => {
+  const getTimeAgo = (dateString: string) => {
+    const date = new Date(dateString);
+    return date.toLocaleTimeString('en-US', { 
+      hour: 'numeric', 
+      minute: '2-digit',
+      hour12: true 
+    });
+  };
+
+  const getHealthEmoji = (rating: string) => {
+    switch (rating) {
+      case 'healthy':
+        return '✅';
+      case 'moderate':
+        return '⚠️';
+      case 'unhealthy':
+        return '❌';
+      default:
+        return '❓';
+    }
+  };
+
+  const renderItem = ({ item, index }: { item: ScanHistoryItem; index: number }) => {
     const rating = calculateHealthRating(item.product.nutritionFacts);
     const ratingColor = getRatingColor(rating);
     
     return (
-      <View style={styles.historyCard}>
-        <TouchableOpacity
-          style={styles.cardTouchable}
-          onPress={() => handleProductPress(item)}
-          onLongPress={() => handleRemoveItem(item.id)}
-          accessibilityRole="button"
-          accessibilityLabel={`${item.product.name}, scanned ${formatDate(item.scannedAt)}`}
-        >
-          <View style={styles.cardContent}>
-            <View style={styles.imageContainer}>
-              {item.product.imageUrl ? (
-                <Image
-                  source={{ uri: item.product.imageUrl }}
-                  style={styles.productImage}
-                  resizeMode="cover"
-                />
-              ) : (
-                <View style={styles.imagePlaceholder}>
-                  <Text style={styles.placeholderEmoji}>📦</Text>
-                </View>
-              )}
-            </View>
-            
-            <View style={styles.infoContainer}>
-              <Text style={styles.productName} numberOfLines={2}>
-                {item.product.name}
-              </Text>
-              {item.product.brand && (
-                <Text style={styles.productBrand} numberOfLines={1}>
-                  {item.product.brand}
-                </Text>
-              )}
-              <View style={styles.metaRow}>
-                <Text style={styles.dateText}>{formatDate(item.scannedAt)}</Text>
-                <View style={[styles.ratingBadge, { backgroundColor: ratingColor + '20' }]}>
-                  <View style={[styles.ratingDot, { backgroundColor: ratingColor }]} />
-                  <Text style={[styles.ratingText, { color: ratingColor }]}>
-                    {getRatingLabel(rating)}
-                  </Text>
-                </View>
+      <AnimatedPress
+        onPress={() => handleProductPress(item)}
+        style={[styles.historyCard, { backgroundColor: colors.surface }]}
+      >
+        <View style={styles.cardContent}>
+          <View style={styles.imageContainer}>
+            {item.product.imageUrl ? (
+              <Image
+                source={{ uri: item.product.imageUrl }}
+                style={styles.productImage}
+                resizeMode="cover"
+              />
+            ) : (
+              <View style={[styles.imagePlaceholder, { backgroundColor: colors.surfaceAlt }]}>
+                <Text style={styles.placeholderEmoji}>📦</Text>
               </View>
+            )}
+            <View style={[styles.healthBadge, { backgroundColor: ratingColor }]}>
+              <Text style={styles.healthEmoji}>{getHealthEmoji(rating)}</Text>
             </View>
           </View>
-        </TouchableOpacity>
-        
-        <TouchableOpacity
-          style={styles.moreButton}
-          onPress={() => handleRemoveItem(item.id)}
-          accessibilityRole="button"
-          accessibilityLabel="Delete item"
-        >
-          <Text style={styles.moreIcon}>•••</Text>
-        </TouchableOpacity>
-      </View>
+          
+          <View style={styles.infoContainer}>
+            <Text style={[styles.productName, { color: colors.text }]} numberOfLines={2}>
+              {item.product.name}
+            </Text>
+            {item.product.brand && (
+              <Text style={[styles.productBrand, { color: colors.textSecondary }]} numberOfLines={1}>
+                {item.product.brand}
+              </Text>
+            )}
+            <View style={styles.metaRow}>
+              <Text style={[styles.dateText, { color: colors.textTertiary }]}>{formatDate(item.scannedAt)}</Text>
+              <Text style={[styles.timeText, { color: colors.textTertiary }]}>• {getTimeAgo(item.scannedAt)}</Text>
+            </View>
+          </View>
+
+          <View style={styles.rightSection}>
+            <View style={[styles.ratingBadge, { backgroundColor: ratingColor + '20' }]}>
+              <Text style={[styles.ratingText, { color: ratingColor }]}>
+                {getRatingLabel(rating)}
+              </Text>
+            </View>
+            <TouchableOpacity 
+              style={styles.moreButton}
+              onPress={() => handleRemoveItem(item.id)}
+            >
+              <Text style={styles.moreIcon}>•••</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </AnimatedPress>
     );
   };
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, { backgroundColor: colors.background }]}>
       {state.scanHistory.length > 0 && (
-        <View style={styles.header}>
+        <View style={[styles.header, { backgroundColor: colors.surface }]}>
           <View style={styles.headerLeft}>
-            <Text style={styles.headerTitle}>
+            <Text style={[styles.headerTitle, { color: colors.text }]}>
               {state.scanHistory.length} {state.scanHistory.length === 1 ? 'Item' : 'Items'}
             </Text>
+            <Text style={[styles.headerSubtitle, { color: colors.textSecondary }]}>Your scan history</Text>
           </View>
           <TouchableOpacity
+            style={[styles.clearButton, { backgroundColor: colors.error + '15' }]}
             onPress={handleClearHistory}
-            accessibilityRole="button"
-            accessibilityLabel="Clear all history"
           >
-            <Text style={styles.clearButton}>Clear All</Text>
+            <Text style={[styles.clearButtonText, { color: colors.error }]}>Clear All</Text>
           </TouchableOpacity>
         </View>
       )}
@@ -162,15 +186,15 @@ export default function HistoryScreen() {
         showsVerticalScrollIndicator={false}
         ListEmptyComponent={
           <View style={styles.emptyState}>
-            <View style={styles.emptyIconContainer}>
+            <View style={[styles.emptyIconContainer, { backgroundColor: colors.primaryLight }]}>
               <Text style={styles.emptyIcon}>📋</Text>
             </View>
-            <Text style={styles.emptyTitle}>No Scan History</Text>
-            <Text style={styles.emptyText}>
+            <Text style={[styles.emptyTitle, { color: colors.text }]}>No Scan History</Text>
+            <Text style={[styles.emptyText, { color: colors.textSecondary }]}>
               Products you scan will appear here for easy access
             </Text>
             <TouchableOpacity 
-              style={styles.scanButton}
+              style={[styles.scanButton, { backgroundColor: colors.primary }]}
               onPress={() => router.push('/scanner')}
             >
               <Text style={styles.scanButtonText}>Scan Now</Text>
@@ -185,30 +209,32 @@ export default function HistoryScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: COLORS.background,
   },
   header: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
     padding: SPACING.lg,
-    backgroundColor: COLORS.surface,
-    borderBottomWidth: 1,
-    borderBottomColor: COLORS.border,
+    ...SHADOWS.small,
   },
   headerLeft: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: SPACING.sm,
+    flexDirection: 'column',
   },
   headerTitle: {
-    fontSize: FONT_SIZE.md,
-    color: COLORS.textSecondary,
-    fontWeight: '600',
+    fontSize: FONT_SIZE.lg,
+    fontWeight: '800',
+  },
+  headerSubtitle: {
+    fontSize: FONT_SIZE.sm,
+    marginTop: 2,
   },
   clearButton: {
-    fontSize: FONT_SIZE.md,
-    color: COLORS.error,
+    paddingVertical: SPACING.sm,
+    paddingHorizontal: SPACING.md,
+    borderRadius: BORDER_RADIUS.lg,
+  },
+  clearButtonText: {
+    fontSize: FONT_SIZE.sm,
     fontWeight: '600',
   },
   listContent: {
@@ -216,16 +242,10 @@ const styles = StyleSheet.create({
     paddingBottom: SPACING.xxl,
   },
   historyCard: {
-    backgroundColor: COLORS.surface,
-    borderRadius: BORDER_RADIUS.xl,
+    borderRadius: BORDER_RADIUS.xxl,
     marginBottom: SPACING.md,
-    ...SHADOWS.small,
+    ...SHADOWS.medium,
     overflow: 'hidden',
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  cardTouchable: {
-    flex: 1,
   },
   cardContent: {
     flexDirection: 'row',
@@ -237,7 +257,7 @@ const styles = StyleSheet.create({
     height: 72,
     borderRadius: BORDER_RADIUS.lg,
     overflow: 'hidden',
-    backgroundColor: COLORS.surfaceAlt,
+    position: 'relative',
   },
   productImage: {
     width: '100%',
@@ -252,98 +272,104 @@ const styles = StyleSheet.create({
   placeholderEmoji: {
     fontSize: 28,
   },
+  healthBadge: {
+    position: 'absolute',
+    top: SPACING.xs,
+    right: SPACING.xs,
+    width: 24,
+    height: 24,
+    borderRadius: 12,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  healthEmoji: {
+    fontSize: 12,
+  },
   infoContainer: {
     flex: 1,
     marginLeft: SPACING.md,
+    marginRight: SPACING.sm,
   },
   productName: {
     fontSize: FONT_SIZE.md,
     fontWeight: '700',
-    color: COLORS.text,
     marginBottom: 2,
     lineHeight: 20,
   },
   productBrand: {
     fontSize: FONT_SIZE.sm,
-    color: COLORS.textSecondary,
     marginBottom: SPACING.xs,
   },
   metaRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: SPACING.sm,
   },
   dateText: {
     fontSize: FONT_SIZE.xs,
-    color: COLORS.textLight,
+  },
+  timeText: {
+    fontSize: FONT_SIZE.xs,
+  },
+  rightSection: {
+    alignItems: 'flex-end',
+    gap: SPACING.sm,
   },
   ratingBadge: {
-    flexDirection: 'row',
-    alignItems: 'center',
     paddingHorizontal: SPACING.sm,
-    paddingVertical: 3,
+    paddingVertical: 4,
     borderRadius: BORDER_RADIUS.sm,
-    gap: 4,
-  },
-  ratingDot: {
-    width: 6,
-    height: 6,
-    borderRadius: 3,
   },
   ratingText: {
     fontSize: FONT_SIZE.xs,
-    fontWeight: '600',
+    fontWeight: '700',
   },
   moreButton: {
-    padding: SPACING.sm,
-    marginLeft: SPACING.xs,
+    padding: SPACING.xs,
   },
   moreIcon: {
     fontSize: FONT_SIZE.lg,
-    color: COLORS.textLight,
+    color: '#94A3B8',
     letterSpacing: -2,
   },
   emptyState: {
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
-    paddingVertical: SPACING.xxl * 2,
+    paddingVertical: SPACING.xxxl,
     paddingHorizontal: SPACING.xl,
   },
   emptyIconContainer: {
-    width: 80,
-    height: 80,
-    borderRadius: 40,
-    backgroundColor: COLORS.surfaceAlt,
+    width: 88,
+    height: 88,
+    borderRadius: 44,
     justifyContent: 'center',
     alignItems: 'center',
-    marginBottom: SPACING.md,
+    marginBottom: SPACING.lg,
+    ...SHADOWS.medium,
   },
   emptyIcon: {
-    fontSize: 40,
+    fontSize: 44,
   },
   emptyTitle: {
     fontSize: FONT_SIZE.xl,
     fontWeight: '700',
-    color: COLORS.text,
     marginBottom: SPACING.sm,
   },
   emptyText: {
     fontSize: FONT_SIZE.md,
-    color: COLORS.textSecondary,
     textAlign: 'center',
     marginBottom: SPACING.lg,
     lineHeight: 22,
   },
   scanButton: {
-    backgroundColor: COLORS.primary,
     paddingVertical: SPACING.md,
     paddingHorizontal: SPACING.xl,
     borderRadius: BORDER_RADIUS.lg,
+    ...SHADOWS.button,
   },
   scanButtonText: {
     fontSize: FONT_SIZE.md,
     fontWeight: '700',
-    color: COLORS.white,
+    color: '#FFFFFF',
   },
 });

@@ -1,25 +1,29 @@
 import { Stack } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import { AppProvider } from '../src/context/AppContext';
-import { COLORS } from '../src/constants';
+import { ThemeProvider, useTheme } from '../src/context/ThemeContext';
 
-export default function RootLayout() {
+function RootLayoutNav() {
+  const { colors, isDark } = useTheme();
+  
   return (
-    <AppProvider>
-      <StatusBar style="dark" />
+    <>
+      <StatusBar style={isDark ? 'light' : 'dark'} />
       <Stack
         screenOptions={{
           headerStyle: {
-            backgroundColor: COLORS.background,
+            backgroundColor: colors.background,
           },
-          headerTintColor: COLORS.text,
+          headerTintColor: colors.text,
           headerTitleStyle: {
-            fontWeight: '600',
+            fontWeight: '700',
+            fontSize: 18,
           },
           headerShadowVisible: false,
           contentStyle: {
-            backgroundColor: COLORS.background,
+            backgroundColor: colors.background,
           },
+          animation: 'slide_from_right',
         }}
       >
         <Stack.Screen
@@ -31,6 +35,7 @@ export default function RootLayout() {
           options={{
             title: 'Scan Barcode',
             presentation: 'fullScreenModal',
+            animation: 'slide_from_bottom',
           }}
         />
         <Stack.Screen
@@ -45,9 +50,20 @@ export default function RootLayout() {
           options={{
             title: 'Product Details',
             presentation: 'card',
+            headerBackTitle: 'Back',
           }}
         />
       </Stack>
-    </AppProvider>
+    </>
+  );
+}
+
+export default function RootLayout() {
+  return (
+    <ThemeProvider>
+      <AppProvider>
+        <RootLayoutNav />
+      </AppProvider>
+    </ThemeProvider>
   );
 }

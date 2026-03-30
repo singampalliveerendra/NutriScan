@@ -1,0 +1,411 @@
+================================================================================
+                         NUTRISCAN APPLICATION
+                     Complete Technical Documentation
+================================================================================
+
+================================================================================
+1. OVERVIEW
+================================================================================
+
+NutriScan is a mobile food nutrition scanning application built with React Native
+and Expo. It allows users to scan food product barcodes to retrieve nutritional
+information, search for products manually, and track their scanning history.
+
+The app provides:
+- Barcode scanning using device camera
+- Manual barcode entry
+- Product search functionality
+- Health rating based on nutritional content
+- Local scan history storage
+- Dark/Light theme support
+- Indian food database fallback
+
+================================================================================
+2. TECHNOLOGY STACK
+================================================================================
+
+FRONTEND FRAMEWORK
+------------------
+- React Native 0.83.2
+- React 19.2.0
+- Expo SDK 55
+
+ROUTING & NAVIGATION
+--------------------
+- expo-router ~55.0.3
+  - File-based routing system
+  - Tab navigation for main screens
+  - Stack navigation for modals and details
+
+MOBILE FEATURES
+---------------
+- expo-camera ~55.0.9 (Camera access for barcode scanning)
+- expo-linear-gradient ~55.0.9 (Gradient backgrounds)
+- expo-status-bar ~55.0.4 (Status bar management)
+- expo-linking ~55.0.7 (Deep linking)
+- expo-constants ~55.0.7 (App constants)
+
+DATA STORAGE
+------------
+- @react-native-async-storage/async-storage 2.2.0 (Local storage)
+- expo-sqlite ~55.0.10 (SQLite database for products/history)
+
+ANIMATIONS
+----------
+- react-native-reanimated ~4.3.0 (Smooth animations)
+
+WEB RENDERING
+-------------
+- react-dom 19.2.0
+- react-native-web ~0.21.0
+
+DEVELOPMENT
+-----------
+- TypeScript ~5.9.2
+- @types/react ~19.2.2
+
+BUILD TOOLS
+-----------
+- Expo Application Services (EAS)
+- Expo prebuild for native code generation
+- Metro bundler for JavaScript bundling
+
+================================================================================
+3. PROJECT STRUCTURE
+================================================================================
+
+NutriScan/
+├── app/                          # Expo Router screens
+│   ├── _layout.tsx              # Root layout with providers
+│   ├── _layout.tsx              # Tabs layout configuration
+│   ├── index.tsx                # Home screen
+│   ├── scanner.tsx              # Barcode scanner screen
+│   ├── search.tsx               # Product search screen
+│   ├── history.tsx              # Scan history screen
+│   └── product/
+│       └── [id].tsx             # Product details screen
+│
+├── src/
+│   ├── components/              # Reusable UI components
+│   │   ├── AnimatedWrapper.tsx
+│   │   ├── Button.tsx
+│   │   ├── GlassCard.tsx
+│   │   ├── GradientButton.tsx
+│   │   ├── index.ts
+│   │   ├── NutritionCard.tsx
+│   │   ├── NutritionFactsTable.tsx
+│   │   ├── ProductCard.tsx
+│   │   ├── RatingBadge.tsx
+│   │   ├── SearchBar.tsx
+│   │   ├── SkeletonLoader.tsx
+│   │   └── ui/                  # Additional UI components
+│   │
+│   ├── constants/              # App constants
+│   │   └── index.ts            # Colors, spacing, fonts, shadows
+│   │
+│   ├── context/                # React Context providers
+│   │   ├── AppContext.tsx      # App state (history, products)
+│   │   └── ThemeContext.tsx    # Theme state (dark/light mode)
+│   │
+│   ├── data/                   # Static data
+│   │   └── indianFoods.ts      # Indian food nutrition database
+│   │
+│   ├── services/               # API and database services
+│   │   ├── api.ts             # Generic API utilities
+│   │   ├── cacheService.ts    # Search result caching
+│   │   ├── databaseService.ts # SQLite database operations
+│   │   ├── databaseService.native.ts # Native SQLite implementation
+│   │   └── foodApi.ts         # Open Food Facts API integration
+│   │
+│   ├── types/                  # TypeScript type definitions
+│   │   └── index.ts           # Product, NutritionFacts, etc.
+│   │
+│   └── utils/                  # Utility functions
+│       └── index.ts            # Health rating calculations, helpers
+│
+├── android/                     # Native Android project (generated)
+├── assets/                      # Images, icons, fonts
+├── foodscanner/                 # Related project/backup
+├── node_modules/                # Dependencies
+├── app.json                     # Expo configuration
+├── package.json                 # Project dependencies
+├── eas.json                     # EAS Build configuration
+├── tsconfig.json                # TypeScript configuration
+└── babel.config.js              # Babel configuration
+
+================================================================================
+4. SCREEN DESCRIPTIONS
+================================================================================
+
+4.1 HOME SCREEN (app/(tabs)/index.tsx)
+--------------------------------------
+The main dashboard showing:
+- Hero section with scan button and gradient background
+- Quick action cards (Scan Food, Search, Enter Barcode)
+- Activity statistics (Today, This Week, Total scans)
+- Recent scans horizontal scroll view
+- Empty state for new users
+
+Features:
+- Animated entrance effects
+- Pulsing scan button
+- Navigation to scanner and search screens
+
+4.2 SCANNER SCREEN (app/scanner.tsx)
+------------------------------------
+Full-screen barcode scanner with:
+- Camera view with barcode detection
+- Support for EAN-13, EAN-8, UPC-A, UPC-E, Code-128
+- Animated scan line effect
+- Flash toggle
+- Manual barcode entry modal
+- Manual product addition form
+- Loading states with glass morphism cards
+- Debounced scanning (2 second cooldown)
+
+4.3 SEARCH SCREEN (app/search.tsx)
+----------------------------------
+Product search functionality:
+- Debounced search input
+- Results from multiple sources:
+  - Open Food Facts API
+  - Indian Foods local database
+  - Local SQLite database
+- Skeleton loading states
+- Animated result cards
+- Health rating badges
+
+4.4 HISTORY SCREEN (app/(tabs)/history.tsx)
+------------------------------------------
+Scan history management:
+- FlatList of scanned products
+- Grouped by date (Today, Yesterday, X days ago)
+- Delete individual items
+- Clear all history option
+- Health rating indicators
+- Empty state for no history
+
+4.5 PRODUCT DETAILS SCREEN (app/product/[id].tsx)
+-------------------------------------------------
+Detailed product information:
+- Product image with gradient background
+- Health rating badge (Healthy/Moderate/Avoid)
+- Nutrition facts grid:
+  - Calories, Protein, Sugar, Fat
+- Ingredients list
+- AI-generated health analysis
+- Save to history button
+
+================================================================================
+5. DATA FLOW & ARCHITECTURE
+================================================================================
+
+5.1 STATE MANAGEMENT
+---------------------
+Two main contexts:
+
+AppContext (src/context/AppContext.tsx)
+- Manages scan history
+- Stores products in AsyncStorage
+- Provides add/remove/clear history functions
+- Maximum 50 history items
+
+ThemeContext (src/context/ThemeContext.tsx)
+- Manages dark/light theme
+- Provides color schemes
+- Toggle function for theme switching
+
+5.2 API INTEGRATION
+-------------------
+
+Primary: Open Food Facts API
+- Endpoint: https://world.openfoodfacts.org/api/v0/product/{barcode}.json
+- Free, open-source product database
+- Returns: product name, brand, image, nutrition facts, ingredients
+
+Fallback: UPC Item DB API
+- Endpoint: https://api.upcitemdb.com/prod/trial/lookup?upc={barcode}
+- Commercial barcode lookup service
+- Free tier available
+- Limited nutrition data
+
+5.3 DATA CACHING
+----------------
+- Search results cached in memory
+- Products saved to local SQLite database
+- Scan history persisted in AsyncStorage
+
+5.4 INDIAN FOOD DATABASE
+------------------------
+Local fallback database with common Indian foods:
+- Name, brand, nutrition facts per 100g
+- Used when API fails or Indian food keywords detected
+- Keywords: maggi, kurkure, parle, amul, etc.
+
+================================================================================
+6. HEALTH RATING SYSTEM
+================================================================================
+
+Products are rated as:
+- Healthy (Green): Low sugar, sodium, saturated fat
+- Moderate (Yellow): Medium levels
+- Avoid (Red): High levels of harmful ingredients
+
+Rating based on thresholds:
+- Sugar > 15g per 100g: negative
+- Sodium > 500mg per 100g: negative
+- Saturated Fat > 5g per 100g: negative
+
+AI Analysis generates text explanation based on:
+- Calorie content
+- Protein levels
+- Sugar content
+- Sodium levels
+- Saturated fat content
+
+================================================================================
+7. NAVIGATION STRUCTURE
+================================================================================
+
+Root Layout (app/_layout.tsx)
+├── ThemeProvider
+├── AppProvider
+└── Stack Navigator
+    ├── Tabs (app/(tabs)/_layout.tsx)
+    │   ├── Home (index.tsx)
+    │   ├── Scan Tab → Redirects to /scanner
+    │   └── History (history.tsx)
+    ├── Scanner (app/scanner.tsx) - Modal presentation
+    ├── Search (app/search.tsx) - Card presentation
+    └── Product Details (app/product/[id].tsx) - Card presentation
+
+================================================================================
+8. KEY FEATURES IMPLEMENTATION
+================================================================================
+
+8.1 BARCODE SCANNING
+--------------------
+- Uses expo-camera CameraView component
+- BarcodeScannerSettings for format selection
+- Debounce to prevent duplicate scans
+- Haptic feedback on successful scan
+- Error handling for timeout (15 seconds)
+
+8.2 ANIMATIONS
+---------------
+- react-native-reanimated for performance
+- scanLineAnim: Looping vertical scan line
+- pulseAnim: Pulsing effect on scan button
+- fadeAnim/slideAnim: Entrance animations
+- Use useFocusEffect for screen focus reset
+
+8.3 LOCAL STORAGE
+-----------------
+- AsyncStorage for scan history (JSON serialized)
+- SQLite for product caching
+- Cache service for search results
+
+8.4 THEME SUPPORT
+-----------------
+- Light mode: White/gray backgrounds, dark text
+- Dark mode: Dark backgrounds, light text
+- Consistent color mapping across all screens
+- Theme toggle in header
+
+================================================================================
+9. BUILDING & DEPLOYMENT
+================================================================================
+
+Development Build:
+------------------
+npm run start          # Start Expo development server
+npx expo run:android   # Run on Android device/emulator
+
+Production Build:
+-----------------
+npx expo prebuild --platform android
+cd android && ./gradlew assembleRelease
+
+EAS Build (Cloud):
+------------------
+npx eas login
+npx eas build --platform android --profile preview
+
+APK Location:
+-------------
+android/app/build/outputs/apk/release/app-release.apk
+
+================================================================================
+10. CONFIGURATION FILES
+================================================================================
+
+app.json - Expo configuration:
+- App name, version, icon
+- iOS bundle ID: com.nutriscan.app
+- Android package: com.nutriscan.app
+- Camera permissions
+- Deep linking scheme: nutriscan
+
+eas.json - EAS Build profiles:
+- Development: internal distribution
+- Preview: internal distribution
+- Production: app-bundle format
+
+package.json - Dependencies:
+- Main framework: expo ~55.0.4
+- Routing: expo-router ~55.0.3
+- Camera: expo-camera ~55.0.9
+- Storage: expo-sqlite, async-storage
+- Animations: react-native-reanimated
+
+================================================================================
+11. DATA TYPES
+================================================================================
+
+interface NutritionFacts {
+  calories: number;
+  protein: number;
+  carbohydrates: number;
+  fat: number;
+  sugar: number;
+  sodium: number;
+  saturatedFat: number;
+  fiber?: number;
+}
+
+interface Product {
+  id: string;
+  barcode: string;
+  name: string;
+  brand?: string;
+  imageUrl?: string;
+  nutritionFacts: NutritionFacts;
+  ingredients?: string;
+}
+
+interface ScanHistoryItem {
+  id: string;
+  product: Product;
+  scannedAt: string;
+  verdict?: 'healthy' | 'moderate' | 'avoid';
+}
+
+type HealthRating = 'healthy' | 'moderate' | 'avoid';
+
+================================================================================
+12. FUTURE IMPLEMENTATIONS
+================================================================================
+
+- User authentication
+- Cloud sync for history
+- Barcode scanning history analytics
+- Nutritional goals tracking
+- Multiple language support
+- Offline mode with full local database
+- Push notifications for product recalls
+- Social sharing features
+- Recipe suggestions based on scanned items
+
+================================================================================
+END OF DOCUMENTATION
+================================================================================

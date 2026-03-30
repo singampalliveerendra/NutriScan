@@ -1,14 +1,13 @@
 export const COLORS = {
-  primary: '#22C55E',
-  primaryDark: '#16A34A',
-  primaryLight: '#DCFCE7',
-  secondary: '#0EA5E9',
-  secondaryDark: '#0284C7',
+  primary: '#10B981',
+  primaryDark: '#059669',
+  primaryLight: '#D1FAE5',
+  secondary: '#6366F1',
   background: '#F8FAFC',
   surface: '#FFFFFF',
   surfaceAlt: '#F1F5F9',
-  text: '#1E293B',
-  textSecondary: '#64748B',
+  text: '#0F172A',
+  textSecondary: '#475569',
   textLight: '#94A3B8',
   border: '#E2E8F0',
   rating: {
@@ -25,6 +24,16 @@ export const COLORS = {
   cardShadow: 'rgba(0, 0, 0, 0.08)',
 };
 
+export const GRADIENTS = {
+  primary: ['#10B981', '#059669'],
+  secondary: ['#6366F1', '#4F46E5'],
+  dark: ['#1A1A2E', '#16213E'],
+  premium: ['#667EEA', '#764BA2'],
+  success: ['#22C55E', '#16A34A'],
+  warning: ['#F59E0B', '#D97706'],
+  danger: ['#EF4444', '#DC2626'],
+};
+
 export const SPACING = {
   xs: 4,
   sm: 8,
@@ -32,6 +41,7 @@ export const SPACING = {
   lg: 24,
   xl: 32,
   xxl: 48,
+  xxxl: 64,
 };
 
 export const FONT_SIZE = {
@@ -43,6 +53,7 @@ export const FONT_SIZE = {
   xxl: 24,
   xxxl: 28,
   title: 32,
+  hero: 40,
 };
 
 export const BORDER_RADIUS = {
@@ -51,6 +62,7 @@ export const BORDER_RADIUS = {
   lg: 16,
   xl: 20,
   xxl: 24,
+  xxxl: 32,
   full: 9999,
 };
 
@@ -76,11 +88,24 @@ export const SHADOWS = {
     shadowRadius: 16,
     elevation: 8,
   },
+  glow: {
+    shadowColor: '#10B981',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 12,
+    elevation: 8,
+  },
   button: {
-    shadowColor: '#22C55E',
+    shadowColor: '#10B981',
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.3,
     shadowRadius: 8,
     elevation: 6,
   },
+};
+
+export const ANIMATION = {
+  fast: 150,
+  normal: 300,
+  slow: 500,
 };
