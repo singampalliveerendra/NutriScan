@@ -1,0 +1,45 @@
+{
+  "cli_version": "0.5.0",
+  "checkpoint_id": "f7e8a23d5a15",
+  "session_id": "ses_2c20bb422ffeO9BqpkTwihwnX7",
+  "strategy": "manual-commit",
+  "created_at": "2026-03-30T17:40:57.707192804Z",
+  "branch": "main",
+  "checkpoints_count": 1,
+  "files_touched": [
+    ".gitignore",
+    "app/(tabs)/_layout.tsx",
+    "app/(tabs)/history.tsx",
+    "app/(tabs)/index.tsx",
+    "app/_layout.tsx",
+    "app/product/[id].tsx",
+    "app/scanner.tsx",
+    "app/search.tsx",
+    "metro.config.js",
+    "src/components/index.ts",
+    "src/services/databaseService.ts",
+    "src/services/foodApi.ts"
+  ],
+  "agent": "OpenCode",
+  "model": "big-pickle",
+  "turn_id": "1e48d7ec459b",
+  "token_usage": {
+    "input_tokens": 65,
+    "cache_creation_tokens": 0,
+    "cache_read_tokens": 11312,
+    "output_tokens": 95,
+    "api_call_count": 1
+  },
+  "session_metrics": {
+    "turn_count": 2
+  },
+  "initial_attribution": {
+    "calculated_at": "2026-03-30T17:40:57.703163327Z",
+    "agent_lines": 0,
+    "human_added": 7057,
+    "human_modified": 741,
+    "human_removed": 0,
+    "total_committed": 7448,
+    "agent_percentage": 0
+  }
+}
