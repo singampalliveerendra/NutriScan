@@ -10,17 +10,28 @@
     "app/(tabs)/_layout.tsx",
     "app/(tabs)/history.tsx",
     "app/(tabs)/index.tsx",
+    "app/(tabs)/scan.tsx",
     "app/_layout.tsx",
     "app/product/[id].tsx",
     "app/scanner.tsx",
     "app/search.tsx",
+    "babel.config.js",
     "explain.txt",
     "metro.config.js",
     "package-lock.json",
     "package.json",
+    "src/components/AnimatedWrapper.tsx",
+    "src/components/SkeletonLoader.tsx",
     "src/components/index.ts",
+    "src/components/ui/AnimatedPress.tsx",
+    "src/components/ui/GlassCard.tsx",
+    "src/components/ui/GradientButton.tsx",
+    "src/components/ui/Skeleton.tsx",
+    "src/components/ui/index.ts",
     "src/constants/index.ts",
+    "src/context/ThemeContext.tsx",
     "src/data/indianFoods.ts",
+    "src/services/databaseService.native.ts",
     "src/services/databaseService.ts",
     "src/services/foodApi.ts"
   ],
@@ -36,6 +47,12 @@
       "transcript": "/f7/e8a23d5a15/1/full.jsonl",
       "content_hash": "/f7/e8a23d5a15/1/content_hash.txt",
       "prompt": "/f7/e8a23d5a15/1/prompt.txt"
+    },
+    {
+      "metadata": "/f7/e8a23d5a15/2/metadata.json",
+      "transcript": "/f7/e8a23d5a15/2/full.jsonl",
+      "content_hash": "/f7/e8a23d5a15/2/content_hash.txt",
+      "prompt": ""
     }
   ],
   "token_usage": {
