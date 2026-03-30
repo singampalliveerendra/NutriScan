@@ -1,0 +1,135 @@
+{
+  "info": {
+    "id": "REDACTED",
+    "slug": "proud-forest",
+    "projectID": "5a48d5ef785e1c7f0cc9f156a4d00b8c5607e5bf",
+    "directory": "/home/veerendra/food/NutriScan",
+    "title": "Greeting message",
+    "version": "1.3.7",
+    "summary": {
+      "additions": 0,
+      "deletions": 0,
+      "files": 0
+    },
+    "time": {
+      "created": 1774865356794,
+      "updated": 1774865358614
+    }
+  },
+  "messages": [
+    {
+      "info": {
+        "role": "user",
+        "time": {
+          "created": 1774865356861
+        },
+        "summary": {
+          "diffs": []
+        },
+        "agent": "build",
+        "model": {
+          "providerID": "opencode",
+          "modelID": "big-pickle"
+        },
+        "id": "msg_d3e381813001qDRfjdCSeF9unI",
+        "sessionID": "REDACTED"
+      },
+      "parts": [
+        {
+          "type": "text",
+          "text": "hi",
+          "id": "prt_d3e381814001yVGxEVGji6uBa2",
+          "sessionID": "REDACTED",
+          "messageID": "msg_d3e381813001qDRfjdCSeF9unI"
+        }
+      ]
+    },
+    {
+      "info": {
+        "role": "assistant",
+        "time": {
+          "created": 1774865356917,
+          "completed": 1774865362798
+        },
+        "parentID": "msg_d3e381813001qDRfjdCSeF9unI",
+        "modelID": "big-pickle",
+        "providerID": "opencode",
+        "mode": "build",
+        "agent": "build",
+        "path": {
+          "cwd": "/home/veerendra/food/NutriScan",
+          "root": "/home/veerendra/food/NutriScan"
+        },
+        "cost": 0,
+        "tokens": {
+          "total": 11240,
+          "input": 65,
+          "output": 45,
+          "reasoning": 0,
+          "cache": {
+            "write": 10620,
+            "read": 510
+          }
+        },
+        "finish": "stop",
+        "id": "REDACTED",
+        "sessionID": "REDACTED"
+      },
+      "parts": [
+        {
+          "snapshot": "2407ed16337df4d49d83e8e3d24461fb83827bdb",
+          "type": "step-start",
+          "id": "prt_d3e382d22001tE02DsDVTwTfFE",
+          "sessionID": "REDACTED",
+          "messageID": "REDACTED"
+        },
+        {
+          "type": "reasoning",
+          "text": "The user is simply saying \"hi\" - this is a greeting. I should respond concisely with a brief greeting as per my instructions to keep responses short.",
+          "time": {
+            "start": 1774865362215,
+            "end": 1774865362573
+          },
+          "metadata": {
+            "anthropic": {
+              "signature": "1947dcf75456a3c022dce30aee492dd49b7c9d093e8a6d241d551b33388ebcdf"
+            }
+          },
+          "id": "prt_d3e382d27001hIF7U3DamSmgeO",
+          "sessionID": "REDACTED",
+          "messageID": "REDACTED"
+        },
+        {
+          "type": "text",
+          "text": "Hi! How can I help you today?",
+          "time": {
+            "start": 1774865362586,
+            "end": 1774865362586
+          },
+          "id": "prt_d3e382e92001grrvHUKLUIisoj",
+          "sessionID": "REDACTED",
+          "messageID": "REDACTED"
+        },
+        {
+          "reason": "stop",
+          "snapshot": "2407ed16337df4d49d83e8e3d24461fb83827bdb",
+          "type": "step-finish",
+          "tokens": {
+            "total": 11240,
+            "input": 65,
+            "output": 45,
+            "reasoning": 0,
+            "cache": {
+              "write": 10620,
+              "read": 510
+            }
+          },
+          "cost": 0,
+          "id": "prt_d3e382ee1001SH60oAoDp4a7nI",
+          "sessionID": "REDACTED",
+          "messageID": "REDACTED"
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,183 @@
+hi
+
+---
+
+open food/nutiscan and Review my existing React Native Expo NutriScan project and FIX search accuracy, improve product coverage (especially Indian snacks and beverages), and improve ingredient display. Do NOT create a new project.
+
+1. Fix Search Not Returning Products:
+   Currently search fails for items like Coca-Cola, snacks, and beverages.
+
+Fix by:
+
+* Use multiple APIs instead of only one:
+
+Primary API:
+https://world.openfoodfacts.org/cgi/search.pl?search_terms={query}&search_simple=1&action=process&json=1
+
+Fallback APIs:
+
+* Edamam Food API (for general foods)
+
+* Spoonacular API (for packaged and recipes)
+
+* Merge results from APIs
+
+* Normalize data into common format
+
+* Ensure snacks, beverages, junk foods appear
+
+2. Improve Indian Product Coverage:
+
+* Detect Indian queries (or when results are empty)
+
+* Add fallback dataset for Indian foods AND packaged snacks:
+  Examples:
+  Maggi, Lays, Kurkure, Parle-G, Good Day, Dairy Milk, Thums Up, Maaza, Frooti, Bournvita
+
+* Combine:
+  API results + local Indian dataset
+
+3. Fix Search Logic:
+
+* Implement debounce (300ms)
+* Ensure correct API query encoding
+* Avoid unnecessary API calls
+* Show accurate results instead of always fallback
+
+4. Ingredients Display (ROW FORMAT):
+
+* Extract:
+  data.product.ingredients_text
+
+* Display ingredients in MULTIPLE ROWS (not one line)
+  Example:
+  Ingredients:
+
+* Sugar
+
+* Wheat Flour
+
+* Palm Oil
+
+* Cocoa
+
+* If ingredients missing:
+  Show "Ingredients not available"
+
+5. Improve Result UI:
+
+* Show product name
+* Show brand
+* Show category (snack, beverage, etc.)
+* Show ingredients section clearly
+* Highlight junk foods (high sugar/fat)
+
+6. Fix Discovery Tab:
+
+* Completely remove discovery screen:
+  Delete:
+  app/(tabs)/discovery.tsx
+  Remove from:
+  app/(tabs)/_layout.tsx
+  Ensure only:
+  Home, Scan, History
+
+7. Performance:
+
+* Cache search results
+* Show loading indicator
+* Handle API errors properly
+
+Goal:
+Make search highly accurate, support Indian snacks and beverages, display ingredients in clean row format, and ensure the app behaves like a real-world food scanning app.
+
+---
+
+open food/nutiscan and Review my existing React Native Expo NutriScan project and FIX search accuracy, improve product coverage (especially Indian snacks and beverages), and improve ingredient display. Do NOT create a new project.
+
+1. Fix Search Not Returning Products:
+   Currently search fails for items like Coca-Cola, snacks, and beverages.
+
+Fix by:
+
+* Use multiple APIs instead of only one:
+
+Primary API:
+https://world.openfoodfacts.org/cgi/search.pl?search_terms={query}&search_simple=1&action=process&json=1
+
+Fallback APIs:
+
+* Edamam Food API (for general foods)
+
+* Spoonacular API (for packaged and recipes)
+
+* Merge results from APIs
+
+* Normalize data into common format
+
+* Ensure snacks, beverages, junk foods appear
+
+2. Improve Indian Product Coverage:
+
+* Detect Indian queries (or when results are empty)
+
+* Add fallback dataset for Indian foods AND packaged snacks:
+  Examples:
+  Maggi, Lays, Kurkure, Parle-G, Good Day, Dairy Milk, Thums Up, Maaza, Frooti, Bournvita
+
+* Combine:
+  API results + local Indian dataset
+
+3. Fix Search Logic:
+
+* Implement debounce (300ms)
+* Ensure correct API query encoding
+* Avoid unnecessary API calls
+* Show accurate results instead of always fallback
+
+4. Ingredients Display (ROW FORMAT):
+
+* Extract:
+  data.product.ingredients_text
+
+* Display ingredients in MULTIPLE ROWS (not one line)
+  Example:
+  Ingredients:
+
+* Sugar
+
+* Wheat Flour
+
+* Palm Oil
+
+* Cocoa
+
+* If ingredients missing:
+  Show "Ingredients not available"
+
+5. Improve Result UI:
+
+* Show product name
+* Show brand
+* Show category (snack, beverage, etc.)
+* Show ingredients section clearly
+* Highlight junk foods (high sugar/fat)
+
+6. Fix Discovery Tab:
+
+* Completely remove discovery screen:
+  Delete:
+  app/(tabs)/discovery.tsx
+  Remove from:
+  app/(tabs)/_layout.tsx
+  Ensure only:
+  Home, Scan, History
+
+7. Performance:
+
+* Cache search results
+* Show loading indicator
+* Handle API errors properly
+
+Goal:
+Make search highly accurate, support Indian snacks and beverages, display ingredients in clean row format, and ensure the app behaves like a real-world food scanning app.
