@@ -1,0 +1,135 @@
+{
+  "info": {
+    "id": "ses_2c2086adfffeoTDiTY72OBV8d2",
+    "slug": "happy-eagle",
+    "projectID": "5a48d5ef785e1c7f0cc9f156a4d00b8c5607e5bf",
+    "directory": "/home/veerendra/food/NutriScan",
+    "title": "Greeting and quick check-in",
+    "version": "1.3.7",
+    "summary": {
+      "additions": 0,
+      "deletions": 0,
+      "files": 0
+    },
+    "time": {
+      "created": 1774861128993,
+      "updated": 1774861130798
+    }
+  },
+  "messages": [
+    {
+      "info": {
+        "role": "user",
+        "time": {
+          "created": 1774861129051
+        },
+        "summary": {
+          "diffs": []
+        },
+        "agent": "build",
+        "model": {
+          "providerID": "opencode",
+          "modelID": "big-pickle"
+        },
+        "id": "msg_d3df79536001dJDb24ZJb1yKQ0",
+        "sessionID": "ses_2c2086adfffeoTDiTY72OBV8d2"
+      },
+      "parts": [
+        {
+          "type": "text",
+          "text": "hi",
+          "id": "prt_d3df79537001SxbeW166bOjDJk",
+          "sessionID": "ses_2c2086adfffeoTDiTY72OBV8d2",
+          "messageID": "msg_d3df79536001dJDb24ZJb1yKQ0"
+        }
+      ]
+    },
+    {
+      "info": {
+        "role": "assistant",
+        "time": {
+          "created": 1774861129118,
+          "completed": 1774861136333
+        },
+        "parentID": "msg_d3df79536001dJDb24ZJb1yKQ0",
+        "modelID": "big-pickle",
+        "providerID": "opencode",
+        "mode": "build",
+        "agent": "build",
+        "path": {
+          "cwd": "/home/veerendra/food/NutriScan",
+          "root": "/home/veerendra/food/NutriScan"
+        },
+        "cost": 0,
+        "tokens": {
+          "total": 11241,
+          "input": 65,
+          "output": 46,
+          "reasoning": 0,
+          "cache": {
+            "write": 6,
+            "read": 11124
+          }
+        },
+        "finish": "stop",
+        "id": "msg_d3df7959e001BGLl3Dc8kkzk1v",
+        "sessionID": "ses_2c2086adfffeoTDiTY72OBV8d2"
+      },
+      "parts": [
+        {
+          "snapshot": "d00ae619f3a6926e0f7d7a3178e4bd84375bf431",
+          "type": "step-start",
+          "id": "prt_d3df7ad40001LqHJyBPitIBP7f",
+          "sessionID": "ses_2c2086adfffeoTDiTY72OBV8d2",
+          "messageID": "msg_d3df7959e001BGLl3Dc8kkzk1v"
+        },
+        {
+          "type": "reasoning",
+          "text": "The user is greeting me with \"hi\". I should respond with a simple greeting and offer to help. Based on my instructions, I should be concise and direct.",
+          "time": {
+            "start": 1774861135170,
+            "end": 1774861136170
+          },
+          "metadata": {
+            "anthropic": {
+              "signature": "21f0400f867ce7d885f08f73615b5733ea757a5a43814114f8e813d9c487ba7b"
+            }
+          },
+          "id": "prt_d3df7ad42001V9vy2uWUFlFsyI",
+          "sessionID": "ses_2c2086adfffeoTDiTY72OBV8d2",
+          "messageID": "msg_d3df7959e001BGLl3Dc8kkzk1v"
+        },
+        {
+          "type": "text",
+          "text": "Hi! How can I help you today?",
+          "time": {
+            "start": 1774861136178,
+            "end": 1774861136178
+          },
+          "id": "prt_d3df7b12c001nINm6L57ipYyUd",
+          "sessionID": "ses_2c2086adfffeoTDiTY72OBV8d2",
+          "messageID": "msg_d3df7959e001BGLl3Dc8kkzk1v"
+        },
+        {
+          "reason": "stop",
+          "snapshot": "d00ae619f3a6926e0f7d7a3178e4bd84375bf431",
+          "type": "step-finish",
+          "tokens": {
+            "total": 11241,
+            "input": 65,
+            "output": 46,
+            "reasoning": 0,
+            "cache": {
+              "write": 6,
+              "read": 11124
+            }
+          },
+          "cost": 0,
+          "id": "prt_d3df7b17a0012LAUJSHWfv7GWo",
+          "sessionID": "ses_2c2086adfffeoTDiTY72OBV8d2",
+          "messageID": "msg_d3df7959e001BGLl3Dc8kkzk1v"
+        }
+      ]
+    }
+  ]
+}

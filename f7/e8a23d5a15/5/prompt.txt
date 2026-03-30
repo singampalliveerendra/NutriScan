@@ -1,0 +1,21 @@
+hi
+
+---
+
+hi
+
+---
+
+open food/nutiscan folder and Ultra modern futuristic dual-theme food discovery UI, split layout showing both dark and light modes side by side, left side dark theme with deep black background, neon blue and purple glow, cyberpunk lighting, glassmorphism UI, soft gradients, glowing accents, high contrast, right side light theme with bright white background, soft blue and violet gradients, transparent glass layers, subtle shadows, elegant minimal interface, smooth lighting, premium Apple-inspired design, clean modern typography, displaying the name "D. Sri Naga Abhay" slightly below center (not touching center line, small balanced gap), perfect alignment, minimal layout, floating elements, depth lighting, holographic UI feel, soft reflections,
+
+rich food app interface with multiple API integrations (restaurant search, recipes API, nutrition API, food delivery API, menu API, rating and reviews API), showing multiple food cards grid with high-quality dishes, trending foods, categories, ratings, pricing, delivery time, filters and search bar, dynamic content loading, infinite scroll feel, real-time data visualization, fast loading UI, optimized performance, instant response interface, low latency design, smooth transitions, responsive layout,
+
+ultra detailed, cinematic lighting, photorealistic rendering, realistic shadows and reflections, high dynamic range, studio lighting, ultra sharp details, 4K resolution, professional tech aesthetic, scalable UI system, modern UX, no clutter, sharp focus
+
+---
+
+open food/nutiscan folder and Ultra modern futuristic dual-theme food discovery UI, split layout showing both dark and light modes side by side, left side dark theme with deep black background, neon blue and purple glow, cyberpunk lighting, glassmorphism UI, soft gradients, glowing accents, high contrast, right side light theme with bright white background, soft blue and violet gradients, transparent glass layers, subtle shadows, elegant minimal interface, smooth lighting, premium Apple-inspired design, clean modern typography, displaying the name "D. Sri Naga Abhay" slightly below center (not touching center line, small balanced gap), perfect alignment, minimal layout, floating elements, depth lighting, holographic UI feel, soft reflections,
+
+rich food app interface with multiple API integrations (restaurant search, recipes API, nutrition API, food delivery API, menu API, rating and reviews API), showing multiple food cards grid with high-quality dishes, trending foods, categories, ratings, pricing, delivery time, filters and search bar, dynamic content loading, infinite scroll feel, real-time data visualization, fast loading UI, optimized performance, instant response interface, low latency design, smooth transitions, responsive layout,
+
+ultra detailed, cinematic lighting, photorealistic rendering, realistic shadows and reflections, high dynamic range, studio lighting, ultra sharp details, 4K resolution, professional tech aesthetic, scalable UI system, modern UX, no clutter, sharp focus
